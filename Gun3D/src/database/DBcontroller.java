@@ -16,7 +16,9 @@ public class DBcontroller implements DBcontrollerInterface {
 	private final String dbName = "jdbc:mysql://localhost/gun";
 	private final String dbUsername = "scott";
 	private final String dbPassword = "tiger";
-	private final String tableName = "events";
+	private final String tableName = "eventsTest"; // MICHA: change to events
+	
+	private final static 
 
 	private Connection connection;
 	private PreparedStatement stmt;
@@ -24,6 +26,12 @@ public class DBcontroller implements DBcontrollerInterface {
 	public DBcontroller() throws Exception {
 		connect();
 		createTable();
+		getCurrentGameNumber();
+	}
+
+	private void getCurrentGameNumber() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	private void connect() throws Exception {
