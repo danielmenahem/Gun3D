@@ -5,17 +5,27 @@ import java.time.LocalDateTime;
 public class DBRecord {
 	private String playerID;
 	private int gameID;
+	private int gameScore;
 	private String eventType;
 	private LocalDateTime timeStamp;
 
 	public DBRecord() {
 	}
 
-	public DBRecord(String playerID, int gameID, String eventType, LocalDateTime timeStamp) {
+	public DBRecord(String playerID, int gameID, int gameScore, String eventType, LocalDateTime timeStamp) {
 		this.playerID = playerID;
 		this.gameID = gameID;
+		this.gameScore = gameScore;
 		this.eventType = eventType;
 		this.timeStamp = timeStamp;
+	}
+
+	public int getGameScore() {
+		return gameScore;
+	}
+
+	public void setGameScore(int gameScore) {
+		this.gameScore = gameScore;
 	}
 
 	public String getPlayerID() {
@@ -52,8 +62,9 @@ public class DBRecord {
 
 	@Override
 	public String toString() {
-		return "DBRecord [playerID=" + playerID + ", gameID=" + gameID + ", eventType=" + eventType + ", timeStamp="
-				+ timeStamp + "]";
+		return "DBRecord [playerID=" + playerID + ", gameID=" + gameID + ", gameScore=" + gameScore + ", eventType="
+				+ eventType + ", timeStamp=" + timeStamp + "]";
 	}
+
 
 }

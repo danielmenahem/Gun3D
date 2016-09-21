@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public interface DBcontrollerInterface {
-	void insertEvent(String playerID, int gameID, String eventType) throws SQLException;
+	void insertEvent(String playerID, int gameID, int gameScore, String eventType) throws SQLException;
 	ArrayList<DBRecord> getEventsByPlayerID(String playerID) throws SQLException;
 	ArrayList<DBRecord> getEventsByGameID(int gameID) throws SQLException;
 	ArrayList<DBRecord> getAllEvents() throws SQLException;
