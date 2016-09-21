@@ -4,14 +4,16 @@ import java.time.LocalDateTime;
 
 public class DBRecord {
 	private String playerID;
+	private int gameID;
 	private String eventType;
 	private LocalDateTime timeStamp;
-	
+
 	public DBRecord() {
 	}
 
-	public DBRecord(String playerID, String eventType, LocalDateTime timeStamp) {
+	public DBRecord(String playerID, int gameID, String eventType, LocalDateTime timeStamp) {
 		this.playerID = playerID;
+		this.gameID = gameID;
 		this.eventType = eventType;
 		this.timeStamp = timeStamp;
 	}
@@ -22,6 +24,14 @@ public class DBRecord {
 
 	public void setPlayerID(String playerID) {
 		this.playerID = playerID;
+	}
+
+	public int getGameID() {
+		return gameID;
+	}
+
+	public void setGameID(int gameID) {
+		this.gameID = gameID;
 	}
 
 	public String getEventType() {
@@ -42,9 +52,8 @@ public class DBRecord {
 
 	@Override
 	public String toString() {
-		return "DBRecord [playerID=" + playerID + ", eventType=" + eventType + ", timeStamp=" + timeStamp + "]";
+		return "DBRecord [playerID=" + playerID + ", gameID=" + gameID + ", eventType=" + eventType + ", timeStamp="
+				+ timeStamp + "]";
 	}
-	
-	
-	
+
 }

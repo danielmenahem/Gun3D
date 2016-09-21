@@ -11,14 +11,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 
-public class DBcontroller implements DBcontrollerInterface {
+public class DBcontroller implements DBcontrollerInterface{
 	private final String dbDriverName = "com.mysql.jdbc.Driver";
 	private final String dbName = "jdbc:mysql://localhost/gun";
 	private final String dbUsername = "scott";
 	private final String dbPassword = "tiger";
-	private final String tableName = "eventsTest"; // MICHA: change to events
-	
-	private final static 
+	private final String tableName = "eventsTest1234"; // MICHA: change to events
+
+	private static int numberOfGames;
 
 	private Connection connection;
 	private PreparedStatement stmt;
@@ -26,12 +26,7 @@ public class DBcontroller implements DBcontrollerInterface {
 	public DBcontroller() throws Exception {
 		connect();
 		createTable();
-		getCurrentGameNumber();
-	}
-
-	private void getCurrentGameNumber() {
-		// TODO Auto-generated method stub
-		
+		getCurrentNumberOfGames();
 	}
 
 	private void connect() throws Exception {
@@ -42,8 +37,8 @@ public class DBcontroller implements DBcontrollerInterface {
 	}
 
 	private void createTable() {
-		String events = "CREATE TABLE IF NOT EXISTS " + tableName + "  (playerID        VARCHAR(100),"
-				+ "   eventType	          VARCHAR(100)," + "   timeStamp       TIMESTAMP)";
+		String events = "CREATE TABLE IF NOT EXISTS " + tableName + "(playerID VARCHAR(100)," + " gameID INT,"
+				+ " eventType VARCHAR(100)," + " timeStamp TIMESTAMP)";
 
 		try {
 			connection.prepareStatement(events).executeUpdate();
@@ -52,14 +47,15 @@ public class DBcontroller implements DBcontrollerInterface {
 		}
 	}
 
-	public void insertEvent(String playerID, String eventType) throws SQLException {
-		// MICHA: timestamps generated at insertion
-		stmt = connection
-				.prepareStatement("INSERT INTO " + tableName + " (playerID, eventType, timeStamp)" + " VALUES (?, ?, ?)");
+	public void insertEvent(String playerID, int gameID, String eventType) throws SQLException {
+		// MICHA: time stamps generated at insertion
+		stmt = connection.prepareStatement(
+				"INSERT INTO " + tableName + " (playerID, gameID, eventType, timeStamp)" + " VALUES (?, ?, ?, ?)");
 
 		stmt.setString(1, playerID);
-		stmt.setString(2, eventType);
-		stmt.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
+		stmt.setInt(2, gameID);
+		stmt.setString(3, eventType);
+		stmt.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
 
 		stmt.executeUpdate();
 	}
@@ -78,7 +74,38 @@ public class DBcontroller implements DBcontrollerInterface {
 
 		while (rs.next()) {
 			// MICHA: Local time zone
-			records.add(new DBRecord(rs.getString("playerID"), rs.getString("eventType"),
+			records.add(new DBRecord(rs.getString("playerID"), rs.getInt("gameID"), rs.getString("eventType"),
+					LocalDateTime.ofInstant(rs.getTimestamp("timeStamp").toInstant(), ZoneId.systemDefault())));
+		}
+
+		return records;
+	}
+	
+	public int getCurrentNumberOfGames() {
+		// MICHA: return current number of games
+		try {
+			stmt = connection.prepareStatement("SELECT IFNULL(MAX(gameID), 0) FROM " + tableName); 
+			ResultSet rs = stmt.executeQuery();
+			rs.next();
+			numberOfGames = ((Number) rs.getObject(1)).intValue();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return numberOfGames;
+	}
+
+	public ArrayList<DBRecord> getEventsByGameID(int gameID) throws SQLException {
+		ArrayList<DBRecord> records = new ArrayList<>();
+
+		stmt = connection.prepareStatement("SELECT * FROM " + tableName + " WHERE gameID = ?");
+		stmt.setInt(1, gameID);
+
+		ResultSet rs = stmt.executeQuery();
+
+		while (rs.next()) {
+			// MICHA: Local time zone
+			records.add(new DBRecord(rs.getString("playerID"), rs.getInt("gameID"), rs.getString("eventType"),
 					LocalDateTime.ofInstant(rs.getTimestamp("timeStamp").toInstant(), ZoneId.systemDefault())));
 		}
 
@@ -103,7 +130,6 @@ public class DBcontroller implements DBcontrollerInterface {
 		stmt.setString(2, oldPlayerID);
 
 		stmt.executeUpdate();
-		
 	}
 
 }
