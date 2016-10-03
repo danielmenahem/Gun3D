@@ -11,7 +11,7 @@ import javax.management.OperationsException;
 
 import Utilities.nameScoreComparator;
 import Utilities.nameTimeComparator;
-import database.DBRecord;
+import database.Record;
 import database.DBcontroller;
 import database.DBcontrollerInterface;
 import javafx.application.Application;
@@ -54,9 +54,9 @@ public class DBView2 extends Stage{
 	private Scene scene;
 
 	private DBcontrollerInterface db; 
-	private TableView<DBRecord> table;
-	private List<DBRecord> list;
-	private ObservableList<DBRecord> data;
+	private TableView<Record> table;
+	private List<Record> list;
+	private ObservableList<Record> data;
 
 	public DBView2(DBcontroller db) throws Exception {
 		this.db = db;
@@ -83,7 +83,7 @@ public class DBView2 extends Stage{
 		gridPane.add(cbxQueryChoice, 0, 1);
 		gridPane.add(btnRun, 1, 1);
 		
-		table = new TableView<DBRecord>();
+		table = new TableView<Record>();
 		
 		TableColumn tcPlayerID = new TableColumn<>("Player ID");
 		tcPlayerID.setCellValueFactory(new PropertyValueFactory("playerID"));
@@ -131,7 +131,7 @@ public class DBView2 extends Stage{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		ObservableList<DBRecord> cm = FXCollections.observableList(list);
+		ObservableList<Record> cm = FXCollections.observableList(list);
 
 		
 		

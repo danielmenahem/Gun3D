@@ -18,7 +18,7 @@ public class DBcontroller implements DBcontrollerInterface{
 	private final String dbName = "jdbc:mysql://localhost/gun";
 	private final String dbUsername = "scott";
 	private final String dbPassword = "tiger";
-	private final String tableName = "eventsTest50505"; // MICHA: change to events
+	private final String tableName = "eventsTest505005"; // MICHA: change to events
 
 	private static int numberOfGames;
 
@@ -63,8 +63,8 @@ public class DBcontroller implements DBcontrollerInterface{
 		stmt.executeUpdate();
 	}
 
-	public ArrayList<DBRecord> getEventsByPlayerID(String playerID) throws SQLException {
-		ArrayList<DBRecord> records = new ArrayList<>();
+	public ArrayList<Record> getEventsByPlayerID(String playerID) throws SQLException {
+		ArrayList<Record> records = new ArrayList<>();
 
 		if (playerID.equals("all")) {
 			stmt = connection.prepareStatement("SELECT * FROM " + tableName);
@@ -77,7 +77,7 @@ public class DBcontroller implements DBcontrollerInterface{
 
 		while (rs.next()) {
 			// MICHA: Local time zone
-			records.add(new DBRecord(rs.getString("playerID"), rs.getInt("gameID"), rs.getInt("gameScore"), Event.valueOf(rs.getString("eventType")),
+			records.add(new Record(rs.getString("playerID"), rs.getInt("gameID"), rs.getInt("gameScore"), Event.valueOf(rs.getString("eventType")),
 					LocalDateTime.ofInstant(rs.getTimestamp("timeStamp").toInstant(), ZoneId.systemDefault())));
 		}
 
@@ -98,8 +98,8 @@ public class DBcontroller implements DBcontrollerInterface{
 		return numberOfGames;
 	}
 
-	public ArrayList<DBRecord> getEventsByGameID(int gameID) throws SQLException {
-		ArrayList<DBRecord> records = new ArrayList<>();
+	public ArrayList<Record> getEventsByGameID(int gameID) throws SQLException {
+		ArrayList<Record> records = new ArrayList<>();
 
 		stmt = connection.prepareStatement("SELECT * FROM " + tableName + " WHERE gameID = ?");
 		stmt.setInt(1, gameID);
@@ -108,14 +108,14 @@ public class DBcontroller implements DBcontrollerInterface{
 
 		while (rs.next()) {
 			// MICHA: Local time zone
-			records.add(new DBRecord(rs.getString("playerID"), rs.getInt("gameID"), rs.getInt("gameScore"), Event.valueOf(rs.getString("eventType")),
+			records.add(new Record(rs.getString("playerID"), rs.getInt("gameID"), rs.getInt("gameScore"), Event.valueOf(rs.getString("eventType")),
 					LocalDateTime.ofInstant(rs.getTimestamp("timeStamp").toInstant(), ZoneId.systemDefault())));
 		}
 
 		return records;
 	}
 
-	public ArrayList<DBRecord> getAllEvents() throws SQLException {
+	public ArrayList<Record> getAllEvents() throws SQLException {
 		return getEventsByPlayerID("all");
 	}
 

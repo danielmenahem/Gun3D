@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import Utilities.Event;
 
-public class DBRecord {
+public class Record {
 	
 	private String playerID;
 	private int gameID;
@@ -12,10 +12,10 @@ public class DBRecord {
 	private Event event;
 	private LocalDateTime timeStamp;
 
-	public DBRecord() {
+	public Record() {
 	}
 
-	public DBRecord(String playerID, int gameID, int score, Event event, LocalDateTime timeStamp) {
+	public Record(String playerID, int gameID, int score, Event event, LocalDateTime timeStamp) {
 		this.playerID = playerID;
 		this.gameID = gameID;
 		this.score = score;

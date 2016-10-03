@@ -5,6 +5,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -14,7 +15,7 @@ import Utilities.Event;
 import Utilities.nameScoreComparator;
 import Utilities.nameTimeComparator;
 import Utilities.scoreComparator;
-import database.DBRecord;
+import database.Record;
 import database.DBcontroller;
 import database.DBcontrollerInterface;
 import javafx.application.Application;
@@ -55,16 +56,16 @@ public class DBView extends Application {
 	private Scene scene;
 
 	private DBcontrollerInterface db;
-	private TableView<DBRecord> table;
-	private List<DBRecord> list;
-	private ObservableList<DBRecord> data;
+	private TableView<Record> table;
+	private List<Record> list;
+	private ObservableList<Record> data;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		this.stage = primaryStage;
 		db = new DBcontroller();
 
-		fakeDbTester();
+		//fakeDbTester();
 		buildGUI();
 	}
 
@@ -76,13 +77,13 @@ public class DBView extends Application {
 			for (int j = 0; j < maxGames; j++) {
 				int gameNumber = db.getCurrentNumberOfGames() + 1;
 				int numberOfEvent = ThreadLocalRandom.current().nextInt(0, 15 + 1);
+				int scoreRandom = ThreadLocalRandom.current().nextInt(0, 500 + 1);
 				// each game has a different number of events
 				for (int k = 0; k < numberOfEvent; k++) {
 					try {
 						//randomize hit of miss
 						int hitOrMiss = ThreadLocalRandom.current().nextInt(0, 1 + 1);
-						db.insertEvent("Player" + i, gameNumber, ThreadLocalRandom.current().nextInt(0, 500 + 1),
-								Event.values()[hitOrMiss]);
+						db.insertEvent("Player" + i, gameNumber, scoreRandom, Event.values()[hitOrMiss]);
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -110,7 +111,7 @@ public class DBView extends Application {
 		gridPane.add(cbxQueryChoice, 0, 1);
 		gridPane.add(btnRun, 1, 1);
 
-		table = new TableView<DBRecord>();
+		table = new TableView<Record>();
 
 		TableColumn tcPlayerID = new TableColumn<>("Player ID");
 		tcPlayerID.setCellValueFactory(new PropertyValueFactory("playerID"));
@@ -157,7 +158,7 @@ public class DBView extends Application {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		ObservableList<DBRecord> cm = FXCollections.observableList(list);
+		ObservableList<Record> cm = FXCollections.observableList(list);
 		// "All events by name and then by game time",
 		// "All events by name and then by game score (descending)",
 		// "All games by game score (descending)",
@@ -181,39 +182,64 @@ public class DBView extends Application {
 			table.setItems(cm);
 		}
 
-		// all players with 3 games or more by rank", // average of 3 top games
+		// All players with 3 games or more by rank", // average of 3 top games
 		if (string.equals(options[3])) {
-			ObservableList<DBRecord> topPlayers = createTopPlayersList(cm);
+			ObservableList<Record> topPlayers = createTopPlayersList(cm);
 			topPlayers.sort(new scoreComparator());
 			table.setItems(topPlayers);
 		}
 
 		// All games by most hits (descending)
 		if (string.equals(options[4])) {
-			//table.setItems(create);
+			ObservableList<Record> gamesWithNumberOfHits = createGamesWithNumberOfEvents(Event.HIT);
+			gamesWithNumberOfHits.sort(new scoreComparator());
+			table.setItems(gamesWithNumberOfHits);
+		}
+		
+		// All games by most misses (descending)
+		if (string.equals(options[5])) {
+			ObservableList<Record> gamesWithNumberOfHits = createGamesWithNumberOfEvents(Event.MISS);
+			gamesWithNumberOfHits.sort(new scoreComparator());
+			table.setItems(gamesWithNumberOfHits);
 		}
 
-		/*
-		 * if (string.equals(options[2])) if (string.equals(options[3])) if
-		 * (string.equals(options[4])) if (string.equals(options[5])) ;
-		 * 
-		 * 
-		 */
-		/*
-		 * "All events by name and then by game time",
-		 * "All events by name and then by game score (descending)",
-		 * "All games by game score (descending)",
-		 * "All players with 3 games or more by rank", // average of 3 top games
-		 * "All games by most hits (descending)",
-		 * "All games by most misses (descending)"};
-		 */
-
 	}
-
-	private ObservableList<DBRecord> createTopPlayersList(ObservableList<DBRecord> cm) {
+	
+	private ObservableList<Record> createTopPlayersList(ObservableList<Record> cm) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	private ObservableList<Record> createGamesWithNumberOfEvents(Event event) {
+		List<Record> list = new ArrayList<Record>();
+		for (int i = 1; i <= db.getCurrentNumberOfGames(); i++) {
+			list.add(getRecordPerGameAccordingToEvent(i, event));
+		}
+		
+		return FXCollections.observableList(list);
+	}
+
+
+
+	
+	
+	private Record getRecordPerGameAccordingToEvent(int gameId, Event event) {
+		int counter = 0;
+		List<Record> eventsByGameList = null;
+		try {
+			eventsByGameList = db.getEventsByGameID(gameId);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		for (int i = 0;  i < eventsByGameList.size(); i++) {
+			if (eventsByGameList.get(i).getEvent() == event) {
+				counter++;
+			}
+		}
+ 		return new Record(eventsByGameList.get(0).getPlayerID(), gameId, counter, event, null);
+	}
+
 
 	public static void main(String[] args) {
 		Application.launch(args);
