@@ -11,12 +11,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 
+import Utilities.Event;
+
 public class DBcontroller implements DBcontrollerInterface{
 	private final String dbDriverName = "com.mysql.jdbc.Driver";
 	private final String dbName = "jdbc:mysql://localhost/gun";
 	private final String dbUsername = "scott";
 	private final String dbPassword = "tiger";
-	private final String tableName = "eventsTest123456"; // MICHA: change to events
+	private final String tableName = "eventsTest50505"; // MICHA: change to events
 
 	private static int numberOfGames;
 
@@ -47,7 +49,7 @@ public class DBcontroller implements DBcontrollerInterface{
 		}
 	}
 
-	public void insertEvent(String playerID, int gameID, int gameScore, String eventType) throws SQLException {
+	public void insertEvent(String playerID, int gameID, int gameScore, Event event) throws SQLException {
 		// MICHA: time stamps generated at insertion
 		stmt = connection.prepareStatement(
 				"INSERT INTO " + tableName + " (playerID, gameID, gameScore, eventType, timeStamp)" + " VALUES (?, ?, ?, ?, ?)");
@@ -55,7 +57,7 @@ public class DBcontroller implements DBcontrollerInterface{
 		stmt.setString(1, playerID);
 		stmt.setInt(2, gameID);
 		stmt.setInt(3, gameScore);
-		stmt.setString(4, eventType);
+		stmt.setString(4, event.name());
 		stmt.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
 
 		stmt.executeUpdate();
@@ -75,7 +77,7 @@ public class DBcontroller implements DBcontrollerInterface{
 
 		while (rs.next()) {
 			// MICHA: Local time zone
-			records.add(new DBRecord(rs.getString("playerID"), rs.getInt("gameID"), rs.getInt("gameScore"), rs.getString("eventType"),
+			records.add(new DBRecord(rs.getString("playerID"), rs.getInt("gameID"), rs.getInt("gameScore"), Event.valueOf(rs.getString("eventType")),
 					LocalDateTime.ofInstant(rs.getTimestamp("timeStamp").toInstant(), ZoneId.systemDefault())));
 		}
 
@@ -106,7 +108,7 @@ public class DBcontroller implements DBcontrollerInterface{
 
 		while (rs.next()) {
 			// MICHA: Local time zone
-			records.add(new DBRecord(rs.getString("playerID"), rs.getInt("gameID"), rs.getInt("gameScore"), rs.getString("eventType"),
+			records.add(new DBRecord(rs.getString("playerID"), rs.getInt("gameID"), rs.getInt("gameScore"), Event.valueOf(rs.getString("eventType")),
 					LocalDateTime.ofInstant(rs.getTimestamp("timeStamp").toInstant(), ZoneId.systemDefault())));
 		}
 

@@ -6,14 +6,17 @@ import java.net.Socket;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.management.OperationsException;
 
+import Utilities.Event;
+import Utilities.nameScoreComparator;
+import Utilities.nameTimeComparator;
+import Utilities.scoreComparator;
 import database.DBRecord;
 import database.DBcontroller;
 import database.DBcontrollerInterface;
-import database.nameScoreComparator;
-import database.nameTimeComparator;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -30,30 +33,28 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class DBView extends Application{
-	private final String[] options = {"All events by name and then by game time",
-	        "All events by name and then by game score (descending)",
-	        "All games by game score (descending)",
-	        "All players with 3 games or more by rank", // average of 3 top games
-	        "All games by most hits (descending)",
-	        "All games by most misses (descending)"};
-	
+public class DBView extends Application {
+	private final String[] options = { "All events by name and then by game time",
+			"All events by name and then by game score (descending)", "All games by game score (descending)",
+			"All players with 3 games or more by rank", // average of 3 top
+														// games
+			"All games by most hits (descending)", "All games by most misses (descending)" };
+
 	private ComboBox<String> cbxQueryChoice;
 	private ObservableList<String> queryOptions;
-	
+
 	private Label lblQueryChoice;
-	
+
 	private Button btnRun;
-	
+
 	private VBox vbContainer;
-	
 
 	private GridPane gridPane;
 
 	private Stage stage;
 	private Scene scene;
 
-	private DBcontrollerInterface db; 
+	private DBcontrollerInterface db;
 	private TableView<DBRecord> table;
 	private List<DBRecord> list;
 	private ObservableList<DBRecord> data;
@@ -63,8 +64,32 @@ public class DBView extends Application{
 		this.stage = primaryStage;
 		db = new DBcontroller();
 
-		
-		buildGUI();		
+		fakeDbTester();
+		buildGUI();
+	}
+
+	private void fakeDbTester() {
+		for (int i = 0; i < 10; i++) {
+			// 10 players
+			int maxGames = ThreadLocalRandom.current().nextInt(0, 5 + 1);
+			// each has a different number of games
+			for (int j = 0; j < maxGames; j++) {
+				int gameNumber = db.getCurrentNumberOfGames() + 1;
+				int numberOfEvent = ThreadLocalRandom.current().nextInt(0, 15 + 1);
+				// each game has a different number of events
+				for (int k = 0; k < numberOfEvent; k++) {
+					try {
+						//randomize hit of miss
+						int hitOrMiss = ThreadLocalRandom.current().nextInt(0, 1 + 1);
+						db.insertEvent("Player" + i, gameNumber, ThreadLocalRandom.current().nextInt(0, 500 + 1),
+								Event.values()[hitOrMiss]);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 	}
 
 	private void buildGUI() {
@@ -74,43 +99,43 @@ public class DBView extends Application{
 		gridPane.setVgap(10);
 		lblQueryChoice = new Label("Choose a query:");
 		cbxQueryChoice = new ComboBox<>();
-		queryOptions = 	FXCollections.observableArrayList(options);	
+		queryOptions = FXCollections.observableArrayList(options);
 		cbxQueryChoice.setItems(queryOptions);
 		btnRun = new Button("Run");
 		btnRun.setOnAction(e -> {
 			runQuery(cbxQueryChoice.getSelectionModel().getSelectedItem().toString());
 		});
-		
+
 		gridPane.add(lblQueryChoice, 0, 0);
 		gridPane.add(cbxQueryChoice, 0, 1);
 		gridPane.add(btnRun, 1, 1);
-		
+
 		table = new TableView<DBRecord>();
-		
+
 		TableColumn tcPlayerID = new TableColumn<>("Player ID");
 		tcPlayerID.setCellValueFactory(new PropertyValueFactory("playerID"));
 		TableColumn tcGameID = new TableColumn<>("Game ID");
 		tcGameID.setCellValueFactory(new PropertyValueFactory("gameID"));
-		TableColumn tcGameScore = new TableColumn<>("Game Score");
-		tcGameScore.setCellValueFactory(new PropertyValueFactory("gameScore"));
+		TableColumn tcGameScore = new TableColumn<>("Score");
+		tcGameScore.setCellValueFactory(new PropertyValueFactory("score"));
 		TableColumn tcEventType = new TableColumn<>("Event Type");
-		tcEventType.setCellValueFactory(new PropertyValueFactory("eventType"));
+		tcEventType.setCellValueFactory(new PropertyValueFactory("event"));
 		TableColumn tcTimeStamp = new TableColumn<>("Time Stamp");
 		tcTimeStamp.setCellValueFactory(new PropertyValueFactory("timeStamp"));
-		
+
 		table.getColumns().setAll(tcPlayerID, tcGameID, tcGameScore, tcEventType, tcTimeStamp);
 		table.setPrefWidth(450);
 		table.setPrefHeight(300);
 		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-		
+
 		vbContainer = new VBox(20);
-		vbContainer.getChildren().addAll(gridPane,table);
-		
+		vbContainer.getChildren().addAll(gridPane, table);
+
 		scene = new Scene(vbContainer, 500, 475);
-		
-		stage.setTitle("Gun3D view");
+
+		stage.setTitle("Gun3D DB view");
 		stage.setScene(scene);
-		
+
 		stage.show();
 		stage.setAlwaysOnTop(true);
 		stage.setOnCloseRequest(e -> {
@@ -120,8 +145,7 @@ public class DBView extends Application{
 			} catch (Exception ex) {
 			}
 		});
-		
-		
+
 	}
 
 	private void runQuery(String string) {
@@ -134,37 +158,62 @@ public class DBView extends Application{
 			e.printStackTrace();
 		}
 		ObservableList<DBRecord> cm = FXCollections.observableList(list);
+		// "All events by name and then by game time",
+		// "All events by name and then by game score (descending)",
+		// "All games by game score (descending)",
+		// "All players with 3 games or more by rank", // average of 3 top games
+		// "All games by most hits (descending)",
+		// "All games by most misses (descending)"
 
-		
-		
+		// All events by name and then by game time
 		if (string.equals(options[0])) {
 			cm.sort(new nameTimeComparator());
+			table.setItems(cm);
 		}
+		// All events by name and then by game score (descending)
 		if (string.equals(options[1])) {
 			cm.sort(new nameScoreComparator());
-			
-		} 
-		
-		table.setItems(cm);
+			table.setItems(cm);
+		}
+		// All games by game score (descending)
+		if (string.equals(options[2])) {
+			cm.sort(new scoreComparator());
+			table.setItems(cm);
+		}
+
+		// all players with 3 games or more by rank", // average of 3 top games
+		if (string.equals(options[3])) {
+			ObservableList<DBRecord> topPlayers = createTopPlayersList(cm);
+			topPlayers.sort(new scoreComparator());
+			table.setItems(topPlayers);
+		}
+
+		// All games by most hits (descending)
+		if (string.equals(options[4])) {
+			//table.setItems(create);
+		}
+
 		/*
-		if (string.equals(options[2])) 
-		if (string.equals(options[3])) 
-		if (string.equals(options[4])) 
-		if (string.equals(options[5])) 
-		;
-		
-			
-		*/
-		/*"All events by name and then by game time",
-	        "All events by name and then by game score (descending)",
-	        "All games by game score (descending)",
-	        "All players with 3 games or more by rank", // average of 3 top games
-	        "All games by most hits (descending)",
-	        "All games by most misses (descending)"};*/
-		
+		 * if (string.equals(options[2])) if (string.equals(options[3])) if
+		 * (string.equals(options[4])) if (string.equals(options[5])) ;
+		 * 
+		 * 
+		 */
+		/*
+		 * "All events by name and then by game time",
+		 * "All events by name and then by game score (descending)",
+		 * "All games by game score (descending)",
+		 * "All players with 3 games or more by rank", // average of 3 top games
+		 * "All games by most hits (descending)",
+		 * "All games by most misses (descending)"};
+		 */
+
 	}
 
-
+	private ObservableList<DBRecord> createTopPlayersList(ObservableList<DBRecord> cm) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	public static void main(String[] args) {
 		Application.launch(args);

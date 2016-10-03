@@ -9,11 +9,11 @@ import java.util.List;
 
 import javax.management.OperationsException;
 
+import Utilities.nameScoreComparator;
+import Utilities.nameTimeComparator;
 import database.DBRecord;
 import database.DBcontroller;
 import database.DBcontrollerInterface;
-import database.nameScoreComparator;
-import database.nameTimeComparator;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;

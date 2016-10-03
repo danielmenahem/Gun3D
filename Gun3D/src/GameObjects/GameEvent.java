@@ -1,12 +1,13 @@
 package GameObjects;
+import Utilities.Event;
 
 public class GameEvent {
 	private String name;
 	private int gameID;
-	private String event;
+	private Event event;
 	private int gameScore;
 	
-	public GameEvent(String name, int gameID, String event, int gameScore) {
+	public GameEvent(String name, int gameID, Event event, int gameScore) {
 		this.name = name;
 		this.gameID = gameID;
 		this.event = event;
@@ -30,11 +31,11 @@ public class GameEvent {
 		this.gameID = gameID;
 	}
 	
-	public String getEvent() {
+	public Event getEvent() {
 		return this.event;
 	}
 	
-	public void setEvent(String event) {
+	public void setEvent(Event event) {
 		this.event = event;
 	}
 	

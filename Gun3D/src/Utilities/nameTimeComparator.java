@@ -1,6 +1,8 @@
-package database;
+package Utilities;
 
 import java.util.Comparator;
+
+import database.DBRecord;
 
 public class nameTimeComparator implements Comparator<DBRecord> {
 

@@ -10,6 +10,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import GameObjects.GameEvent;
+import Utilities.Event;
 import database.DBcontroller;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -109,7 +110,7 @@ public class GameServer extends Application {
 				while (loop) {
 					try {
 						event = (GameEvent)inputFromClient.readObject();
-						if(event.getEvent() != "End_Game"){
+						if(event.getEvent() != Event.END_GAME){
 							db.insertEvent(event.getName(), gameId, event.getGameScore(), event.getEvent());
 						}
 						else{
