@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import Utilities.EventType;
 
 public interface DBcontrollerInterface {
+	
 	// General queries
+	
 	void insertEvent(String playerID, int gameID, int gameScore, EventType event) throws SQLException;
 	ArrayList<Record> getEventsByPlayerID(String playerID) throws SQLException;
 	ArrayList<Record> getEventsByGameID(int gameID) throws SQLException;

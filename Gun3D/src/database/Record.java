@@ -12,8 +12,7 @@ public class Record {
 	private EventType event;
 	private LocalDateTime timeStamp;
 
-	public Record() {
-	}
+	public Record() {}
 
 	public Record(String playerID, int gameID, int score, EventType event, LocalDateTime timeStamp) {
 		this.playerID = playerID;

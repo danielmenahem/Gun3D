@@ -49,6 +49,7 @@ public class DBcontroller implements DBcontrollerInterface {
 		}
 	}
 
+	@Override
 	public void insertEvent(String playerID, int gameID, int gameScore, EventType event) throws SQLException {
 		// Time stamps generated at insertion
 		stmt = connection.prepareStatement("INSERT INTO " + tableName
@@ -63,6 +64,7 @@ public class DBcontroller implements DBcontrollerInterface {
 		stmt.executeUpdate();
 	}
 
+	@Override
 	public ArrayList<Record> getEventsByPlayerID(String playerID) throws SQLException {
 		ArrayList<Record> records = new ArrayList<>();
 
@@ -84,7 +86,8 @@ public class DBcontroller implements DBcontrollerInterface {
 
 		return records;
 	}
-
+	
+	@Override
 	public int getCurrentNumberOfGames() throws SQLException {
 		// Return current number of games
 		stmt = connection.prepareStatement("SELECT IFNULL(MAX(gameID), 0) FROM " + tableName);
@@ -94,7 +97,8 @@ public class DBcontroller implements DBcontrollerInterface {
 
 		return numberOfGames;
 	}
-
+	
+	@Override
 	public ArrayList<Record> getEventsByGameID(int gameID) throws SQLException {
 		ArrayList<Record> records = new ArrayList<>();
 
@@ -113,17 +117,20 @@ public class DBcontroller implements DBcontrollerInterface {
 		return records;
 	}
 
+	@Override
 	public ArrayList<Record> getAllEvents() throws SQLException {
 		return getEventsByPlayerID("all");
 	}
 
+	@Override
 	public void deletePlayer(String playerID) throws SQLException {
 		stmt = connection.prepareStatement("DELETE FROM " + tableName + " WHERE playerID = ?");
 		stmt.setString(1, playerID);
 
 		stmt.executeUpdate();
 	}
-
+	
+	@Override
 	public void changePlayerName(String oldPlayerID, String newPlayerID) throws SQLException {
 		// playerID is player's name
 		stmt = connection.prepareStatement("UPDATE " + tableName + " SET playerID = ? WHERE playerID = ?");

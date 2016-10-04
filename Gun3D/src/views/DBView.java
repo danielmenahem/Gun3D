@@ -44,15 +44,10 @@ public class DBView extends Application {
 
 	private ComboBox<String> cbxQueryChoice;
 	private ObservableList<String> queryOptions;
-
 	private Label lblQueryChoice;
-
 	private Button btnRun;
-
 	private VBox vbContainer;
-
 	private GridPane gridPane;
-
 	private Stage stage;
 	private Scene scene;
 
