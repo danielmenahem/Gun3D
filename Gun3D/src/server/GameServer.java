@@ -10,7 +10,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import GameObjects.GameEvent;
-import Utilities.Event;
+import Utilities.EventType;
 import database.DBcontroller;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -101,7 +101,13 @@ public class GameServer extends Application {
 		/** Run a thread */
 		public void run() {
 			try {
-				int gameId = db.getCurrentNumberOfGames() + 1;
+				int gameId = 0;
+				try {
+					gameId = db.getCurrentNumberOfGames() + 1;
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				ObjectInputStream inputFromClient = new ObjectInputStream(socket.getInputStream()); 
 				ObjectOutputStream outputToClient = new ObjectOutputStream(socket.getOutputStream());
 				outputToClient.writeInt(this.clientNumber);
@@ -110,7 +116,7 @@ public class GameServer extends Application {
 				while (loop) {
 					try {
 						event = (GameEvent)inputFromClient.readObject();
-						if(event.getEvent() != Event.END_GAME){
+						if(event.getEvent() != EventType.END_GAME){
 							db.insertEvent(event.getName(), gameId, event.getGameScore(), event.getEvent());
 						}
 						else{

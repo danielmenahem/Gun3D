@@ -1,6 +1,6 @@
 package Utilities;
 
-public enum Event {
+public enum EventType {
 	HIT,
 	MISS,
 	END_GAME

@@ -2,20 +2,20 @@ package database;
 
 import java.time.LocalDateTime;
 
-import Utilities.Event;
+import Utilities.EventType;
 
 public class Record {
 	
 	private String playerID;
 	private int gameID;
 	private int score;
-	private Event event;
+	private EventType event;
 	private LocalDateTime timeStamp;
 
 	public Record() {
 	}
 
-	public Record(String playerID, int gameID, int score, Event event, LocalDateTime timeStamp) {
+	public Record(String playerID, int gameID, int score, EventType event, LocalDateTime timeStamp) {
 		this.playerID = playerID;
 		this.gameID = gameID;
 		this.score = score;
@@ -47,11 +47,11 @@ public class Record {
 		this.gameID = gameID;
 	}
 
-	public Event getEvent() {
+	public EventType getEvent() {
 		return event;
 	}
 
-	public void setEventType(Event event) {
+	public void setEventType(EventType event) {
 		this.event = event;
 	}
 
