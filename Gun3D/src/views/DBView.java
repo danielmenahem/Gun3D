@@ -13,9 +13,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.management.OperationsException;
 
 import Utilities.EventType;
-import Utilities.nameScoreComparator;
-import Utilities.nameTimeComparator;
-import Utilities.scoreComparator;
 import database.Record;
 import database.DBcontroller;
 import database.DBcontrollerInterface;
