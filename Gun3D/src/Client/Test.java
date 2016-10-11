@@ -2,31 +2,43 @@ package Client;
 
 import java.util.ArrayList;
 
+import Client.GamePane.Difficulty;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.*;
 
 public class Test extends Application {
 	
 	private ArrayList<CannonShell> shells = new ArrayList<>();
-	@Override
+/*	@Override
 	public void start(Stage primaryStage) throws Exception {
 		Pane pane = new Pane();
+
 		//Scene scene = new Scene(pane, 1000, 700, true);
 		Scene scene = new Scene(pane, 1000, 700);
 		Target t1 = new Target(20, 200,300,4, scene.getX(), scene.getWidth());
 		Target t2 = new Target(50, 500,100,0, scene.getX(), scene.getWidth());
+		BackgroundImage myBI= new BackgroundImage(new Image("/Client/Images/desert.jpg",scene.getWidth(),scene.getHeight(),false,true),
+		        BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER,
+		         BackgroundSize.DEFAULT);
+		pane.setBackground(new Background(myBI));
 		Label lbl = new Label();
-		CannonShell cs = new CannonShell(135, 82, 130, scene.getHeight(), scene.getWidth());
+		CannonShell cs = new CannonShell(135, 82, 125, scene.getHeight(), scene.getWidth());
 		shells.add(cs);
 		Cannon cannon = new Cannon(scene.getWidth(), scene.getHeight());
 		pane.getChildren().addAll(t1, t2, cs, lbl, cannon);
@@ -65,7 +77,7 @@ public class Test extends Application {
 			else if(e.getCode() == KeyCode.DOWN)
 				cannon.rotateBackwords();
 			CannonShell c = new CannonShell(cannon.getTheta(), 
-					cannon.getPhi(), 125, scene.getHeight(), scene.getWidth());
+					cannon.getPhi(), 122, scene.getHeight(), scene.getWidth());
 			pane.getChildren().add(c);
 			shells.add(c);
 			
@@ -75,6 +87,27 @@ public class Test extends Application {
 		
 		pane.setFocusTraversable(true);
 		pane.requestFocus();
+	}*/
+	
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+        double width = primaryScreenBounds.getWidth();
+        double height = primaryScreenBounds.getHeight()/1.1;
+		GamePane gamePane = new GamePane(width, height);
+        Scene scene = new Scene(gamePane, width, height );
+		//gamePane.startTraining(Difficulty.Low);
+		//gamePane.startTraining(Difficulty.Medium);
+		gamePane.startTraining(Difficulty.High);
+		primaryStage.setScene(scene);
+		primaryStage.show(); 
+		primaryStage.setAlwaysOnTop(true);
+		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			public void handle(WindowEvent event) {
+				Platform.exit();
+				System.exit(0);
+			}
+		});
 	}
 	
 	

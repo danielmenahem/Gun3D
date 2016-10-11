@@ -5,7 +5,7 @@ import javafx.scene.shape.*;
 import javafx.scene.paint.PhongMaterial;
 
 public class CannonShell extends Sphere{
-	private PhongMaterial redMaterial;
+	private PhongMaterial material;
 	private int theta, phi, length;
 	private double height, width;
 	
@@ -23,14 +23,14 @@ public class CannonShell extends Sphere{
 	}
 	
 	private void paintCannonShell(){
-        redMaterial = new PhongMaterial();
-        redMaterial.setDiffuseColor(Color.GREY);
-        redMaterial.setSpecularColor(Color.BLACK);
+        material = new PhongMaterial();
+        material.setDiffuseColor(Color.GREY);
+        material.setSpecularColor(Color.BLACK);
 		//shell = new Sphere();
 		setRadius(RADIUS);
 		moveShell();
 		setDrawMode(DrawMode.FILL);
-        setMaterial(redMaterial);
+        setMaterial(material);
 	}
 	
 	

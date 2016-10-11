@@ -16,7 +16,7 @@ public class Cannon extends ImageView{
 	private double height, width;
 	
 	public Cannon(double width, double height){
-		super(new Image("/Client/Images/cannon.jpg"));
+		super(new Image("/Client/Images/cannon_transp4.png"));
 		this.horzinotalRotation = 0;
 		this.verticalRotation = 0;
 		this.height = height;
@@ -28,7 +28,7 @@ public class Cannon extends ImageView{
 	
 	private void paintCannon(){
 		this.setFitHeight(120);
-		this.setFitWidth(65);
+		this.setFitWidth(120);
 		this.setX(width/2 - this.getFitWidth()/2);
 		this.setY(height - this.getFitHeight());
 	}
@@ -63,6 +63,7 @@ public class Cannon extends ImageView{
 		}
 	}
 	
+
 	public void rotateRight(){
 		if(horzinotalRotation < MAX_HORIZONTAL_ROTATION){
 			horzinotalRotation+=ROTATION_DELTA;
@@ -76,6 +77,14 @@ public class Cannon extends ImageView{
 	
 	public int getPhi(){
 		return BASE_ANGEL-verticalRotation;
+	}
+	
+	public double getHeight() {
+		return height;
+	}
+
+	public double getWidth() {
+		return width;
 	}
 	
 	
