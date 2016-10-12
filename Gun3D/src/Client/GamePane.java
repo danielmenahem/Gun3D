@@ -78,6 +78,9 @@ public class GamePane extends Pane{
 	public void startMatch(Difficulty difficulty, ObjectOutputStream toServer, String name, int gameId){
 		this.isMatch = true;
 		this.difficulty = difficulty;
+		this.toServer = toServer;
+		this.name = name;
+		this.gameID = gameId;
 		prepareAndStartGame();
 	}
 	
@@ -227,8 +230,6 @@ public class GamePane extends Pane{
 				this.getChildren().add(shell);
 				shells.add(shell);
 			}
-			getFocus();
-
 		});
 	}
 	
