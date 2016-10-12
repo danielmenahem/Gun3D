@@ -49,7 +49,7 @@ public class Cannon extends ImageView{
 		}
 	}
 	
-	public void rotateBackwords(){
+	public void rotateBackwards(){
 		if(verticalRotation > 0){			
 			verticalRotation-=ROTATION_DELTA;
 			rotateVertical.setAngle(verticalRotation);

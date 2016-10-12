@@ -27,7 +27,9 @@ public class GamePane extends Pane{
 		
 	private static final String TRAINING_BACKGROUND_URL = "/Client/Images/cartoon_desert.jpg";
 	private static final String MATCH_BACKGROUND_URL = "/Client/Images/desert.jpg";
-	private static final String SHOT_SOUND_URL = "/Shot2.mp3";
+	private static final String SHOT_SOUND_URL = "src/Client/Sounds/shot.wav";
+	private static final String HIT_SOUND_URL = "src/Client/Sounds/hit.wav";
+	private static final String MOVE_SOUND_URL = "src/Client/Sounds/cannon_move.wav";
 	private static final int [] TARGET_SIZES = {40, 30 , 20};
 	private static final int TARGET_Z_MAX = 100;
 	private static final double TARGET_Y_DEVIDER = 2.2;
@@ -54,7 +56,8 @@ public class GamePane extends Pane{
 	
 	private Label lblInfo;
 	private BackgroundImage background;
-	private MediaPlayer mediaPlayer;
+	private MediaPlayer shotPlayer, hitPlayer, movePlayer;
+
 
 	
 	public GamePane(double width, double height){
@@ -92,9 +95,7 @@ public class GamePane extends Pane{
 		this.score = 0;
 		this.hits = 0;
 		this.misses = 0;
-		//Media sound = new Media(new File(SHOT_SOUND_URL).toURI().toString());
-		//Media sound = new Media(SHOT_SOUND_URL);
-		//this.mediaPlayer = new MediaPlayer(sound);
+		initMediaPlayers();
 		setBackground();
         addGameControls();
         setKeyboardEvents();
@@ -109,8 +110,12 @@ public class GamePane extends Pane{
 		gameAnimation.play();
 	}
 	
-	
-	
+	private void initMediaPlayers(){
+		this.shotPlayer = new MediaPlayer(new Media(new File(SHOT_SOUND_URL).toURI().toString()));
+		this.hitPlayer = new MediaPlayer(new Media(new File(HIT_SOUND_URL).toURI().toString()));
+		this.movePlayer = new MediaPlayer(new Media(new File(MOVE_SOUND_URL).toURI().toString()));
+	}
+		
 	private void game() {
 		if(difficulty == Difficulty.High){
 			this.mainTarget.moveTarget();
@@ -138,6 +143,7 @@ public class GamePane extends Pane{
 	}
 
 	private void hit(CannonShell cs, Target target) {
+		playSound(hitPlayer);
 		this.hits++;
 		removeShell(cs);
 		calculateScore();
@@ -198,16 +204,24 @@ public class GamePane extends Pane{
 
 	private void setKeyboardEvents() {
 		this.setOnKeyPressed(e -> {
-			if(e.getCode() == KeyCode.LEFT)
+			if(e.getCode() == KeyCode.LEFT){
+				playSound(movePlayer);
 				cannon.rotateLeft();
-			else if(e.getCode() == KeyCode.RIGHT)
+			}
+			else if(e.getCode() == KeyCode.RIGHT){
+				playSound(movePlayer);
 				cannon.rotateRight();
-			else if(e.getCode() == KeyCode.UP)
+			}
+			else if(e.getCode() == KeyCode.UP){
+				playSound(movePlayer);
 				cannon.rotateForward();
-			else if(e.getCode() == KeyCode.DOWN)
-				cannon.rotateBackwords();
+			}
+			else if(e.getCode() == KeyCode.DOWN){
+				playSound(movePlayer);
+				cannon.rotateBackwards();
+			}
 			else if(e.getCode() == KeyCode.SPACE){
-				//this.mediaPlayer.play();
+				playSound(shotPlayer);
 				CannonShell shell = new CannonShell(cannon.getTheta(), 
 						cannon.getPhi(), (int)cannon.getFitHeight() + 2, height, width);
 				this.getChildren().add(shell);
@@ -216,6 +230,16 @@ public class GamePane extends Pane{
 			getFocus();
 
 		});
+	}
+	
+	private void playSound(MediaPlayer sound){
+        new Thread()
+        {
+            public void run() {
+            	sound.seek(Duration.ZERO);
+            	sound.play();
+            }
+        }.start();
 	}
 	
 	private void getFocus(){
