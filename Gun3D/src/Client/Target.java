@@ -38,7 +38,7 @@ public class Target extends Sphere {
 	
 
 	public void moveTarget() {
-		if(getTranslateX() + getRadius()>rightBoundry || 
+		if(getTranslateX() + getRadius() > rightBoundry || 
 				getTranslateX() - getRadius() < leftBoundry)
 			direction*=-1;
 		setTranslateX(getTranslateX()+direction);

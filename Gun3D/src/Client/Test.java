@@ -93,9 +93,15 @@ public class Test extends Application {
 	public void start(Stage primaryStage) throws Exception {
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         double width = primaryScreenBounds.getWidth();
-        double height = primaryScreenBounds.getHeight()/1.1;
-		GamePane gamePane = new GamePane(width, height);
-        Scene scene = new Scene(gamePane, width, height );
+        double height = primaryScreenBounds.getHeight();
+        Pane paneMain = new BorderPane();
+       // paneMain.setStyle("-fx-background-color: Black");
+		GamePane gamePane = new GamePane(width/1.1, height/1.2);
+		paneMain.getChildren().add(gamePane);
+		gamePane.setTranslateX(paneMain.getTranslateX()+5);
+		gamePane.setTranslateY(height-height/1.2);
+        //Scene scene = new Scene(paneMain, width, height,true );
+        Scene scene = new Scene(paneMain, width, height );
 		//gamePane.startTraining(Difficulty.Low);
 		//gamePane.startTraining(Difficulty.Medium);
 		gamePane.startTraining(Difficulty.High);

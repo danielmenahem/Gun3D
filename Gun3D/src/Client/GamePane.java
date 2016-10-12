@@ -1,27 +1,19 @@
 package Client;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.ObjectInputStream;
+import javafx.scene.text.Font;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javafx.geometry.Rectangle2D;
-import javafx.stage.Screen;
+import GameObjects.GameEvent;
+import Utilities.EventType;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
 public class GamePane extends Pane{
@@ -30,33 +22,35 @@ public class GamePane extends Pane{
 		Low, Medium, High
 	};
 		
-	private static final String TRAINING_BACKGROUND_URL = "/Client/Images/cartoon_desert.gif";
+	private static final String TRAINING_BACKGROUND_URL = "/Client/Images/cartoon_desert.jpg";
 	private static final String MATCH_BACKGROUND_URL = "/Client/Images/desert.jpg";
-	public final int [] TARGET_SIZES = {40, 30 , 20};
-	public final int TARGET_Z_MAX = 50;
-	public final double TARGET_Y_DEVIDER = 2.2;
-	private final int ANIMATION_MILLIS = 20;
+	private static final int [] TARGET_SIZES = {40, 30 , 20};
+	private static final int TARGET_Z_MAX = 100;
+	private static final double TARGET_Y_DEVIDER = 2.2;
+	private static final double ANIMATION_MILLIS = 5;
+	private static final int HIT_MULTIPLIER = 10; 
+	
 	private static HashMap <Boolean, String> backqrounds_url = new HashMap<>();
 	
 	private boolean isMatch;
-	private Socket socket;
 	private ObjectOutputStream toServer = null;
-	private ObjectInputStream fromServer = null;
 	
 	private Difficulty difficulty;
 	private int score = 0;
 	private int hits = 0;
-	private int shots = 0;
+	private int misses = 0;
 	private int gameID;
+	private String name;
 	private double width, height;
 	
 	private ArrayList<CannonShell> shells;
 	private Target mainTarget, seconderyTarget;
 	private Cannon cannon;
-	private Timeline targetAnimation, shellsAnimation;
+	private Timeline gameAnimation;
 	
 	private Label lblInfo;
 	private BackgroundImage background;
+
 	
 	public GamePane(double width, double height){
 		this.width = width;
@@ -69,12 +63,131 @@ public class GamePane extends Pane{
 	public void startTraining(Difficulty difficulty){
 		this.isMatch = false;
 		this.difficulty = difficulty;
+		prepareAndStartGame();
+		
+	}
+	
+	public void startMatch(Difficulty difficulty, ObjectOutputStream toServer, String name, int gameId){
+		this.isMatch = true;
+		this.difficulty = difficulty;
+		prepareAndStartGame();
+	}
+	
+	public void stopGame(){
+		if(isMatch){
+			try {
+				toServer.writeObject(new GameEvent(this.name, this.gameID, EventType.END_GAME, this.score));
+			} catch (IOException e) {
+			}
+		}
+		this.getChildren().removeAll(this.getChildren());
+	}
+	
+	private void prepareAndStartGame(){
+		this.score = 0;
+		this.hits = 0;
+		this.misses = 0;
 		setBackground();
         addGameControls();
         setKeyboardEvents();
         getFocus();
+        
+        gameAnimation = new Timeline(new KeyFrame(Duration.millis(ANIMATION_MILLIS), e ->{ 
+        	game();
+        	getFocus();
+        }));
+        
+		gameAnimation.setCycleCount(Timeline.INDEFINITE);
+		gameAnimation.play();
 	}
 	
+	
+	
+	private void game() {
+		if(difficulty == Difficulty.High){
+			this.mainTarget.moveTarget();
+		}
+		for(int i=0; i<this.shells.size();i++){
+			if (this.shells.get(i) instanceof CannonShell){
+				CannonShell cs = (CannonShell)this.shells.get(i);
+				cs.moveShell  ();
+				if(isOutofBounds(cs)){
+					miss(cs);
+				}
+				else{
+					Target target = isHit(cs);
+					if(target != null){
+						hit(cs, target);
+					}
+				}
+			}
+		}
+	}
+	
+	private void removeShell(CannonShell cs){
+		this.getChildren().remove(cs);
+		this.shells.remove(cs);
+	}
+
+	private void hit(CannonShell cs, Target target) {
+		this.hits++;
+		removeShell(cs);
+		calculateScore();
+		int targetSize = TARGET_SIZES[difficulty.ordinal()];
+		target.paintTarget(targetSize, getRandom(width, targetSize), 
+				getRandom(height/TARGET_Y_DEVIDER, targetSize), getRandom(TARGET_Z_MAX, 0));
+		if(isMatch){
+			try {
+				toServer.writeObject(new GameEvent(this.name, this.gameID, EventType.HIT, this.score));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		updateInfoText();
+	}
+
+	private void miss(CannonShell cs) {
+		this.misses++;
+		removeShell(cs);
+		calculateScore();
+		if(isMatch){
+			try {
+				toServer.writeObject(new GameEvent(this.name, this.gameID, EventType.MISS, this.score));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		updateInfoText();
+	}
+
+	private void calculateScore() {
+		this.score = this.hits*(this.difficulty.ordinal()+1)*HIT_MULTIPLIER - this.misses;
+	}
+
+	private Target isHit(CannonShell cs) {
+		if(checkForHit(cs, mainTarget))
+			return mainTarget;
+		
+		if(difficulty == Difficulty.Low){
+			if(checkForHit(cs, seconderyTarget))
+				return seconderyTarget;
+		}
+		return null;
+	}
+	
+	private boolean checkForHit(CannonShell cs, Target target){
+		return Math.sqrt(Math.pow((target.getTranslateX() - cs.getTranslateX()), 2)
+				+ Math.pow((target.getTranslateY() - cs.getTranslateY()), 2) 
+				+ Math.pow((target.getTranslateZ() - cs.getTranslateZ()), 2)) <= (target.getRadius() + cs.getRadius());
+	}
+
+	private boolean isOutofBounds(CannonShell shell) {
+		
+		return ((shell.getTranslateX() > (this.getWidth()+this.getTranslateX())) || 
+				(shell.getTranslateX() < 0) || (shell.getTranslateY() < 0) || 
+				(shell.getTranslateZ() > TARGET_Z_MAX*5) );
+	}
+
 	private void setKeyboardEvents() {
 		this.setOnKeyPressed(e -> {
 			if(e.getCode() == KeyCode.LEFT)
@@ -103,7 +216,7 @@ public class GamePane extends Pane{
 	
 
 	private void setBackground() {
-		background = new BackgroundImage(new Image(backqrounds_url.get(isMatch),width,width,false,true),
+		background = new BackgroundImage(new Image(backqrounds_url.get(isMatch),width,height,false,true),
 		        BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER,
 		         BackgroundSize.DEFAULT);
 		this.setBackground(new Background(background));
@@ -115,43 +228,42 @@ public class GamePane extends Pane{
 		this.getChildren().add(cannon);
 		int targetSize = TARGET_SIZES[this.difficulty.ordinal()];
 		mainTarget = new Target(targetSize, getRandom(width, targetSize), 
-				getRandom(height/TARGET_Y_DEVIDER, 0), getRandom(TARGET_Z_MAX, targetSize)
-				, this.getTranslateX(), width);
-		//this.getChildren().addAll(cannon, mainTarget);
+				getRandom(height/TARGET_Y_DEVIDER, targetSize), getRandom(TARGET_Z_MAX, 0)
+				, this.getTranslateX(), width + this.getTranslateX());
 		this.getChildren().add(mainTarget);
 		
 		if(this.difficulty == Difficulty.Low){
 			seconderyTarget =  new Target(targetSize, getRandom(width, targetSize), 
-				getRandom(height/TARGET_Y_DEVIDER, 0), getRandom(TARGET_Z_MAX, targetSize)
-					,height, width);
+				getRandom(height/TARGET_Y_DEVIDER, targetSize), getRandom(TARGET_Z_MAX, 0)
+					,this.getTranslateX(), width + this.getTranslateX());
 			this.getChildren().add(seconderyTarget);
 		}
 		
-		else if(difficulty == Difficulty.High){
-			targetAnimation = new Timeline(new KeyFrame(Duration.millis(ANIMATION_MILLIS), e1 -> mainTarget.moveTarget()));
-			targetAnimation.setCycleCount(Timeline.INDEFINITE);
-			targetAnimation.play();
-		}
-		
-		setShellsAnimation();
+		setLblInfo();
 	}
 	
-	private void setShellsAnimation(){
-		shellsAnimation = new Timeline(new KeyFrame(Duration.millis(ANIMATION_MILLIS), e->{
-			for(CannonShell c : shells){
-				c.moveShell();
-			}
-		}));
-		shellsAnimation.setCycleCount(Timeline.INDEFINITE);
-		shellsAnimation.play();
+	private void setLblInfo(){
+		lblInfo = new Label();
+		this.getChildren().add(lblInfo);
+		lblInfo.setTranslateX(5);
+		lblInfo.setTranslateY(5);
+		lblInfo.setStyle("-fx-font-weight: bold;-fx-text-fill: blue;");
+		lblInfo.setFont(Font.font ("Cooper Black", 14));
+		updateInfoText();
 	}
+	
+	private void updateInfoText(){
+		Platform.runLater(()->{
+			lblInfo.setText("Hits: " + this.hits + " Misses: " + this.misses +"\nScore: " + this.score);
+		});
+	}
+	
 
 	private double getRandom(double max, int margin) {
 		return(margin + Math.random()*(max - margin*2)); 
 	}
 
 	private void setSize(){
-        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         this.setWidth(width);
         this.setHeight(height);
 	}
