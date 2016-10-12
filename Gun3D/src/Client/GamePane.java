@@ -15,6 +15,9 @@ import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import java.io.File;
 
 public class GamePane extends Pane{
 	
@@ -24,13 +27,14 @@ public class GamePane extends Pane{
 		
 	private static final String TRAINING_BACKGROUND_URL = "/Client/Images/cartoon_desert.jpg";
 	private static final String MATCH_BACKGROUND_URL = "/Client/Images/desert.jpg";
+	private static final String SHOT_SOUND_URL = "/Shot2.mp3";
 	private static final int [] TARGET_SIZES = {40, 30 , 20};
 	private static final int TARGET_Z_MAX = 100;
 	private static final double TARGET_Y_DEVIDER = 2.2;
 	private static final double ANIMATION_MILLIS = 5;
 	private static final int HIT_MULTIPLIER = 10; 
 	
-	private static HashMap <Boolean, String> backqrounds_url = new HashMap<>();
+	private static HashMap <Boolean, String> backgrounds_url = new HashMap<>();
 	
 	private boolean isMatch;
 	private ObjectOutputStream toServer = null;
@@ -50,14 +54,15 @@ public class GamePane extends Pane{
 	
 	private Label lblInfo;
 	private BackgroundImage background;
+	private MediaPlayer mediaPlayer;
 
 	
 	public GamePane(double width, double height){
 		this.width = width;
 		this.height = height;
 		setSize();
-		backqrounds_url.put(true, MATCH_BACKGROUND_URL);
-		backqrounds_url.put(false, TRAINING_BACKGROUND_URL);
+		backgrounds_url.put(true, MATCH_BACKGROUND_URL);
+		backgrounds_url.put(false, TRAINING_BACKGROUND_URL);
 	}
 	
 	public void startTraining(Difficulty difficulty){
@@ -87,6 +92,9 @@ public class GamePane extends Pane{
 		this.score = 0;
 		this.hits = 0;
 		this.misses = 0;
+		//Media sound = new Media(new File(SHOT_SOUND_URL).toURI().toString());
+		//Media sound = new Media(SHOT_SOUND_URL);
+		//this.mediaPlayer = new MediaPlayer(sound);
 		setBackground();
         addGameControls();
         setKeyboardEvents();
@@ -198,7 +206,8 @@ public class GamePane extends Pane{
 				cannon.rotateForward();
 			else if(e.getCode() == KeyCode.DOWN)
 				cannon.rotateBackwords();
-			else if(e.getCode() == KeyCode.SPACE){				
+			else if(e.getCode() == KeyCode.SPACE){
+				//this.mediaPlayer.play();
 				CannonShell shell = new CannonShell(cannon.getTheta(), 
 						cannon.getPhi(), (int)cannon.getFitHeight() + 2, height, width);
 				this.getChildren().add(shell);
@@ -216,7 +225,7 @@ public class GamePane extends Pane{
 	
 
 	private void setBackground() {
-		background = new BackgroundImage(new Image(backqrounds_url.get(isMatch),width,height,false,true),
+		background = new BackgroundImage(new Image(backgrounds_url.get(isMatch),width,height,false,true),
 		        BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER,
 		         BackgroundSize.DEFAULT);
 		this.setBackground(new Background(background));
