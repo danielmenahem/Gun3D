@@ -42,33 +42,45 @@ public class Cannon extends ImageView{
 
 	}
 	
-	public void rotateForward(){
+	public boolean rotateForward(){
 		if(verticalRotation < MAX_VERTICAL_ROTATION){
 			verticalRotation+=ROTATION_DELTA;
 			rotateVertical.setAngle(verticalRotation);
+			return true;
 		}
+		else
+			return false;
 	}
 	
-	public void rotateBackwards(){
+	public boolean rotateBackwards(){
 		if(verticalRotation > 0){			
 			verticalRotation-=ROTATION_DELTA;
 			rotateVertical.setAngle(verticalRotation);
+			return true;
 		}
+		else
+			return false;
 	}
 	
-	public void rotateLeft(){
+	public boolean rotateLeft(){
 		if(horzinotalRotation > -MAX_HORIZONTAL_ROTATION){
 			horzinotalRotation-=ROTATION_DELTA;
 			rotateHorizontal.setAngle(horzinotalRotation);
+			return true;
 		}
+		else
+			return false;
 	}
 	
 
-	public void rotateRight(){
+	public boolean rotateRight(){
 		if(horzinotalRotation < MAX_HORIZONTAL_ROTATION){
 			horzinotalRotation+=ROTATION_DELTA;
 			rotateHorizontal.setAngle(horzinotalRotation);
+			return true;
 		}
+		else
+			return false;
 	}
 	
 	public int getTheta(){

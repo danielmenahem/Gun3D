@@ -32,11 +32,14 @@ public class GameServer extends Application {
 	private ServerSocket serverSocket;
 	private Socket socket;
 	private DBcontroller db;
+	private int lastGameID;
+	private static Lock gameIdLock = new ReentrantLock();
 	
 	@Override
 	public void start(Stage primaryStage) {
 		try {
 			db = new DBcontroller();
+			this.lastGameID = db.getCurrentNumberOfGames();
 		} catch (Exception e) {
 		}
 		ta.setEditable(false);
@@ -101,13 +104,10 @@ public class GameServer extends Application {
 		/** Run a thread */
 		public void run() {
 			try {
-				int gameId = 0;
-				try {
-					gameId = db.getCurrentNumberOfGames() + 1;
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				gameIdLock.lock();
+				lastGameID++;
+				this.clientNumber = lastGameID;
+				gameIdLock.unlock();
 				ObjectInputStream inputFromClient = new ObjectInputStream(socket.getInputStream()); 
 				ObjectOutputStream outputToClient = new ObjectOutputStream(socket.getOutputStream());
 				outputToClient.writeInt(this.clientNumber);
@@ -117,7 +117,7 @@ public class GameServer extends Application {
 					try {
 						event = (GameEvent)inputFromClient.readObject();
 						if(event.getEvent() != EventType.END_GAME){
-							db.insertEvent(event.getName(), gameId, event.getGameScore(), event.getEvent());
+							db.insertEvent(event.getName(), event.getGameID(), event.getGameScore(), event.getEvent());
 						}
 						else{
 							loop = false;

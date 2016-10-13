@@ -19,6 +19,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import java.io.File;
 
+
 public class GamePane extends Pane{
 	
 	public enum Difficulty {
@@ -42,9 +43,7 @@ public class GamePane extends Pane{
 	private ObjectOutputStream toServer = null;
 	
 	private Difficulty difficulty;
-	private int score = 0;
-	private int hits = 0;
-	private int misses = 0;
+	private int score, hits, misses;
 	private int gameID;
 	private String name;
 	private double width, height;
@@ -59,7 +58,9 @@ public class GamePane extends Pane{
 	private MediaPlayer shotPlayer, hitPlayer, movePlayer;
 
 
-	
+	/**Create new Game panel
+	 * @param width panel width
+	 * @param height panel height*/
 	public GamePane(double width, double height){
 		this.width = width;
 		this.height = height;
@@ -68,13 +69,21 @@ public class GamePane extends Pane{
 		backgrounds_url.put(false, TRAINING_BACKGROUND_URL);
 	}
 	
+	/**Start training game
+	 * @param difficulty game difficulty (enum; options: Low, Medium, High)
+	 * */
 	public void startTraining(Difficulty difficulty){
 		this.isMatch = false;
 		this.difficulty = difficulty;
 		prepareAndStartGame();
-		
 	}
 	
+	/**Start an official match
+	 * @param difficulty game difficulty (enum; options: Low, Medium, High)
+	 * @param toServer ObjectOutputStream, already initialized and connected to the server
+	 * @param name Player name
+	 * @param gameID game ID given from server
+	 * */
 	public void startMatch(Difficulty difficulty, ObjectOutputStream toServer, String name, int gameId){
 		this.isMatch = true;
 		this.difficulty = difficulty;
@@ -84,6 +93,7 @@ public class GamePane extends Pane{
 		prepareAndStartGame();
 	}
 	
+	/**Stops current game. Cleans the panel upwards the next game*/
 	public void stopGame(){
 		if(isMatch){
 			try {
@@ -208,20 +218,20 @@ public class GamePane extends Pane{
 	private void setKeyboardEvents() {
 		this.setOnKeyPressed(e -> {
 			if(e.getCode() == KeyCode.LEFT){
-				playSound(movePlayer);
-				cannon.rotateLeft();
+				if(cannon.rotateLeft())
+					playSound(movePlayer);
 			}
 			else if(e.getCode() == KeyCode.RIGHT){
-				playSound(movePlayer);
-				cannon.rotateRight();
+				if(cannon.rotateRight())
+					playSound(movePlayer);
 			}
 			else if(e.getCode() == KeyCode.UP){
-				playSound(movePlayer);
-				cannon.rotateForward();
+				if(cannon.rotateForward())
+					playSound(movePlayer);
 			}
 			else if(e.getCode() == KeyCode.DOWN){
-				playSound(movePlayer);
-				cannon.rotateBackwards();
+				if(cannon.rotateBackwards())
+					playSound(movePlayer);
 			}
 			else if(e.getCode() == KeyCode.SPACE){
 				playSound(shotPlayer);
