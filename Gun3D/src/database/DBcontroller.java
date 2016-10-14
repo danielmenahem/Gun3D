@@ -250,4 +250,12 @@ public class DBcontroller implements DBcontrollerInterface {
 		return records;
 	}
 
+	@Override
+	public void closeConnection() {
+		try {
+			connection.close();
+		} catch (SQLException e) {
+		}
+	}
+
 }

@@ -18,6 +18,7 @@ public interface DBcontrollerInterface {
 	int getCurrentNumberOfGames() throws SQLException;
 	void deletePlayer(String playerID) throws SQLException;
 	void changePlayerName(String oldPlayerID, String newPlayerID) throws SQLException;
+	void closeConnection();
 	
 	// Specific requested queries
 	

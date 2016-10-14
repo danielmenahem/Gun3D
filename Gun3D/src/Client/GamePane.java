@@ -13,6 +13,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
+import server.GameServer;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
@@ -59,8 +60,8 @@ public class GamePane extends Pane{
 
 
 	/**Create new Game panel
-	 * @param width panel width
-	 * @param height panel height*/
+	 * @param width panel width (double)
+	 * @param height panel height (double)*/
 	public GamePane(double width, double height){
 		this.width = width;
 		this.height = height;
@@ -93,8 +94,9 @@ public class GamePane extends Pane{
 		prepareAndStartGame();
 	}
 	
-	/**Stops current game. Cleans the panel upwards the next game*/
-	public void stopGame(){
+	/**Stops current game. Cleans the panel upwards the next game
+	 * @return game final score*/
+	public int stopGame(){
 		if(isMatch){
 			try {
 				toServer.writeObject(new GameEvent(this.name, this.gameID, EventType.END_GAME, this.score));
@@ -102,6 +104,8 @@ public class GamePane extends Pane{
 			}
 		}
 		this.getChildren().removeAll(this.getChildren());
+		calculateScore();
+		return this.score;
 	}
 	
 	private void prepareAndStartGame(){

@@ -100,13 +100,12 @@ public class DBView2 extends Stage{
 
 		this.show();
 		this.setAlwaysOnTop(true);
-		this.setOnCloseRequest(e -> {
+/*		this.setOnCloseRequest(e -> {
 			try {
 				Platform.exit();
-				System.exit(0);
 			} catch (Exception ex) {
 			}
-		});
+		});*/
 		
 	}
 
