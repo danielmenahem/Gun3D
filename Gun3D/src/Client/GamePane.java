@@ -60,8 +60,8 @@ public class GamePane extends Pane{
 
 
 	/**Create new Game panel
-	 * @param width panel width (double)
-	 * @param height panel height (double)*/
+	 * @param width the game panel width (double)
+	 * @param height the game panel height (double)*/
 	public GamePane(double width, double height){
 		this.width = width;
 		this.height = height;
@@ -71,7 +71,7 @@ public class GamePane extends Pane{
 	}
 	
 	/**Start training game
-	 * @param difficulty game difficulty (enum; options: Low, Medium, High)
+	 * @param difficulty the requested game difficulty ({@link Difficulty} options: Low, Medium, High)
 	 * */
 	public void startTraining(Difficulty difficulty){
 		this.isMatch = false;
@@ -80,10 +80,10 @@ public class GamePane extends Pane{
 	}
 	
 	/**Start an official match
-	 * @param difficulty game difficulty (enum; options: Low, Medium, High)
-	 * @param toServer ObjectOutputStream, already initialized and connected to the server
-	 * @param name Player name
-	 * @param gameID game ID given from server
+	 * @param difficulty game difficulty ({@link Difficulty} options: Low, Medium, High)
+	 * @param toServer {@link ObjectOutputStream}, the output stream, already initialized and connected to the server
+	 * @param name the player name
+	 * @param gameID the game ID given from server
 	 * */
 	public void startMatch(Difficulty difficulty, ObjectOutputStream toServer, String name, int gameId){
 		this.isMatch = true;
@@ -94,8 +94,8 @@ public class GamePane extends Pane{
 		prepareAndStartGame();
 	}
 	
-	/**Stops current game. Cleans the panel upwards the next game
-	 * @return game final score*/
+	/**Stops current game. prepares the panel to the next game
+	 * @return the game final score*/
 	public int stopGame(){
 		if(isMatch){
 			try {

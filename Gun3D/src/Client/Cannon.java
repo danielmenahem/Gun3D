@@ -7,6 +7,8 @@ import javafx.scene.transform.Rotate;
 
 public class Cannon extends ImageView{
 
+	
+	private static String PICTURE_URL = "/Client/Images/cannon_transp5.png";
 	private int horzinotalRotation, verticalRotation;
 	private Rotate rotateHorizontal, rotateVertical;
 	public static final int ROTATION_DELTA = 2;
@@ -16,7 +18,7 @@ public class Cannon extends ImageView{
 	private double height, width;
 	
 	public Cannon(double width, double height){
-		super(new Image("/Client/Images/cannon_transp4.png"));
+		super(new Image(PICTURE_URL));
 		this.horzinotalRotation = 0;
 		this.verticalRotation = 0;
 		this.height = height;
