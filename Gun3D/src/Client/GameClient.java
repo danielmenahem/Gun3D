@@ -211,41 +211,7 @@ public class GameClient extends Application {
 			// TODO: handle exception
 		}
 	}
-	/*
-	class HandleSever implements Runnable {
-		private boolean keepAlive = true;
-		private Object message = null;
 
-		public Object getMessage() {
-			return message;
-		}
-
-		public void setMessage(Object message) {
-			this.message = message;
-		}
-
-		public boolean isKeepAlive() {
-			return keepAlive;
-		}
-
-		public void setKeepAlive(boolean keepAlive) {
-			this.keepAlive = keepAlive;
-		}
-
-		public void run() {
-			while (keepAlive) {
-				try {
-					if (message != null) {
-						toServer.writeObject(message);
-						message = null;
-					}
-					Thread.sleep(50);
-				} 
-				catch (Exception e) {}
-			}
-		}
-	}
-	*/
 	public static void main(String[] args) {
 		launch(args);
 	}
