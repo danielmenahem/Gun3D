@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import GameObjects.GameEvent;
+import Utilities.Difficulty;
 import Utilities.EventType;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -22,10 +23,7 @@ import java.io.File;
 
 public class GamePane extends Pane{
 	
-	public enum Difficulty {
-		Low, Medium, High
-	};
-		
+
 	private static final String TRAINING_BACKGROUND_URL = "/Client/Images/cartoon_desert.jpg";
 	private static final String MATCH_BACKGROUND_URL = "/Client/Images/desert.jpg";
 	private static final String SHOT_SOUND_URL = "src/Client/Sounds/shot.wav";
@@ -201,7 +199,7 @@ public class GamePane extends Pane{
 		if(checkForHit(cs, mainTarget))
 			return mainTarget;
 		
-		if(difficulty == Difficulty.Low){
+		if(difficulty == Difficulty.Easy){
 			if(checkForHit(cs, seconderyTarget))
 				return seconderyTarget;
 		}
@@ -282,7 +280,7 @@ public class GamePane extends Pane{
 				, this.getTranslateX(), width + this.getTranslateX());
 		this.getChildren().add(mainTarget);
 		
-		if(this.difficulty == Difficulty.Low){
+		if(this.difficulty == Difficulty.Easy){
 			seconderyTarget =  new Target(targetSize, getRandom(width, targetSize), 
 				getRandom(height/TARGET_Y_DEVIDER, targetSize), getRandom(TARGET_Z_MAX, 0)
 					,this.getTranslateX(), width + this.getTranslateX());
