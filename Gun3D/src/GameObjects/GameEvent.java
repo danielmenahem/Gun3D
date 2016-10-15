@@ -1,48 +1,93 @@
 package GameObjects;
 import Utilities.EventType;
 
+/**
+ * A game event class
+ * @author Micha
+ * @author Daniel
+ */
 public class GameEvent {
-	private String name;
+	private String playerName;
 	private int gameID;
 	private EventType event;
 	private int gameScore;
 	
-	public GameEvent(String name, int gameID, EventType event, int gameScore) {
-		this.name = name;
+	/**
+	 * Public constructor to create a game event
+	 * @param playerName 	player's name and ID		
+	 * @param gameID		game ID
+	 * @param event			event type ({@link EventType} options: HIT, MISS, END_GAME)
+	 * @param gameScore		game's current score
+	 */
+	public GameEvent(String playerName, int gameID, EventType event, int gameScore) {
+		this.playerName = playerName;
 		this.gameID = gameID;
 		this.event = event;
 		this.gameScore = gameScore;
 	}
 	
 	
-	public String getName() {
-		return name;
+	/**
+	 * Gets the event's player ID
+	 * @return	the player's name
+	 */
+	public String getPlayerName() {
+		return playerName;
 	}
 	
-	public void setName(String name) {
-		this.name = name;
+	/**
+	 * Sets the event's player ID
+	 * @param name the event's new player's name
+	 */
+	public void setPlayerName(String name) {
+		this.playerName = name;
 	}
 	
+	/**
+	 * Gets the event's game ID
+	 * @return game's ID
+	 */
 	public int getGameID() {
 		return gameID;
 	}
 	
+	/**
+	 * Sets the event's game ID
+	 * @param gameID the event's new game ID
+	 */
 	public void setGameID(int gameID) {
 		this.gameID = gameID;
 	}
 	
+	/**
+	 * Gets the event type
+	 * @return {@link EventType} options: MISS, HIT, END_GAME
+	 */
 	public EventType getEvent() {
 		return this.event;
 	}
 	
+	/**
+	 * Sets the event's event type
+	 * @param event new event type, {@link EventType} options: MISS, HIT, END_GAME
+	 */	
 	public void setEvent(EventType event) {
 		this.event = event;
 	}
 	
+	
+	/**
+	 * Gets the event's game score
+	 * @return the game's score
+	 */
 	public int getGameScore() {
 		return gameScore;
 	}
 	
+	/**
+	 * Sets the event's game score
+	 * @param gameScore new event game score
+	 */
 	public void setGameScore(int gameScore) {
 		this.gameScore = gameScore;
 	}

@@ -100,8 +100,8 @@ public class Test extends Application {
 		paneMain.getChildren().add(gamePane);
 		gamePane.setTranslateX(paneMain.getTranslateX()+5);
 		gamePane.setTranslateY(height-height/1.2);
-        //Scene scene = new Scene(paneMain, width, height,true );
-        Scene scene = new Scene(paneMain, width, height );
+        Scene scene = new Scene(paneMain, width, height,true );
+        //Scene scene = new Scene(paneMain, width, height );
 		gamePane.startTraining(Difficulty.Low);
 		gamePane.startTraining(Difficulty.Medium);
 		gamePane.startTraining(Difficulty.High);

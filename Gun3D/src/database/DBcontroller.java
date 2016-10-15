@@ -10,9 +10,17 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 import Utilities.EventType;
 
+/**
+ * Implementation of the DB interface for the DB view
+ * 
+ * @author Micha
+ * @author Daniel
+ * @see DBcontrollerInterface
+ */
 public class DBcontroller implements DBcontrollerInterface {
 	private final String dbDriverName = "com.mysql.jdbc.Driver";
 	private final String dbName = "jdbc:mysql://localhost/gun";
@@ -25,12 +33,24 @@ public class DBcontroller implements DBcontrollerInterface {
 	private Connection connection;
 	private PreparedStatement stmt;
 
+	/**
+	 * A public constructor to connect to DB and create the view
+	 * 
+	 * @throws Exception
+	 *             {@link ClassNotFoundException} and {@link SQLException}
+	 */
 	public DBcontroller() throws Exception {
 		connect();
 		createTable();
 		getCurrentNumberOfGames();
 	}
 
+	/**
+	 * Connects to the database
+	 * 
+	 * @throws Exception
+	 *             {@link ClassNotFoundException} and {@link SQLException}
+	 */
 	private void connect() throws Exception {
 		Class.forName(dbDriverName);
 		System.out.println("Driver loaded");
@@ -38,6 +58,9 @@ public class DBcontroller implements DBcontrollerInterface {
 		System.out.println("Database connected");
 	}
 
+	/**
+	 * Create the table in the database, if it doesn't exist
+	 */
 	private void createTable() {
 		String events = "CREATE TABLE IF NOT EXISTS " + tableName + "(playerID VARCHAR(100)," + " gameID INT,"
 				+ " gameScore INT," + " eventType VARCHAR(100)," + " timeStamp TIMESTAMP)";
@@ -86,7 +109,7 @@ public class DBcontroller implements DBcontrollerInterface {
 
 		return records;
 	}
-	
+
 	@Override
 	public int getCurrentNumberOfGames() throws SQLException {
 		// Return current number of games
@@ -97,7 +120,7 @@ public class DBcontroller implements DBcontrollerInterface {
 
 		return numberOfGames;
 	}
-	
+
 	@Override
 	public ArrayList<Record> getEventsByGameID(int gameID) throws SQLException {
 		ArrayList<Record> records = new ArrayList<>();
@@ -129,7 +152,7 @@ public class DBcontroller implements DBcontrollerInterface {
 
 		stmt.executeUpdate();
 	}
-	
+
 	@Override
 	public void changePlayerName(String oldPlayerID, String newPlayerID) throws SQLException {
 		// playerID is player's name
@@ -258,4 +281,36 @@ public class DBcontroller implements DBcontrollerInterface {
 		}
 	}
 
+	/**
+	 * A method to create DB records for testing purposes.
+	 */
+	private void fakeDbTester() {
+		for (int i = 0; i < 10; i++) {
+			// 10 players
+			int maxGames = ThreadLocalRandom.current().nextInt(0, 5 + 1);
+			// each has a different number of games
+			for (int j = 0; j < maxGames; j++) {
+				int gameNumber = 0;
+				try {
+					gameNumber = getCurrentNumberOfGames() + 1;
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				int numberOfEvent = ThreadLocalRandom.current().nextInt(0, 15 + 1);
+				int scoreRandom = ThreadLocalRandom.current().nextInt(0, 500 + 1);
+				// each game has a different number of events
+				for (int k = 0; k < numberOfEvent; k++) {
+					try {
+						// randomize hit of miss
+						int hitOrMiss = ThreadLocalRandom.current().nextInt(0, 1 + 1);
+						insertEvent("Player" + i, gameNumber, scoreRandom, EventType.values()[hitOrMiss]);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
 }

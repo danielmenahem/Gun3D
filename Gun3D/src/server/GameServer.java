@@ -24,7 +24,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import views.DBView2;
+import views.DBView;
 
 public class GameServer extends Application { 
 	
@@ -103,7 +103,7 @@ public class GameServer extends Application {
 			try {
 				db.changePlayerName(tfNameToChange.getText(), tfReplacingName.getText());
 				writeToLog("Name change message: All events under the name " + tfNameToChange.getText()
-				+ "have been replaced by the name " +  tfReplacingName.getText());
+				+ " have been replaced by the name " +  tfReplacingName.getText());
 			} 
 			catch (SQLException e) {
 				writeToLog("Name Change Error: Old player name does not exist\n");
@@ -153,7 +153,7 @@ public class GameServer extends Application {
 		Platform.runLater(() -> {
 			primaryStage.setAlwaysOnTop(false);
 			try {
-				Stage dialog = new DBView2(db);
+				Stage dialog = new DBView(db);
 				dialog.show();
 			} 
 			catch (Exception e1) {
@@ -276,7 +276,7 @@ public class GameServer extends Application {
 						event = (GameEvent)inputFromClient.readObject();
 						failedReadAttempts = 0;
 						if(event.getEvent() != EventType.END_GAME){
-							db.insertEvent(event.getName(), event.getGameID(), 
+							db.insertEvent(event.getPlayerName(), event.getGameID(), 
 									event.getGameScore(), event.getEvent());
 						}
 						else{
@@ -289,7 +289,7 @@ public class GameServer extends Application {
 						boolean success = false;
 						for(int i = 0; i<NUMBER_OF_ATTEMPTS; i++){
 							try {
-								db.insertEvent(event.getName(), event.getGameID(), 
+								db.insertEvent(event.getPlayerName(), event.getGameID(), 
 										event.getGameScore(), event.getEvent());
 								success = true;
 								i = NUMBER_OF_ATTEMPTS;

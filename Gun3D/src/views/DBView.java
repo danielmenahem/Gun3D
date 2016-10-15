@@ -1,23 +1,12 @@
 package views;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
-
-import javax.management.OperationsException;
-
 import Utilities.EventType;
 import database.Record;
 import database.DBcontroller;
 import database.DBcontrollerInterface;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -32,66 +21,42 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class DBView extends Application {
+/**
+ * A GUI to display DB queries
+ * 
+ * @author Micha
+ * @author Daniel
+ *
+ */
+public class DBView extends Stage{
 	private final String[] options = {"All events by name and then by game time",
 			"All events by name and then by game score (descending)", "All games by game score (descending)",
 			"All players with 3 games or more by rank",
 			"All games by most hits (descending)", "All games by most misses (descending)" };
 	private final int MIN_GAMES_TO_COUNT_FOR_TOP_PLAYERS = 3;
-
+	
 	private ComboBox<String> cbxQueryChoice;
 	private ObservableList<String> queryOptions;
 	private Label lblQueryChoice;
 	private Button btnRun;
 	private VBox vbContainer;
 	private GridPane gridPane;
-	private Stage stage;
 	private Scene scene;
-
 	private DBcontrollerInterface db;
 	private TableView<Record> table;
-	private List<Record> list;
-	private ObservableList<Record> data;
-
-	@Override
-	public void start(Stage primaryStage) throws Exception {
-		this.stage = primaryStage;
-		db = new DBcontroller();
-
-		// fakeDbTester();
-		buildGUI();
+	
+	/**
+	 * A constructor to build this view
+	 * @param db			an object implementing the {@link DBcontrollerInterface}
+	 */
+	public DBView(DBcontroller db) {
+		this.db = db;
+		buildGUI();		
 	}
 
-	private void fakeDbTester() {
-		for (int i = 0; i < 10; i++) {
-			// 10 players
-			int maxGames = ThreadLocalRandom.current().nextInt(0, 5 + 1);
-			// each has a different number of games
-			for (int j = 0; j < maxGames; j++) {
-				int gameNumber = 0;
-				try {
-					gameNumber = db.getCurrentNumberOfGames() + 1;
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				int numberOfEvent = ThreadLocalRandom.current().nextInt(0, 15 + 1);
-				int scoreRandom = ThreadLocalRandom.current().nextInt(0, 500 + 1);
-				// each game has a different number of events
-				for (int k = 0; k < numberOfEvent; k++) {
-					try {
-						// randomize hit of miss
-						int hitOrMiss = ThreadLocalRandom.current().nextInt(0, 1 + 1);
-						db.insertEvent("Player" + i, gameNumber, scoreRandom, EventType.values()[hitOrMiss]);
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-	}
-
+	/**
+	 * Builds the GUI elements
+	 */
 	private void buildGUI() {
 		gridPane = new GridPane();
 		gridPane.setPadding(new Insets(10, 10, 10, 10));
@@ -133,21 +98,24 @@ public class DBView extends Application {
 
 		scene = new Scene(vbContainer, 500, 475);
 
-		stage.setTitle("Gun3D DB view");
-		stage.setScene(scene);
+		this.setTitle("Gun3D DB view");
+		this.setScene(scene);
 
-		stage.show();
-		stage.setAlwaysOnTop(true);
-		stage.setOnCloseRequest(e -> {
+		this.show();
+		this.setAlwaysOnTop(true);
+/*		this.setOnCloseRequest(e -> {
 			try {
 				Platform.exit();
-				System.exit(0);
 			} catch (Exception ex) {
 			}
-		});
-
+		});*/
+		
 	}
 
+	/**
+	 * Runs the selected query
+	 * @param index			of the selected query
+	 */
 	private void runQuery(int index) {
 		try {
 			switch (index) {
