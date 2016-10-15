@@ -15,26 +15,58 @@ import java.util.concurrent.ThreadLocalRandom;
 import Utilities.EventType;
 
 /**
- * Implementation of the DB interface for the DB view
+ * Implementation of the DB interface for the DB view.
  * 
  * @author Micha
  * @author Daniel
  * @see DBcontrollerInterface
+ * 
+ *      JavaDoc made under the assumption that the HTML generated doc will
+ *      include private fields. Under different circumstances, the private
+ *      attributes would be documented in the public getters, and the rest would
+ *      link there. Private attributes documentation was made so everything will
+ *      be documented.
  */
 public class DBcontroller implements DBcontrollerInterface {
+	/**
+	 * DB driver: jdbc.
+	 */
 	private final String dbDriverName = "com.mysql.jdbc.Driver";
+	/**
+	 * DB name: "gun".
+	 */
 	private final String dbName = "jdbc:mysql://localhost/gun";
+	/**
+	 * DB user name, by instructions is "scott".
+	 */
 	private final String dbUsername = "scott";
+	/**
+	 * DB password, by instructions is "tiger".
+	 */
 	private final String dbPassword = "tiger";
-	private final String tableName = "eventsTest505005"; // Change to events
+	/**
+	 * DB table's name, should be "events" (different names for testing tables).
+	 */
+	private final String tableName = "eventsTest505005";
 
+	/**
+	 * Number of games. When setting this property current number should be
+	 * extracted and incremented.
+	 */
 	private static int numberOfGames;
 
+	/**
+	 * Current DB connection.
+	 */
 	private Connection connection;
+
+	/**
+	 * DB prepared statement property, to be defined and executed.
+	 */
 	private PreparedStatement stmt;
 
 	/**
-	 * A public constructor to connect to DB and create the view
+	 * A public constructor to connect to DB and create the database table.
 	 * 
 	 * @throws Exception
 	 *             {@link ClassNotFoundException} and {@link SQLException}
@@ -46,7 +78,7 @@ public class DBcontroller implements DBcontrollerInterface {
 	}
 
 	/**
-	 * Connects to the database
+	 * Connects to the database.
 	 * 
 	 * @throws Exception
 	 *             {@link ClassNotFoundException} and {@link SQLException}
@@ -59,7 +91,7 @@ public class DBcontroller implements DBcontrollerInterface {
 	}
 
 	/**
-	 * Create the table in the database, if it doesn't exist
+	 * Create the table in the database, if it doesn't exist.
 	 */
 	private void createTable() {
 		String events = "CREATE TABLE IF NOT EXISTS " + tableName + "(playerID VARCHAR(100)," + " gameID INT,"
@@ -284,6 +316,7 @@ public class DBcontroller implements DBcontrollerInterface {
 	/**
 	 * A method to create DB records for testing purposes.
 	 */
+	@SuppressWarnings("unused")
 	private void fakeDbTester() {
 		for (int i = 0; i < 10; i++) {
 			// 10 players
@@ -294,7 +327,6 @@ public class DBcontroller implements DBcontrollerInterface {
 				try {
 					gameNumber = getCurrentNumberOfGames() + 1;
 				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				int numberOfEvent = ThreadLocalRandom.current().nextInt(0, 15 + 1);
@@ -306,7 +338,6 @@ public class DBcontroller implements DBcontrollerInterface {
 						int hitOrMiss = ThreadLocalRandom.current().nextInt(0, 1 + 1);
 						insertEvent("Player" + i, gameNumber, scoreRandom, EventType.values()[hitOrMiss]);
 					} catch (SQLException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
