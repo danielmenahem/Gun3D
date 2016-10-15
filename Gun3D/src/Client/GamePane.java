@@ -13,7 +13,6 @@ import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
-import server.GameServer;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
@@ -33,7 +32,7 @@ public class GamePane extends Pane{
 	private static final String HIT_SOUND_URL = "src/Client/Sounds/hit.wav";
 	private static final String MOVE_SOUND_URL = "src/Client/Sounds/cannon_move.wav";
 	private static final int [] TARGET_SIZES = {40, 30 , 20};
-	private static final int TARGET_Z_MAX = 100;
+	private static final int TARGET_Z_MAX = 35;
 	private static final double TARGET_Y_DEVIDER = 2.2;
 	private static final double ANIMATION_MILLIS = 5;
 	private static final int HIT_MULTIPLIER = 10; 
@@ -57,6 +56,9 @@ public class GamePane extends Pane{
 	private Label lblInfo;
 	private BackgroundImage background;
 	private MediaPlayer shotPlayer, hitPlayer, movePlayer;
+	
+	
+	//private CannonShell currentShell;
 
 
 	/**Create new Game panel
@@ -209,7 +211,7 @@ public class GamePane extends Pane{
 	private boolean checkForHit(CannonShell cs, Target target){
 		return Math.sqrt(Math.pow((target.getTranslateX() - cs.getTranslateX()), 2)
 				+ Math.pow((target.getTranslateY() - cs.getTranslateY()), 2) 
-				+ Math.pow((target.getTranslateZ() - cs.getTranslateZ()), 2)) <= (target.getRadius() + cs.getRadius());
+				+ Math.pow((target.getTranslateZ() - cs.getTranslateZ()), 2)) <= (TARGET_SIZES[this.difficulty.ordinal()]);
 	}
 
 	private boolean isOutofBounds(CannonShell shell) {
@@ -242,7 +244,7 @@ public class GamePane extends Pane{
 				CannonShell shell = new CannonShell(cannon.getTheta(), 
 						cannon.getPhi(), (int)cannon.getFitHeight() + 2, height, width);
 				this.getChildren().add(shell);
-				shells.add(shell);
+				shells.add(shell);				
 			}
 		});
 	}

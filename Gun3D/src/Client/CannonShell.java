@@ -9,7 +9,7 @@ public class CannonShell extends Sphere{
 	private int theta, phi, length;
 	private double height, width;
 	
-	private static final int RADIUS = 8;
+	public static final int RADIUS = 8;
 	public static final int INCREASMENT = 2;
 	
 	public CannonShell(int theta, int phi, int length, double height, double width){	
@@ -26,7 +26,6 @@ public class CannonShell extends Sphere{
         material = new PhongMaterial();
         material.setDiffuseColor(Color.GREY);
         material.setSpecularColor(Color.BLACK);
-		//shell = new Sphere();
 		setRadius(RADIUS);
 		moveShell();
 		setDrawMode(DrawMode.FILL);
@@ -36,9 +35,13 @@ public class CannonShell extends Sphere{
 	
 	public void moveShell() {
 		this.length +=INCREASMENT;
+		double z = this.getTranslateZ();
 		setTranslateX((int) (this.length*Math.cos(Math.toRadians(this.theta))*Math.sin(Math.toRadians(this.phi)) + this.width/2 ));
 		setTranslateY((int) (this.height - this.length*Math.sin(Math.toRadians(this.theta))*Math.sin(Math.toRadians(this.phi))));
-		setTranslateZ((int) (this.length*Math.cos(Math.toRadians(this.phi))));
+		setTranslateZ((int) (this.length*Math.cos(Math.toRadians(this.phi))/10));
+		
+		if((z>0 && this.getTranslateZ()>0))
+			this.setRadius(RADIUS+this.getTranslateZ()/5);
 		
 	}
 }

@@ -102,8 +102,8 @@ public class Test extends Application {
 		gamePane.setTranslateY(height-height/1.2);
         Scene scene = new Scene(paneMain, width, height,true );
         //Scene scene = new Scene(paneMain, width, height );
-		gamePane.startTraining(Difficulty.Low);
-		gamePane.startTraining(Difficulty.Medium);
+		//gamePane.startTraining(Difficulty.Low);
+		//gamePane.startTraining(Difficulty.Medium);
 		gamePane.startTraining(Difficulty.High);
 		primaryStage.setScene(scene);
 		primaryStage.show(); 

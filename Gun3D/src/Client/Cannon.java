@@ -4,7 +4,17 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.transform.Rotate;
 
-
+/**
+ * This class provides an API compatible with Cannon with JavaFx and
+ * control the cannon movement.
+ * 
+ * <br>
+ * Extends: {@link ImageView}
+ * 
+ * @author Daniel Menahem 39676804
+ * @author Michael Shvarts 301578878
+ * @version 1.0
+ */
 public class Cannon extends ImageView{
 
 	
@@ -12,7 +22,7 @@ public class Cannon extends ImageView{
 	private int horzinotalRotation, verticalRotation;
 	private Rotate rotateHorizontal, rotateVertical;
 	public static final int ROTATION_DELTA = 2;
-	public static final int MAX_HORIZONTAL_ROTATION = 50;
+	public static final int MAX_HORIZONTAL_ROTATION = 60;
 	public static final int MAX_VERTICAL_ROTATION = 30;
 	public static final int BASE_ANGEL = 90;
 	private double height, width;
