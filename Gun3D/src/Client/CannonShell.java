@@ -38,10 +38,10 @@ public class CannonShell extends Sphere{
 		double z = this.getTranslateZ();
 		setTranslateX((int) (this.length*Math.cos(Math.toRadians(this.theta))*Math.sin(Math.toRadians(this.phi)) + this.width/2 ));
 		setTranslateY((int) (this.height - this.length*Math.sin(Math.toRadians(this.theta))*Math.sin(Math.toRadians(this.phi))));
-		setTranslateZ((int) (this.length*Math.cos(Math.toRadians(this.phi))/10));
+		setTranslateZ((int) (this.length*Math.cos(Math.toRadians(this.phi)))/10);
 		
 		if((z>0 && this.getTranslateZ()>0))
-			this.setRadius(RADIUS+this.getTranslateZ()/5);
+			this.setRadius(RADIUS+this.getTranslateZ()/50);
 		
 	}
 }

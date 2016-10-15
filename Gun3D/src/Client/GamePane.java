@@ -29,9 +29,9 @@ public class GamePane extends Pane{
 	private static final String SHOT_SOUND_URL = "src/Client/Sounds/shot.wav";
 	private static final String HIT_SOUND_URL = "src/Client/Sounds/hit.wav";
 	private static final String MOVE_SOUND_URL = "src/Client/Sounds/cannon_move.wav";
-	private static final int [] TARGET_SIZES = {40, 30 , 20};
-	private static final int TARGET_Z_MAX = 35;
-	private static final double TARGET_Y_DEVIDER = 2.2;
+	private static final int [] TARGET_SIZES = {30, 25 ,20};
+	private static final int [] TARGET_Z_MAX = {45, 40, 35};
+	private static final double TARGET_Y_DEVIDER = 2.5;
 	private static final double ANIMATION_MILLIS = 5;
 	private static final int HIT_MULTIPLIER = 10; 
 	
@@ -166,7 +166,7 @@ public class GamePane extends Pane{
 		calculateScore();
 		int targetSize = TARGET_SIZES[difficulty.ordinal()];
 		target.paintTarget(targetSize, getRandom(width, targetSize), 
-				getRandom(height/TARGET_Y_DEVIDER, targetSize), getRandom(TARGET_Z_MAX, 0));
+				getRandom(height/TARGET_Y_DEVIDER, targetSize), getRandom(TARGET_Z_MAX[difficulty.ordinal()], 0));
 		if(isMatch){
 			try {
 				toServer.writeObject(new GameEvent(this.name, this.gameID, EventType.HIT, this.score));
@@ -216,7 +216,7 @@ public class GamePane extends Pane{
 		
 		return ((shell.getTranslateX() > (this.getWidth()+this.getTranslateX())) || 
 				(shell.getTranslateX() < 0) || (shell.getTranslateY() < 0) || 
-				(shell.getTranslateZ() > TARGET_Z_MAX*5) );
+				(shell.getTranslateZ() > TARGET_Z_MAX[difficulty.ordinal()]*3) );
 	}
 
 	private void setKeyboardEvents() {
@@ -276,14 +276,14 @@ public class GamePane extends Pane{
 		this.getChildren().add(cannon);
 		int targetSize = TARGET_SIZES[this.difficulty.ordinal()];
 		mainTarget = new Target(targetSize, getRandom(width, targetSize), 
-				getRandom(height/TARGET_Y_DEVIDER, targetSize), getRandom(TARGET_Z_MAX, 0)
-				, this.getTranslateX(), width + this.getTranslateX());
+				getRandom(height/TARGET_Y_DEVIDER, targetSize), getRandom(TARGET_Z_MAX[difficulty.ordinal()], 0)
+				, this.getTranslateX(), width + this.getTranslateX(),TARGET_Z_MAX[difficulty.ordinal()]);
 		this.getChildren().add(mainTarget);
 		
 		if(this.difficulty == Difficulty.Easy){
 			seconderyTarget =  new Target(targetSize, getRandom(width, targetSize), 
-				getRandom(height/TARGET_Y_DEVIDER, targetSize), getRandom(TARGET_Z_MAX, 0)
-					,this.getTranslateX(), width + this.getTranslateX());
+				getRandom(height/TARGET_Y_DEVIDER, targetSize), getRandom(TARGET_Z_MAX[difficulty.ordinal()], 0)
+					,this.getTranslateX(), width + this.getTranslateX(),TARGET_Z_MAX[difficulty.ordinal()]);
 			this.getChildren().add(seconderyTarget);
 		}
 		

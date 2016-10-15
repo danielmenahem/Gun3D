@@ -40,7 +40,7 @@ public class Cannon extends ImageView{
 	
 	private void paintCannon(){
 		this.setFitHeight(120);
-		this.setFitWidth(120);
+		this.setFitWidth(50);
 		this.setX(width/2 - this.getFitWidth()/2);
 		this.setY(height - this.getFitHeight());
 	}
@@ -110,6 +110,4 @@ public class Cannon extends ImageView{
 	public double getWidth() {
 		return width;
 	}
-	
-	
 }
