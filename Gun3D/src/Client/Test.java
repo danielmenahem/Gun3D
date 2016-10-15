@@ -2,6 +2,7 @@ package Client;
 
 import java.util.ArrayList;
 
+import Utilities.Difficulty;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;

@@ -41,7 +41,7 @@ public class CannonShell extends Sphere{
 		setTranslateZ((int) (this.length*Math.cos(Math.toRadians(this.phi)))/10);
 		
 		if((z>0 && this.getTranslateZ()>0))
-			this.setRadius(RADIUS+this.getTranslateZ()/50);
+			this.setRadius(Math.max(RADIUS, this.getTranslateZ() + 0.1));
 		
 	}
 }

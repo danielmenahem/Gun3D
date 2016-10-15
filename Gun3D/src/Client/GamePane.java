@@ -175,6 +175,8 @@ public class GamePane extends Pane{
 			}
 		}
 		updateInfoText();
+		
+		
 	}
 
 	private void miss(CannonShell cs) {
@@ -214,8 +216,8 @@ public class GamePane extends Pane{
 
 	private boolean isOutofBounds(CannonShell shell) {
 		
-		return ((shell.getTranslateX() > (this.getWidth()+this.getTranslateX())) || 
-				(shell.getTranslateX() < 0) || (shell.getTranslateY() < 0) || 
+		return ((shell.getTranslateX() + CannonShell.RADIUS> (this.getWidth()+this.getTranslateX())) || 
+				(shell.getTranslateX() - CannonShell.RADIUS< 0) || (shell.getTranslateY() - CannonShell.RADIUS*2 < 0) || 
 				(shell.getTranslateZ() > TARGET_Z_MAX[difficulty.ordinal()]*3) );
 	}
 
@@ -277,13 +279,13 @@ public class GamePane extends Pane{
 		int targetSize = TARGET_SIZES[this.difficulty.ordinal()];
 		mainTarget = new Target(targetSize, getRandom(width, targetSize), 
 				getRandom(height/TARGET_Y_DEVIDER, targetSize), getRandom(TARGET_Z_MAX[difficulty.ordinal()], 0)
-				, this.getTranslateX(), width + this.getTranslateX(),TARGET_Z_MAX[difficulty.ordinal()]);
+				, this.getTranslateX(), width + this.getTranslateX());
 		this.getChildren().add(mainTarget);
 		
 		if(this.difficulty == Difficulty.Easy){
 			seconderyTarget =  new Target(targetSize, getRandom(width, targetSize), 
 				getRandom(height/TARGET_Y_DEVIDER, targetSize), getRandom(TARGET_Z_MAX[difficulty.ordinal()], 0)
-					,this.getTranslateX(), width + this.getTranslateX(),TARGET_Z_MAX[difficulty.ordinal()]);
+					,this.getTranslateX(), width + this.getTranslateX());
 			this.getChildren().add(seconderyTarget);
 		}
 		
