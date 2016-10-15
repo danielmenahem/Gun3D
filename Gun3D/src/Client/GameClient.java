@@ -38,8 +38,8 @@ public class GameClient extends Application {
 	private ObjectOutputStream toServer;
 	private ObjectInputStream fromServer;
 	
-	double gameWidth;
-	double gameHeight;
+	private double gameWidth;
+	private double gameHeight;
 	
 	private int gameID;
 
@@ -124,7 +124,7 @@ public class GameClient extends Application {
 		gpGameSettings.setBackground(null);
 		
 		Scene scene = new Scene(gpGameSettings, sizeOfButtons * 3 + sizeOfPadding * 3,
-				sizeOfButtons + sizeOfPadding * 5);
+				sizeOfButtons + sizeOfPadding * 5, true);
 		scene.setFill(null);
 		return scene;	
 	}
@@ -163,7 +163,7 @@ public class GameClient extends Application {
 		bpTraining.setCenter(gp);
 		bpTraining.setBackground(null);
 		
-		Scene scene = new Scene(bpTraining,gameWidth, gameHeight, true);
+		Scene scene = new Scene(bpTraining, gameWidth, gameHeight, true);
 		scene.setFill(null);
 		return scene;
 	}
@@ -196,7 +196,7 @@ public class GameClient extends Application {
 		gpTraingOrGame.setPadding(new Insets(sizeOfPadding));
 		gpTraingOrGame.setBackground(null);
 		
-		Scene scene = new Scene(gpTraingOrGame, sizeOfButtons * 2 + sizeOfPadding * 3, sizeOfButtons + sizeOfPadding * 2);
+		Scene scene = new Scene(gpTraingOrGame, sizeOfButtons * 2 + sizeOfPadding * 3, sizeOfButtons + sizeOfPadding * 2, true);
 		scene.setFill(null);	
 		return scene;
 	}
