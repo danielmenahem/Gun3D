@@ -134,7 +134,7 @@ public class GamePane extends Pane{
 	}
 		
 	private void game() {
-		if(difficulty == Difficulty.High){
+		if(difficulty == Difficulty.Hard){
 			this.mainTarget.moveTarget();
 		}
 		for(int i=0; i<this.shells.size();i++){

@@ -4,7 +4,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import Client.GamePane.Difficulty;
+import Utilities.Difficulty;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -101,7 +101,7 @@ public class GameClient extends Application {
 				+ "-fx-min-height: " + sizeOfButtons + "px; " + "-fx-max-width: " + sizeOfButtons + "px; "
 				+ "-fx-max-height: " + sizeOfButtons + "px;");
 		btnMedium.setOnAction(e -> {
-
+			startGame(Difficulty.Medium);
 		});
 
 		btnHard = new Button("Hard");
@@ -109,7 +109,7 @@ public class GameClient extends Application {
 				+ "-fx-min-height: " + sizeOfButtons + "px; " + "-fx-max-width: " + sizeOfButtons + "px; "
 				+ "-fx-max-height: " + sizeOfButtons + "px;");
 		btnHard.setOnAction(e -> {
-			
+			startGame(Difficulty.Hard);
 		});
 
 		gpGameSettings.add(lblName, 0, 0);
@@ -120,6 +120,11 @@ public class GameClient extends Application {
 		
 		gpGameSettings.setPadding(new Insets(sizeOfPadding));
 		gpGameSettings.setBackground(null);
+		
+	}
+
+	private void startGame(Difficulty easy) {
+		// TODO Auto-generated method stub
 		
 	}
 

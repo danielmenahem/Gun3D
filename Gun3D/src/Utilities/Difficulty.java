@@ -1,5 +1,5 @@
 package Utilities;
 
 public enum Difficulty {
-	Easy, Medium, High
+	Easy, Medium, Hard
 	};
