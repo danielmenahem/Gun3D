@@ -72,6 +72,7 @@ public class Cannon extends ImageView{
 	 */
 	private double width;
 	
+	
 	/**
 	 * Constructs a cannon
 	 * @param width the container width
@@ -88,6 +89,7 @@ public class Cannon extends ImageView{
 		setRotationAxis();
 	}
 	
+	
 	/**
 	 * Places the cannon on the container
 	 * */
@@ -98,6 +100,7 @@ public class Cannon extends ImageView{
 		this.setY(height - this.getFitHeight());
 	}
 	
+	
 	/**
 	 * Sets the cannon rotation axis;
 	 * */
@@ -107,8 +110,8 @@ public class Cannon extends ImageView{
 		this.rotateHorizontal = new Rotate(horzinotalRotation, width/2, height);
 		this.rotateHorizontal.setAxis(Rotate.Z_AXIS);
 		this.getTransforms().addAll(rotateVertical, rotateHorizontal);
-
 	}
+	
 	
 	/**
 	 * Rotates the cannon forward throughout the z axis
@@ -124,6 +127,7 @@ public class Cannon extends ImageView{
 			return false;
 	}
 	
+	
 	/**
 	 * Rotates the cannon backwards throughout the z axis
 	 * @return true if the rotation is allowed (boolean)
@@ -137,6 +141,7 @@ public class Cannon extends ImageView{
 		else
 			return false;
 	}
+	
 	
 	/**
 	 * Rotates the cannon left throughout the x axis
@@ -152,6 +157,7 @@ public class Cannon extends ImageView{
 			return false;
 	}
 	
+	
 	/**
 	 * Rotates the cannon right throughout the x axis
 	 * @return true if the rotation is allowed (boolean)
@@ -166,6 +172,7 @@ public class Cannon extends ImageView{
 			return false;
 	}
 	
+	
 	/**
 	 * Returns the cannon rotation theta angle
 	 * @return theta angel (int)
@@ -173,6 +180,7 @@ public class Cannon extends ImageView{
 	public int getTheta(){
 		return BASE_ANGEL-horzinotalRotation;
 	}
+	
 	
 	/**
 	 * Returns the cannon rotation phi angle
@@ -182,6 +190,7 @@ public class Cannon extends ImageView{
 		return BASE_ANGEL-verticalRotation;
 	}
 	
+	
 	/**
 	 * Returns the cannon height
 	 * @return cannon height (double)
@@ -190,6 +199,7 @@ public class Cannon extends ImageView{
 		return height;
 	}
 
+	
 	/**
 	 * Returns the cannon height
 	 * @return cannon height (double)

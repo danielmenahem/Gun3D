@@ -1,9 +1,5 @@
 package Client;
 
-import java.net.Socket;
-import java.util.ArrayList;
-
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.paint.PhongMaterial;
@@ -47,6 +43,7 @@ public class Target extends Sphere {
 	private static final Color [] colors = {Color.BLACK,Color.YELLOW, Color.RED, Color.BLUEVIOLET, Color.BROWN, Color.DEEPSKYBLUE,
 			Color.LIMEGREEN, Color.MEDIUMVIOLETRED, Color.ORANGERED, Color.GREENYELLOW};
 	
+	
 	/**
 	 * Construct a target
 	 * @param radius the target radius
@@ -88,6 +85,7 @@ public class Target extends Sphere {
 		setDrawMode(DrawMode.FILL);
         setMaterial(material);
 	}
+	
 	
 	/**
 	 * Moves the target 1 unit on the X axis

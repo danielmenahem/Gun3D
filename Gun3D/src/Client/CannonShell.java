@@ -101,6 +101,6 @@ public class CannonShell extends Sphere{
 		
 		if((z>0 && this.getTranslateZ()>0))
 			this.setRadius(Math.max(RADIUS, this.getTranslateZ() + 0.1));
-		
 	}
 }
+

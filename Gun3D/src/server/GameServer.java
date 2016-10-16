@@ -168,6 +168,7 @@ public class GameServer extends Application {
 	private static Lock gameIdLock = new ReentrantLock();
 	//private static Lock dbLock = new ReentrantLock();
 	
+	
 	/**
 	 * Builds the GUI and sets up the server.
 	 * @param primaryStage the desired stage of the start
@@ -206,6 +207,7 @@ public class GameServer extends Application {
 		}).start();
 	}
 	
+	
 	/**
 	 *Changes player name in DB based on the inserted text in the intended TextFileds
 	 *errors will be printed in server log
@@ -227,6 +229,7 @@ public class GameServer extends Application {
 		tfReplacingName.setText("");
 	}
 
+	
 	/**
 	 *Deletes player name in DB based on the inserted text in the intended TextFiled
 	 *errors will be printed in server log
@@ -246,6 +249,7 @@ public class GameServer extends Application {
 		}
 	}
 
+	
 	/**
 	 * Gets new socket and opens new thread for it
 	 * documents details in server log
@@ -257,6 +261,7 @@ public class GameServer extends Application {
 		writeToLog("Client IP Address is " + inetAddress.getHostAddress() + "\n");					
 		new Thread(new HandleAClient(socket)).start();
 	}
+	
 	
 	/**
 	 * Starts a connection do DB
@@ -270,6 +275,7 @@ public class GameServer extends Application {
 			close();
 		}
 	}
+	
 	
 	/**
 	 * Opens the DB view
@@ -287,6 +293,7 @@ public class GameServer extends Application {
 		});
 	}
 	
+	
 	/**
 	 *Writes messages to sever log
 	 **/
@@ -295,6 +302,7 @@ public class GameServer extends Application {
 			taLog.appendText(line);
 		});
 	}
+	
 	
 	/**
 	 * Builds the application GUI
@@ -341,6 +349,7 @@ public class GameServer extends Application {
 		primaryStage.setAlwaysOnTop(true);
 	}
 	
+	
 	/**
 	 *Prepares the application for close. close the application
 	 * */
@@ -358,6 +367,7 @@ public class GameServer extends Application {
 		close();
 	}
 	
+	
 	/**
 	 * Close the application
 	 * */
@@ -369,6 +379,7 @@ public class GameServer extends Application {
 		});
 	}
 
+	
 	/**
 	 * This class provides a task to manage online clients
 	 * 
@@ -400,6 +411,7 @@ public class GameServer extends Application {
 			sockets.remove(socket);
 		}
 
+		
 		/** 
 		 * Runs a task
 		 * @exception SQLException closes the client socket
@@ -468,6 +480,7 @@ public class GameServer extends Application {
 			catch (IOException ex) {}
 		}
 	}
+	
 	
 	/**
 	 * Main of {@code GameServer} start the application

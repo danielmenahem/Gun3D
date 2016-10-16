@@ -2,9 +2,9 @@ package Client;
 import javafx.scene.text.Font;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import GameObjects.GameEvent;
 import Utilities.Difficulty;
 import Utilities.EventType;
@@ -19,7 +19,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import java.io.File;
+
 
 /**
  * This class provides an API compatible with GamePane, with JavaFx.
@@ -315,8 +315,11 @@ public class GamePane extends Pane{
 	 * */
 	private void initMediaPlayers(){
 		this.shotPlayer = new MediaPlayer(new Media(new File(SHOT_SOUND_URL).toURI().toString()));
+		this.shotPlayer.setVolume(0.5);
 		this.hitPlayer = new MediaPlayer(new Media(new File(HIT_SOUND_URL).toURI().toString()));
+		this.hitPlayer.setVolume(0.5);
 		this.movePlayer = new MediaPlayer(new Media(new File(MOVE_SOUND_URL).toURI().toString()));
+		this.movePlayer.setVolume(0.5);
 		this.backgroundPlayer = new MediaPlayer(new Media(new File(BACKGROUND_SOUND_URL).toURI().toString()));
 	}
 		
