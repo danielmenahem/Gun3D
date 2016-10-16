@@ -4,14 +4,67 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.paint.PhongMaterial;
 
+/**
+ * This class provides an API compatible with CannonShell, with JavaFx.
+ * Creates and control the cannon shell.
+ * 
+ * <br>
+ * Extends: {@link Sphere}
+ * 
+ * @author Daniel Menahem 39676804
+ * @author Michael Shvarts 301578878
+ * @version 1.0
+ */
 public class CannonShell extends Sphere{
-	private PhongMaterial material;
-	private int theta, phi, length;
-	private double height, width;
-	
+	/**
+	 * The value of static final int {@code RADIUS} is {@value}.
+	 */
 	public static final int RADIUS = 8;
+	
+	/**
+	 * The value of static final int {@code INCREASMENT} is {@value}.
+	 */
 	public static final int INCREASMENT = 2;
 	
+	/**
+	 * The {@code material} is a {@link PhongMaterial}
+	 */
+	private PhongMaterial material;
+	
+	/**
+	 * The {@code theta} in an int. holds the cannon shell theta angel
+	 * */
+	private int theta;
+	
+	/**
+	 * The {@code phi} in an int. holds the cannon shell phi angel
+	 * */
+	private int phi;
+	
+	/**
+	 * The {@code length} in an int. holds the cannon shell length from bottom center
+	 * */
+	private int length;
+	
+	/**
+	 * The {@code height} in an int. holds the container height
+	 * */
+	private double height;
+
+	/**
+	 * The {@code height} in an int. holds the container width
+	 * */
+	private double width;
+	
+	
+	/**
+	 * Constructs and paint cannon shell
+	 * @param theta the cannon shell fire theta angel
+	 * @param phi the cannon shell fire phi angel
+	 * @param length the cannon shell initial length from bottom center 
+	 * @param height the container height
+	 * @param width the container width
+	 * */
 	public CannonShell(int theta, int phi, int length, double height, double width){	
 		this.theta = theta;
 		this.phi = phi;
@@ -19,9 +72,12 @@ public class CannonShell extends Sphere{
 		this.height = height;
 		this.width = width;
 		paintCannonShell();
-
 	}
 	
+	
+	/**
+	 * Paints the cannon shell on the container
+	 * */
 	private void paintCannonShell(){
         material = new PhongMaterial();
         material.setDiffuseColor(Color.GREY);
@@ -33,6 +89,9 @@ public class CannonShell extends Sphere{
 	}
 	
 	
+	/**
+	 * Moves the shell one unit based on theta and phi angles
+	 * */
 	public void moveShell() {
 		this.length +=INCREASMENT;
 		double z = this.getTranslateZ();

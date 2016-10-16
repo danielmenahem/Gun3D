@@ -21,47 +21,157 @@ import javafx.scene.shape.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import views.DBView;
 
+/**
+ * This class provides a game server, manages online games and games history
+ * 
+ * <br>
+ * Extends: {@link Application}
+ * 
+ * @author Daniel Menahem 39676804
+ * @author Michael Shvarts 301578878
+ * @version 1.0
+ */
 public class GameServer extends Application { 
 	
+	/**
+	 * The value of static final  int {@code NUMBER_OF_ATTEMPTS} is {@value}.
+	 */
 	private static final int NUMBER_OF_ATTEMPTS = 3;
 	
-	private TextArea ta = new TextArea();
+	/**
+	 *The {@code taLog} is a {@link TextArea}. present server log.
+	 * */
+	private TextArea taLog = new TextArea();
+	
+	/**
+	 * The {@code btnShowDB} is a {@link Button}. loads the DB view.
+	 */
 	private Button btnShowDB = new Button("Show DB Data");
+	
+	/**
+	 * The {@code btnDelte} is a {@link Button}. deletes player from DB.
+	 */
 	private Button btnDelete = new Button("Delete Player");
+	
+	/**
+	 * The {@code btnChange} is a {@link Button}. changes player name on DB.
+	 */
 	private Button btnChange = new Button("Change Player Name");
-
+	
+	/**
+	 * The {@code paneMain} is a {@link BorderPane}.
+	 * contains all of the GUI components.
+	 */
 	private BorderPane paneMain = new BorderPane();
+	
+	/**
+	 * The {@code paneActions} is a {@link BorderPane}.
+	 */
 	private BorderPane paneActions = new BorderPane();
+	
+	/**
+	 * The {@code paneDelete} is a {@link BorderPane}.
+	 */
 	private BorderPane paneDelete = new BorderPane();
+	
+	/**
+	 * The {@code paneChange} is a {@link BorderPane}.
+	 */
 	private BorderPane paneChange = new BorderPane();
+	
+	/**
+	 * The {@code paneDeleteControls} is a {@link GridPane}.
+	 */
 	private GridPane paneDeleteControls = new GridPane();
+	
+	/**
+	 * The {@code paneChangeControls} is a {@link GridPane}.
+	 */
 	private GridPane paneChangeControls = new GridPane();
 	
+	/**
+	 * The {@code lblDeleteHead} is a {@link Label}.
+	 */
 	private Label lblDeleteHead = new Label("Delete Player");
+	
+	/**
+	 * The {@code lblChangeHead} is a {@link Label}.
+	 */
 	private Label lblChangeHead = new Label("Change Player Name");
+	
+	/**
+	 * The {@code lblNameForDelete} is a {@link Label}.
+	 */
 	private Label lblNameForDelate = new Label("Player Name: ");
+	
+	/**
+	 * The {@code lblNameForChange} is a {@link Label}.
+	 */
 	private Label lblNameToChange = new Label("Current Name: ");
+	
+	/**
+	 * The {@code lblReplacingName} is a {@link Label}.
+	 */
 	private Label lblReplacingName = new Label("New Name: ");
 	
+	/**
+	 * The {@code tfNameForDelete} is a {@link TextField}.
+	 */
 	private TextField tfNameForDelete = new TextField();
+	
+	/**
+	 * The {@code tfNameToChange} is a {@link TextField}.
+	 */
 	private TextField tfNameToChange = new TextField();
+	
+	/**
+	 * The {@code tfReplacingName} is a {@link TextField}.
+	 */
 	private TextField tfReplacingName = new TextField();
 	
+	/**
+	 * The {@code primaryStage} is a {@link Stage}. The application's primary Stage
+	 */
 	private Stage primaryStage;
 	
+	/**
+	 * The {@code serverSocket} is a {@link ServerSocket}. The listening socket of the server
+	 */
 	private ServerSocket serverSocket;
+	
+	/**
+	 * The {@code sockets} is a {@link ArrayList}. Holds ongoing sockets
+	 * @see Socket
+	 */
 	private ArrayList<Socket> sockets;
+
+	/**
+	 * The {@code dbManager} is a {@link DBcontroller}. Controls all interactions with DB.
+	 */
+	private DBcontroller dbManager;
 	
-	private DBcontroller db;
+	/**
+	 * The {@code lastGameID} is an integer. holds the last game id.
+	 */
 	private int lastGameID;
+	
+	/**
+	 * The {@code gameIdLock} is a {@link ReentrantLock}. 
+	 * protects the {@code lastGameID} from parallel use
+	 */
 	private static Lock gameIdLock = new ReentrantLock();
+	//private static Lock dbLock = new ReentrantLock();
 	
-	
+	/**
+	 * Builds the GUI and sets up the server.
+	 * @param primaryStage the desired stage of the start
+	 */
 	@Override
 	public void start(Stage primaryStage) {
 		this.primaryStage = primaryStage;
@@ -96,12 +206,16 @@ public class GameServer extends Application {
 		}).start();
 	}
 	
+	/**
+	 *Changes player name in DB based on the inserted text in the intended TextFileds
+	 *errors will be printed in server log
+	 */
 	private void changePlayerName() {
 		if(tfNameToChange.getText().equals("") || tfReplacingName.getText().equals(""))
 			writeToLog("Name Change Error: Please insert both names to make the change\n");
 		else{
 			try {
-				db.changePlayerName(tfNameToChange.getText(), tfReplacingName.getText());
+				dbManager.changePlayerName(tfNameToChange.getText(), tfReplacingName.getText());
 				writeToLog("Name change message: All events under the name " + tfNameToChange.getText()
 				+ " have been replaced by the name " +  tfReplacingName.getText());
 			} 
@@ -113,13 +227,16 @@ public class GameServer extends Application {
 		tfReplacingName.setText("");
 	}
 
-	
+	/**
+	 *Deletes player name in DB based on the inserted text in the intended TextFiled
+	 *errors will be printed in server log
+	 */
 	private void deletePlayer() {
 		if(tfNameForDelete.getText().equals(""))
 			writeToLog("Delete Error: Please insert name to deleting\n");
 		else{
 			try {
-				db.deletePlayer(tfNameForDelete.getText());
+				dbManager.deletePlayer(tfNameForDelete.getText());
 				writeToLog("Delete message: The player " + tfNameForDelete.getText() + " deleted successfuly\n");
 			} 
 			catch (SQLException e) {
@@ -129,7 +246,10 @@ public class GameServer extends Application {
 		}
 	}
 
-	
+	/**
+	 * Gets new socket and opens new thread for it
+	 * documents details in server log
+	 */
 	private void dealWithNewClient(Socket socket){
 		InetAddress inetAddress = socket.getInetAddress();
 		writeToLog("Starting thread for client at " + new Date() + '\n');
@@ -138,22 +258,27 @@ public class GameServer extends Application {
 		new Thread(new HandleAClient(socket)).start();
 	}
 	
-	
+	/**
+	 * Starts a connection do DB
+	 * 	 * @exception e close the server if the connection failed;
+	 */
 	private void connectToDB(){
 		try {
-			db = new DBcontroller();
-			this.lastGameID = db.getCurrentNumberOfGames();
+			dbManager = new DBcontroller();
+			this.lastGameID = dbManager.getCurrentNumberOfGames();
 		} catch (Exception e) {
 			close();
 		}
 	}
 	
-	
+	/**
+	 * Opens the DB view
+	 * */
 	private void viewDB(){
 		Platform.runLater(() -> {
 			primaryStage.setAlwaysOnTop(false);
 			try {
-				Stage dialog = new DBView(db);
+				Stage dialog = new DBView(dbManager);
 				dialog.show();
 			} 
 			catch (Exception e1) {
@@ -162,16 +287,20 @@ public class GameServer extends Application {
 		});
 	}
 	
-	
+	/**
+	 *Writes messages to sever log
+	 **/
 	private void writeToLog(String line){
 		Platform.runLater(() -> { 
-			ta.appendText(line);
+			taLog.appendText(line);
 		});
 	}
 	
-	
+	/**
+	 * Builds the application GUI
+	 * */
 	private void buildGUI(){
-		ta.setEditable(false);
+		taLog.setEditable(false);
 		paneChangeControls.add(lblNameToChange, 0, 0);
 		paneChangeControls.add(tfNameToChange, 1, 0);
 		paneChangeControls.add(lblReplacingName, 0, 1);
@@ -196,7 +325,7 @@ public class GameServer extends Application {
 		paneActions.setBottom(paneDelete);
 		paneMain.setRight(paneActions);
 		paneMain.setTop(btnShowDB);
-		paneMain.setCenter(new ScrollPane(ta));
+		paneMain.setCenter(new ScrollPane(taLog));
 		paneMain.setShape(new Line());
 		
 		BorderPane.setAlignment(lblDeleteHead, Pos.CENTER);
@@ -212,7 +341,9 @@ public class GameServer extends Application {
 		primaryStage.setAlwaysOnTop(true);
 	}
 	
-	
+	/**
+	 *Prepares the application for close. close the application
+	 * */
 	private void onClose(){
 		for(int i = 0; i< sockets.size(); i++){
 			try {
@@ -227,26 +358,40 @@ public class GameServer extends Application {
 		close();
 	}
 	
-	
+	/**
+	 * Close the application
+	 * */
 	private void close(){
-		db.closeConnection();
+		dbManager.closeConnection();
 		Platform.runLater(() -> {					
 			Platform.exit();
 			System.exit(0);
 		});
 	}
 
-	
+	/**
+	 * This class provides a task to manage online clients
+	 * 
+	 * <br>
+	 * Implements: {@link Runnable}
+	 * 
+	 * @version 1.0
+	 */
 	class HandleAClient implements Runnable {
 		private Socket socket;
 		private int gameID;
 		
-		/** Construct a thread */
+		/** 
+		 *Construct a task 
+		 * */
 		public HandleAClient(Socket socket) {
 			this.socket = socket;
 			sockets.add(socket);
 		}
 		
+		/**
+		 * Closes client socket
+		 * */
 		private void closeClient(){
 			try {
 				this.socket.close();
@@ -255,7 +400,13 @@ public class GameServer extends Application {
 			sockets.remove(socket);
 		}
 
-		/** Run a thread */
+		/** 
+		 * Runs a task
+		 * @exception SQLException closes the client socket
+		 * @exception IOException closes the client socket
+		 * @exception SocketException closes client socket
+		 * */
+		@Override
 		public void run() {
 			try {
 				gameIdLock.lock();
@@ -276,7 +427,7 @@ public class GameServer extends Application {
 						event = (GameEvent)inputFromClient.readObject();
 						failedReadAttempts = 0;
 						if(event.getEvent() != EventType.END_GAME){
-							db.insertEvent(event.getPlayerName(), event.getGameID(), 
+							dbManager.insertEvent(event.getPlayerName(), event.getGameID(), 
 									event.getGameScore(), event.getEvent());
 						}
 						else{
@@ -289,7 +440,7 @@ public class GameServer extends Application {
 						boolean success = false;
 						for(int i = 0; i<NUMBER_OF_ATTEMPTS; i++){
 							try {
-								db.insertEvent(event.getPlayerName(), event.getGameID(), 
+								dbManager.insertEvent(event.getPlayerName(), event.getGameID(), 
 										event.getGameScore(), event.getEvent());
 								success = true;
 								i = NUMBER_OF_ATTEMPTS;
@@ -301,7 +452,6 @@ public class GameServer extends Application {
 							closeClient();
 						}
 					}
-					
 					catch(IOException e){
 						failedReadAttempts++;
 						if(failedReadAttempts >= NUMBER_OF_ATTEMPTS){
@@ -310,18 +460,21 @@ public class GameServer extends Application {
 						}
 					}
 				}
+				closeClient();
 			} 
 			catch (SocketException ex) {
-				onClose();
+				closeClient();
 			} 
 			catch (IOException ex) {}
 		}
 	}
 	
-
+	/**
+	 * Main of {@code GameServer} start the application
+	 * @param args the command line arguments
+	 * @see start
+	 */
 	public static void main(String[] args) {
 		launch(args);
 	}
-	
-
 }
