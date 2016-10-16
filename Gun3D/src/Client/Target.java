@@ -76,7 +76,7 @@ public class Target extends Sphere {
 	public void paintTarget(int radius, double x, double y, double z){
         material = new PhongMaterial();
         int random1 = (int)(Math.random()*colors.length);
-        int random2 = (int)(1 + Math.random()*(colors.length-1));
+        int random2 = (int)(1 + Math.random()*(colors.length-2));
         
         material.setDiffuseColor(colors[random1]);
         material.setSpecularColor(colors[(random1+random2)%colors.length]);

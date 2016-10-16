@@ -11,6 +11,8 @@ import Utilities.EventType;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
@@ -45,6 +47,11 @@ public class GamePane extends Pane{
 	private static final String MATCH_BACKGROUND_URL = "/Client/Images/desert.jpg";
 	
 	/**
+	 * The value of static final String {@code  EXPLOSION_URL} is {@value}.
+	 */
+	private static final String EXPLOSION_URL = "/Client/Images/explosion.png";
+	
+	/**
 	 * The value of static final String {@code SHOT_SOUND_URL} is {@value}.
 	 */
 	private static final String SHOT_SOUND_URL = "src/Client/Sounds/shot.wav";
@@ -67,7 +74,7 @@ public class GamePane extends Pane{
 	/**
 	 * The static final int[] {@code TARGET_Z_MAX} holds the values 45, 40, 35
 	 */
-	private static final int [] TARGET_Z_MAX = {45, 40, 35};
+	private static final int [] TARGET_Z_MAX = {50, 42, 35};
 	
 	/**
 	 * The value of static final double {@code TARGET_Y_DEVIDER} is {@value}.
@@ -75,9 +82,20 @@ public class GamePane extends Pane{
 	private static final double TARGET_Y_DEVIDER = 2.5;
 	
 	/**
-	 * The value of static final double {@code ANIMATION_MILLIS} is {@value}.
+	 * The value of static final double {@code GAME_ANIMATION_MILLIS} is {@value}.
 	 */
-	private static final double ANIMATION_MILLIS = 5;
+	private static final double GAME_ANIMATION_MILLIS = 5;
+	
+	/**
+	 * The value of static final double {@code EXPLOSION_ANIMATION_MILLIS} is {@value}.
+	 */
+	private static final double EXPLOSION_ANIMATION_MILLIS = 100;
+	
+	/**
+	 * The value of static final int {@code NUMBER_OF_EXPLOSION_CYCLES} is {@value}.
+	 */
+	private static final int NUMBER_OF_EXPLOSION_CYCLES = 9;
+	
 	
 	/**
 	 * The value of static final int {@code HIT_MULTIPLIER} is {@value}.
@@ -189,7 +207,17 @@ public class GamePane extends Pane{
 	 * */
 	private MediaPlayer movePlayer;
 	
-
+	/**
+	 * The {@code imgExplusion} is {@link ImageView}. holds the explosion picture
+	 * */
+	private ImageView imgExplusion;
+	
+	/**
+	 * The {@code explosionAnimation} is {@link Timeline}. sets the explosion animation
+	 * */
+	private Timeline explosionAnimation;
+	
+	
 	/** 
 	 * Constructs new Game panel
 	 * @param width the game panel width (double)
@@ -198,8 +226,11 @@ public class GamePane extends Pane{
 		this.width = width;
 		this.height = height;
 		setSize();
+		
 		backgrounds_url.put(true, MATCH_BACKGROUND_URL);
 		backgrounds_url.put(false, TRAINING_BACKGROUND_URL);
+		
+		prepareExplosionAnimation();
 	}
 	
 	
@@ -260,7 +291,7 @@ public class GamePane extends Pane{
         setKeyboardEvents();
         getFocus();
         
-        gameAnimation = new Timeline(new KeyFrame(Duration.millis(ANIMATION_MILLIS), e ->{ 
+        gameAnimation = new Timeline(new KeyFrame(Duration.millis(GAME_ANIMATION_MILLIS), e ->{ 
         	game();
         	getFocus();
         }));
@@ -322,6 +353,7 @@ public class GamePane extends Pane{
 	 * */
 	private void hit(CannonShell cs, Target target) {
 		playSound(hitPlayer);
+		prepareAndShowExplosion(target);
 		this.hits++;
 		removeShell(cs);
 		calculateScore();
@@ -337,8 +369,22 @@ public class GamePane extends Pane{
 		}
 		updateInfoText();
 	}
-
 	
+	
+	/**
+	 * Prepares and start explosion animation
+	 * @param target the impaired target*/
+	private void prepareAndShowExplosion(Target target){
+    	imgExplusion.setVisible(true);
+    	imgExplusion.setX(target.getTranslateX() - target.getRadius() + target.getTranslateZ()/2);
+    	imgExplusion.setY(target.getTranslateY() - target.getRadius() + target.getTranslateZ()/2);
+    	imgExplusion.setFitWidth(Math.max(1,target.getRadius()*2 - target.getTranslateZ()));
+    	imgExplusion.setFitHeight(Math.max(1,target.getRadius()*2 - target.getTranslateZ()));
+
+		explosionAnimation.play();
+	}
+	
+
 	/**
 	 * Performs the action needed after a miss
 	 * @param cs the missing {@link CannonShell}
@@ -460,6 +506,21 @@ public class GamePane extends Pane{
 	private void getFocus(){
 		this.setFocusTraversable(true);
 		this.requestFocus();
+	}
+	
+	/**
+	 * Configures the explosion animation
+	 * */
+	private void prepareExplosionAnimation(){
+		imgExplusion = new ImageView(new Image(EXPLOSION_URL));
+		imgExplusion.setVisible(false);
+		
+		explosionAnimation = new Timeline(new KeyFrame(Duration.millis(EXPLOSION_ANIMATION_MILLIS), e -> {
+		    imgExplusion.setVisible(!imgExplusion.isVisible());
+		}));
+		
+		explosionAnimation.setCycleCount(9);
+		this.getChildren().add(imgExplusion);
 	}
 	
 
