@@ -11,8 +11,6 @@ import Utilities.EventType;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
@@ -65,6 +63,11 @@ public class GamePane extends Pane{
 	 * The value of static final String {@code MOVE_SOUND_URL} is {@value}.
 	 */
 	private static final String MOVE_SOUND_URL = "src/Client/Sounds/cannon_move.wav";
+	
+	/**
+	 * The value of static final String {@code BACKGROUND_SOUND_URL} is {@value}.
+	 */
+	private static final String BACKGROUND_SOUND_URL = "src/Client/Sounds/wind.wav";
 	
 	/**
 	 * The static final int[] {@code TARGET_SIZES} holds the values 30, 25 ,20
@@ -208,6 +211,11 @@ public class GamePane extends Pane{
 	private MediaPlayer movePlayer;
 	
 	/**
+	 * The {@code movePlayer} is {@link MediaPlayer}. holds the sound for cannon movement
+	 * */
+	private MediaPlayer backgroundPlayer;
+	
+	/**
 	 * The {@code imgExplusion} is {@link ImageView}. holds the explosion picture
 	 * */
 	private ImageView imgExplusion;
@@ -298,6 +306,7 @@ public class GamePane extends Pane{
         
 		gameAnimation.setCycleCount(Timeline.INDEFINITE);
 		gameAnimation.play();
+		playSound(backgroundPlayer, Timeline.INDEFINITE);
 	}
 	
 	
@@ -308,6 +317,7 @@ public class GamePane extends Pane{
 		this.shotPlayer = new MediaPlayer(new Media(new File(SHOT_SOUND_URL).toURI().toString()));
 		this.hitPlayer = new MediaPlayer(new Media(new File(HIT_SOUND_URL).toURI().toString()));
 		this.movePlayer = new MediaPlayer(new Media(new File(MOVE_SOUND_URL).toURI().toString()));
+		this.backgroundPlayer = new MediaPlayer(new Media(new File(BACKGROUND_SOUND_URL).toURI().toString()));
 	}
 		
 	
@@ -319,17 +329,15 @@ public class GamePane extends Pane{
 			this.mainTarget.moveTarget();
 		}
 		for(int i=0; i<this.shells.size();i++){
-			if (this.shells.get(i) instanceof CannonShell){
-				CannonShell cs = (CannonShell)this.shells.get(i);
-				cs.moveShell  ();
-				if(isOutofBounds(cs)){
-					miss(cs);
-				}
-				else{
-					Target target = isHit(cs);
-					if(target != null){
-						hit(cs, target);
-					}
+			CannonShell cs = this.shells.get(i);
+			cs.moveShell();
+			if(isOutofBounds(cs)){
+				miss(cs);
+			}
+			else{
+				Target target = isHit(cs);
+				if(target != null){
+					hit(cs, target);
 				}
 			}
 		}
@@ -352,7 +360,7 @@ public class GamePane extends Pane{
 	 * @param target the impaired target
 	 * */
 	private void hit(CannonShell cs, Target target) {
-		playSound(hitPlayer);
+		playSound(hitPlayer,1);
 		prepareAndShowExplosion(target);
 		this.hits++;
 		removeShell(cs);
@@ -462,22 +470,22 @@ public class GamePane extends Pane{
 		this.setOnKeyPressed(e -> {
 			if(e.getCode() == KeyCode.LEFT){
 				if(cannon.rotateLeft())
-					playSound(movePlayer);
+					playSound(movePlayer,1);
 			}
 			else if(e.getCode() == KeyCode.RIGHT){
 				if(cannon.rotateRight())
-					playSound(movePlayer);
+					playSound(movePlayer,1);
 			}
 			else if(e.getCode() == KeyCode.UP){
 				if(cannon.rotateForward())
-					playSound(movePlayer);
+					playSound(movePlayer,1);
 			}
 			else if(e.getCode() == KeyCode.DOWN){
 				if(cannon.rotateBackwards())
-					playSound(movePlayer);
+					playSound(movePlayer,1);
 			}
 			else if(e.getCode() == KeyCode.SPACE){
-				playSound(shotPlayer);
+				playSound(shotPlayer,1);
 				CannonShell shell = new CannonShell(cannon.getTheta(), 
 						cannon.getPhi(), (int)cannon.getFitHeight() + 2, height, width);
 				this.getChildren().add(shell);
@@ -487,14 +495,18 @@ public class GamePane extends Pane{
 	}
 	
 	
-	/**Plays a sound file
-	 * @param sound the sound {@link MediaPlayer}*/
-	private void playSound(MediaPlayer sound){
+	/**
+	 * Plays a sound file
+	 * @param sound the sound {@link MediaPlayer}
+	 * @param sycleCount 
+	 * */
+	private void playSound(MediaPlayer sound, int cycles){
         new Thread()
         {
             public void run() {
             	sound.seek(Duration.ZERO);
             	sound.play();
+            	sound.setCycleCount(cycles);
             }
         }.start();
 	}
@@ -508,6 +520,7 @@ public class GamePane extends Pane{
 		this.requestFocus();
 	}
 	
+	
 	/**
 	 * Configures the explosion animation
 	 * */
@@ -519,7 +532,7 @@ public class GamePane extends Pane{
 		    imgExplusion.setVisible(!imgExplusion.isVisible());
 		}));
 		
-		explosionAnimation.setCycleCount(9);
+		explosionAnimation.setCycleCount(NUMBER_OF_EXPLOSION_CYCLES);
 		this.getChildren().add(imgExplusion);
 	}
 	
