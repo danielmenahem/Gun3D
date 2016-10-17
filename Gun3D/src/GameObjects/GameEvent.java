@@ -1,5 +1,7 @@
 package GameObjects;
 
+import java.io.Serializable;
+
 import Utilities.EventType;
 
 /**
@@ -8,7 +10,12 @@ import Utilities.EventType;
  * @author Micha
  * @author Daniel
  */
-public class GameEvent {
+public class GameEvent implements Serializable{
+	/**
+	 * The value of static final long is {@value}.
+	 */
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Player's ID that is the player's name associated to this event
 	 */

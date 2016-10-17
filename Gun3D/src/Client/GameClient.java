@@ -72,8 +72,7 @@ public class GameClient extends Application {
 
 	private Scene startGame(Difficulty difficulty, String nameText) {
 
-		String playerID;
-		playerID = nameText.equals("") ? "Annonymous" : nameText;
+		String playerID = nameText.equals("") ? "Annonymous" : nameText;
 		try {
 			connectToServer();
 		} catch (ClassNotFoundException | IOException e) {
@@ -209,12 +208,17 @@ public class GameClient extends Application {
 		socket = new Socket(host, 8000);
 		toServer = new ObjectOutputStream(socket.getOutputStream());
 		fromServer = new ObjectInputStream(socket.getInputStream());
-		
-		gameID = (int) fromServer.readObject();
+		gameID = fromServer.readInt();
 	}
 
 	public static void main(String[] args) {
 		launch(args);
 	}
+	
+	//TODO: CSS independent sheet + better design
+	//TODO: JavaDoc, Daniel's improvements
+	//TODO: no server exceptions
+	//TODO: Close client better
+	
 
 }
