@@ -13,7 +13,6 @@ import Utilities.EventType;
 import database.DBcontroller;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -21,10 +20,8 @@ import javafx.scene.shape.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import views.DBView;
 
 /**
@@ -425,11 +422,10 @@ public class GameServer extends Application {
 				lastGameID++;
 				this.gameID = lastGameID;
 				gameIdLock.unlock();
-				
 				ObjectInputStream inputFromClient = new ObjectInputStream(socket.getInputStream()); 
 				ObjectOutputStream outputToClient = new ObjectOutputStream(socket.getOutputStream());
 				outputToClient.writeInt(this.gameID);
-				
+				writeToLog("Sent gameID: " + gameID + "\n");
 				GameEvent event = null;
 				Boolean loop = true;
 				int failedReadAttempts = 0;
