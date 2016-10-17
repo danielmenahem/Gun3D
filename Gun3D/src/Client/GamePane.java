@@ -129,7 +129,7 @@ public class GamePane extends Pane{
 	 * The {@code score} is an int. holds the game score
 	 * */
 	private int score;
-	
+
 	/**
 	 * The {@code hits} is an int. holds the number of hits
 	 * */
@@ -615,4 +615,41 @@ public class GamePane extends Pane{
         this.setWidth(width);
         this.setHeight(height);
 	}
+	
+	
+	public Difficulty getDifficulty() {
+		return difficulty;
+	}
+
+
+	public int getScore() {
+		return score;
+	}
+
+
+	public int getHits() {
+		return hits;
+	}
+
+
+	public int getMisses() {
+		return misses;
+	}
+
+
+	public int getGameID() {
+		return gameID;
+	}
+
+
+	public String getName() {
+		return name;
+	}
+
+	public boolean isMatch() {
+		return isMatch;
+	}
+
+
+	
 }

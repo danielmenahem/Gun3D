@@ -22,6 +22,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -29,9 +30,10 @@ import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 public class GameClient extends Application {
-	private final Difficulty trainingDifficulty = Difficulty.Easy;
-	private final int sizeOfButtons = 300;
-	private final int sizeOfPadding = 30;
+	private final Difficulty TRAINING_DIFFICULTY = Difficulty.Easy;
+	private final int SIZE_OF_BUTTONS = 300;
+	private final int SIZE_OF_PADDING = 30;
+	private final int GAME_LENGTH = 120; 
 
 	private Stage primaryStage;
 	private int secondsCounter;
@@ -43,6 +45,9 @@ public class GameClient extends Application {
 	private double gameWidth;
 	private double gameHeight;
 
+	private GamePane pnlGame;
+	private Stage currentStage;
+	
 	private int gameID;
 
 	@Override
@@ -57,39 +62,47 @@ public class GameClient extends Application {
 		Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 		gameWidth = primaryScreenBounds.getWidth();
 		gameHeight = primaryScreenBounds.getHeight();
-
-		primaryStage.setScene(trainingOrGameScene());
-		// primaryStage.initStyle(StageStyle.TRANSPARENT);
-		primaryStage.show();
-		primaryStage.setAlwaysOnTop(true);
-		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-			public void handle(WindowEvent event) {
-				Platform.exit();
-				System.exit(0);
-			}
-		});
+		
+		showTrainingOrGameStage();
 	}
 
-	private Scene startGame(Difficulty difficulty, String nameText) {
+	private void showGameStage(Difficulty difficulty, String nameText) {
 
 		String playerID = nameText.equals("") ? "Annonymous" : nameText;
+		
 		try {
 			connectToServer();
-		} catch (ClassNotFoundException | IOException e) {
-			// TODO what if no server
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		GamePane gp = new GamePane(gameWidth, gameHeight);
-		addTimerToGame(gp);
-		gp.startMatch(difficulty, toServer, playerID, gameID);
+		
+		pnlGame = new GamePane(gameWidth, gameHeight);
+		addTimerToGame(pnlGame, true);
+		pnlGame.startMatch(difficulty, toServer, playerID, gameID);
 
-		Scene scene = new Scene(gp, gameWidth, gameHeight, true);
+		Scene scene = new Scene(pnlGame, gameWidth, gameHeight, true);
 		scene.setFill(null);
-		return scene;
+		Stage stage = new Stage();
+		stage.setScene(scene);
+		stage.show();
+		stage.centerOnScreen();
+		stage.setAlwaysOnTop(true);
+		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			public void handle(WindowEvent event) {
+				endGame();
+			}
+		});
 
 	}
 
-	private void addTimerToGame(GamePane gp) {
+	private void addTimerToGame(GamePane gp, boolean realGame) {
 		secondsCounter = 0;
 		Label lblTimer = new Label("Timer:");
 		Timeline timer = new Timeline(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
@@ -97,7 +110,12 @@ public class GameClient extends Application {
 			public void handle(ActionEvent event) {
 				secondsCounter++;
 				lblTimer.setText("Time: " + Integer.toString(secondsCounter));
+				
+				if ((secondsCounter == GAME_LENGTH) && realGame) {
+					endGame();
+				}	
 			}
+
 		}));
 		timer.setCycleCount(Timeline.INDEFINITE);
 		timer.play();
@@ -105,34 +123,79 @@ public class GameClient extends Application {
 		lblTimer.setLayoutY(gp.getHeight() - 45);
 		gp.getChildren().add(lblTimer);
 	}
+	
+	
 
-	private Scene gameSettingsScene() {
+	private void endGame() {
+		pnlGame.stopGame();
+		try {
+			toServer.close();
+			fromServer.close();
+			socket.close();
+			
+			showGameEndedStage();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
+
+	private void showGameEndedStage() {
+		Label lblInfo = new Label("Player: " + pnlGame.getName()
+				+ "\nGame ID: " + pnlGame.getGameID()
+				+ "\nTime: " + secondsCounter
+				+ "\nHits: " + pnlGame.getHits()
+				+ "\nMisses: " + pnlGame.getMisses()
+				+ "\nScore: " + pnlGame.getScore());		
+		Button btnOK = new Button("OK");
+		btnOK.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				currentStage.close();				
+			}
+		});
+		
+		VBox vb = new VBox(30);
+		vb.getChildren().addAll(lblInfo, btnOK);
+		Scene scene = new Scene(vb);
+		
+		currentStage.setScene(scene);
+		currentStage.centerOnScreen();
+		currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			public void handle(WindowEvent event) {
+				showTrainingOrGameStage();
+			}
+		});
+	}
+	
+	private void showGameSettingsStage() {
 		GridPane gpGameSettings = new GridPane();
 		Label lblName = new Label("Insert your name:");
 		TextField tfName = new TextField();
 
 		Button btnEasy = new Button("Easy");
-		btnEasy.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + sizeOfButtons + "px; "
-				+ "-fx-min-height: " + sizeOfButtons + "px; " + "-fx-max-width: " + sizeOfButtons + "px; "
-				+ "-fx-max-height: " + sizeOfButtons + "px;");
+		btnEasy.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
+				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
+				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;");
 		btnEasy.setOnAction(e -> {
-			createNewWindow(startGame(Difficulty.Easy, tfName.getText()));
+			showGameStage(Difficulty.Easy, tfName.getText());
 		});
 
 		Button btnMedium = new Button("Medium");
-		btnMedium.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + sizeOfButtons + "px; "
-				+ "-fx-min-height: " + sizeOfButtons + "px; " + "-fx-max-width: " + sizeOfButtons + "px; "
-				+ "-fx-max-height: " + sizeOfButtons + "px;");
+		btnMedium.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
+				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
+				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;");
 		btnMedium.setOnAction(e -> {
-			createNewWindow(startGame(Difficulty.Medium, tfName.getText()));
+			showGameStage(Difficulty.Medium, tfName.getText());
 		});
 
 		Button btnHard = new Button("Hard");
-		btnHard.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + sizeOfButtons + "px; "
-				+ "-fx-min-height: " + sizeOfButtons + "px; " + "-fx-max-width: " + sizeOfButtons + "px; "
-				+ "-fx-max-height: " + sizeOfButtons + "px;");
+		btnHard.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
+				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
+				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;");
 		btnHard.setOnAction(e -> {
-			createNewWindow(startGame(Difficulty.Hard, tfName.getText()));
+			showGameStage(Difficulty.Hard, tfName.getText());
 		});
 
 		gpGameSettings.add(lblName, 0, 0);
@@ -141,67 +204,82 @@ public class GameClient extends Application {
 		gpGameSettings.add(btnMedium, 1, 1);
 		gpGameSettings.add(btnHard, 2, 1);
 
-		gpGameSettings.setHgap(sizeOfPadding);
-		gpGameSettings.setVgap(sizeOfPadding);
-		gpGameSettings.setPadding(new Insets(sizeOfPadding));
+		gpGameSettings.setHgap(SIZE_OF_PADDING);
+		gpGameSettings.setVgap(SIZE_OF_PADDING);
+		gpGameSettings.setPadding(new Insets(SIZE_OF_PADDING));
 		gpGameSettings.setBackground(null);
 
-		Scene scene = new Scene(gpGameSettings, sizeOfButtons * 3 + sizeOfPadding * 4,
-				sizeOfButtons + sizeOfPadding * 5, true);
+		Scene scene = new Scene(gpGameSettings, SIZE_OF_BUTTONS * 3 + SIZE_OF_PADDING * 4,
+				SIZE_OF_BUTTONS + SIZE_OF_PADDING * 5, true);
 		scene.setFill(null);
-		return scene;
+
+		currentStage.setScene(scene);
+		currentStage.centerOnScreen();
+		currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			public void handle(WindowEvent event) {
+				showTrainingOrGameStage();
+			}
+		});
 	}
 
-	private Scene trainingScene() {
+	private void showTrainingStage() {
 		GamePane gp = new GamePane(gameWidth, gameHeight);
 		Scene scene = new Scene(gp, gameWidth, gameHeight, true);
 		scene.setFill(null);
-		addTimerToGame(gp);
+		addTimerToGame(gp, false);
 
-		gp.startTraining(trainingDifficulty);
+		gp.startTraining(TRAINING_DIFFICULTY);
 
-		return scene;
+		currentStage.setScene(scene);
+		currentStage.centerOnScreen();
+		currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			public void handle(WindowEvent event) {
+				showTrainingOrGameStage();
+			}
+		});
 	}
-
-	private Scene trainingOrGameScene() {
+	
+	private void showTrainingOrGameStage() {
 		GridPane gpTraingOrGame = new GridPane();
 		Button btnTraining = new Button("Training Mode");
 
-		btnTraining.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + sizeOfButtons + "px; "
-				+ "-fx-min-height: " + sizeOfButtons + "px; " + "-fx-max-width: " + sizeOfButtons + "px; "
-				+ "-fx-max-height: " + sizeOfButtons + "px;"
+		btnTraining.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
+				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
+				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;"
 				+ "-fx-background-color: #E6E6FA, rgba(0,0,0,0.05),linear-gradient(#dcca8a, #c7a740), linear-gradient(#f9f2d6 0%, #f4e5bc 20%, #e6c75d 80%, #e2c045 100%),linear-gradient(#f6ebbe, #e6c34d);");
 		btnTraining.setOnAction(e -> {
-			createNewWindow(trainingScene());
+			showTrainingStage();
 		});
 
 		Button btnGame = new Button("Game Mode");
-		btnGame.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + sizeOfButtons + "px; "
-				+ "-fx-min-height: " + sizeOfButtons + "px; " + "-fx-max-width: " + sizeOfButtons + "px; "
-				+ "-fx-max-height: " + sizeOfButtons + "px;");
+		btnGame.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
+				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
+				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;");
 		btnGame.setOnAction(e -> {
-			createNewWindow(gameSettingsScene());
+			showGameSettingsStage();
 		});
 
 		gpTraingOrGame.add(btnTraining, 0, 0);
 		gpTraingOrGame.add(btnGame, 1, 0);
-		gpTraingOrGame.setHgap(sizeOfPadding);
-		gpTraingOrGame.setPadding(new Insets(sizeOfPadding));
+		gpTraingOrGame.setHgap(SIZE_OF_PADDING);
+		gpTraingOrGame.setPadding(new Insets(SIZE_OF_PADDING));
 		gpTraingOrGame.setBackground(null);
 
-		Scene scene = new Scene(gpTraingOrGame, sizeOfButtons * 2 + sizeOfPadding * 3,
-				sizeOfButtons + sizeOfPadding * 2, true);
+		Scene scene = new Scene(gpTraingOrGame, SIZE_OF_BUTTONS * 2 + SIZE_OF_PADDING * 3,
+				SIZE_OF_BUTTONS + SIZE_OF_PADDING * 2, true);
 		scene.setFill(null);
-		return scene;
-	}
-
-	private void createNewWindow(Scene scene) {
-		Stage stage = new Stage();
-		stage.setScene(scene);
-		stage.centerOnScreen();
-		stage.show();
-		stage.centerOnScreen();
-		stage.setAlwaysOnTop(true);
+		
+		currentStage = new Stage();
+		currentStage.show();
+		currentStage.setScene(scene);
+		currentStage.centerOnScreen();
+		currentStage.setAlwaysOnTop(true);
+		currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			public void handle(WindowEvent event) {
+				Platform.exit();
+				System.exit(0);
+			}
+		});
 	}
 
 	private void connectToServer() throws UnknownHostException, IOException, ClassNotFoundException {
@@ -211,12 +289,13 @@ public class GameClient extends Application {
 		gameID = fromServer.readInt();
 	}
 
+	
 	public static void main(String[] args) {
 		launch(args);
 	}
 	
 	//TODO: CSS independent sheet + better design
-	//TODO: JavaDoc, Daniel's improvements
+	//TODO: JavaDoc, Daniel's improvements and added methods
 	//TODO: no server exceptions
 	//TODO: Close client better
 	
