@@ -19,13 +19,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
@@ -33,9 +30,8 @@ public class GameClient extends Application {
 	private final Difficulty TRAINING_DIFFICULTY = Difficulty.Easy;
 	private final int SIZE_OF_BUTTONS = 300;
 	private final int SIZE_OF_PADDING = 30;
-	private final int GAME_LENGTH = 120; 
+	private final int GAME_LENGTH = 120;
 
-	private Stage primaryStage;
 	private int secondsCounter;
 	private Socket socket;
 	private String host = "localhost";
@@ -46,8 +42,8 @@ public class GameClient extends Application {
 	private double gameHeight;
 
 	private GamePane pnlGame;
-	private Stage currentStage;
-	
+	private Stage primaryStage;
+
 	private int gameID;
 
 	@Override
@@ -62,14 +58,14 @@ public class GameClient extends Application {
 		Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 		gameWidth = primaryScreenBounds.getWidth();
 		gameHeight = primaryScreenBounds.getHeight();
-		
+
 		showTrainingOrGameStage();
 	}
 
 	private void showGameStage(Difficulty difficulty, String nameText) {
 
 		String playerID = nameText.equals("") ? "Annonymous" : nameText;
-		
+
 		try {
 			connectToServer();
 		} catch (UnknownHostException e) {
@@ -82,21 +78,20 @@ public class GameClient extends Application {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		pnlGame = new GamePane(gameWidth, gameHeight);
 		addTimerToGame(pnlGame, true);
 		pnlGame.startMatch(difficulty, toServer, playerID, gameID);
 
 		Scene scene = new Scene(pnlGame, gameWidth, gameHeight, true);
 		scene.setFill(null);
-		Stage stage = new Stage();
-		stage.setScene(scene);
-		stage.show();
-		stage.centerOnScreen();
-		stage.setAlwaysOnTop(true);
-		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+		primaryStage.setScene(scene);
+		primaryStage.centerOnScreen();
+		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent event) {
+				
 				endGame();
+				event.consume();
 			}
 		});
 
@@ -110,10 +105,10 @@ public class GameClient extends Application {
 			public void handle(ActionEvent event) {
 				secondsCounter++;
 				lblTimer.setText("Time: " + Integer.toString(secondsCounter));
-				
+
 				if ((secondsCounter == GAME_LENGTH) && realGame) {
 					endGame();
-				}	
+				}
 			}
 
 		}));
@@ -123,52 +118,48 @@ public class GameClient extends Application {
 		lblTimer.setLayoutY(gp.getHeight() - 45);
 		gp.getChildren().add(lblTimer);
 	}
-	
-	
 
 	private void endGame() {
 		pnlGame.stopGame();
 		try {
+			System.out.println("gpt here");
 			toServer.close();
 			fromServer.close();
 			socket.close();
-			
 			showGameEndedStage();
+			System.out.println("got here 2");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}	
+		}
 	}
 
 	private void showGameEndedStage() {
-		Label lblInfo = new Label("Player: " + pnlGame.getName()
-				+ "\nGame ID: " + pnlGame.getGameID()
-				+ "\nTime: " + secondsCounter
-				+ "\nHits: " + pnlGame.getHits()
-				+ "\nMisses: " + pnlGame.getMisses()
-				+ "\nScore: " + pnlGame.getScore());		
+		Label lblInfo = new Label("Player: " + pnlGame.getName() + "\nGame ID: " + pnlGame.getGameID() + "\nTime: "
+				+ secondsCounter + "\nHits: " + pnlGame.getHits() + "\nMisses: " + pnlGame.getMisses() + "\nScore: "
+				+ pnlGame.getScore());
 		Button btnOK = new Button("OK");
 		btnOK.setOnAction(new EventHandler<ActionEvent>() {
-			
 			@Override
 			public void handle(ActionEvent event) {
-				currentStage.close();				
+				showTrainingOrGameStage();
 			}
 		});
-		
+
 		VBox vb = new VBox(30);
 		vb.getChildren().addAll(lblInfo, btnOK);
 		Scene scene = new Scene(vb);
-		
-		currentStage.setScene(scene);
-		currentStage.centerOnScreen();
-		currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+
+		primaryStage.setScene(scene);
+		System.out.println("got here 3");
+		primaryStage.centerOnScreen();
+		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent event) {
 				showTrainingOrGameStage();
 			}
 		});
 	}
-	
+
 	private void showGameSettingsStage() {
 		GridPane gpGameSettings = new GridPane();
 		Label lblName = new Label("Insert your name:");
@@ -213,9 +204,9 @@ public class GameClient extends Application {
 				SIZE_OF_BUTTONS + SIZE_OF_PADDING * 5, true);
 		scene.setFill(null);
 
-		currentStage.setScene(scene);
-		currentStage.centerOnScreen();
-		currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+		primaryStage.setScene(scene);
+		primaryStage.centerOnScreen();
+		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent event) {
 				showTrainingOrGameStage();
 			}
@@ -230,15 +221,15 @@ public class GameClient extends Application {
 
 		gp.startTraining(TRAINING_DIFFICULTY);
 
-		currentStage.setScene(scene);
-		currentStage.centerOnScreen();
-		currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+		primaryStage.setScene(scene);
+		primaryStage.centerOnScreen();
+		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent event) {
 				showTrainingOrGameStage();
 			}
 		});
 	}
-	
+
 	private void showTrainingOrGameStage() {
 		GridPane gpTraingOrGame = new GridPane();
 		Button btnTraining = new Button("Training Mode");
@@ -268,13 +259,12 @@ public class GameClient extends Application {
 		Scene scene = new Scene(gpTraingOrGame, SIZE_OF_BUTTONS * 2 + SIZE_OF_PADDING * 3,
 				SIZE_OF_BUTTONS + SIZE_OF_PADDING * 2, true);
 		scene.setFill(null);
-		
-		currentStage = new Stage();
-		currentStage.show();
-		currentStage.setScene(scene);
-		currentStage.centerOnScreen();
-		currentStage.setAlwaysOnTop(true);
-		currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+
+		primaryStage.show();
+		primaryStage.setScene(scene);
+		primaryStage.centerOnScreen();
+		primaryStage.setAlwaysOnTop(true);
+		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent event) {
 				Platform.exit();
 				System.exit(0);
@@ -289,15 +279,13 @@ public class GameClient extends Application {
 		gameID = fromServer.readInt();
 	}
 
-	
 	public static void main(String[] args) {
 		launch(args);
 	}
-	
-	//TODO: CSS independent sheet + better design
-	//TODO: JavaDoc, Daniel's improvements and added methods
-	//TODO: no server exceptions
-	//TODO: Close client better
-	
+
+	// TODO: CSS independent sheet + better design
+	// TODO: JavaDoc, Daniel's improvements and added methods
+	// TODO: no server exceptions
+	// TODO: Close client better
 
 }
