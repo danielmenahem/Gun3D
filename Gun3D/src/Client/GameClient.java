@@ -379,7 +379,6 @@ public class GameClient extends Application {
 
 	/**
 	 * Main method of {@code GameClient} to launch the application.
-	 * 
 	 * @param args
 	 *            command line arguments
 	 */
@@ -387,8 +386,11 @@ public class GameClient extends Application {
 		launch(args);
 	}
 
-	// TODO: CSS independent sheet + better design
+	// TODO: CSS independent sheet + better GUI
 	// TODO: JavaDoc, improve. Daniel: no need to mention type of properties (already mentioned)
 	// TODO: DANIEL? Music doesn't stop at scene change
+	// TODO: DANIEL? 3D improvements (balls should be small AND look further away, cannon ball should fall and not disappear/rise - add gravity? add shadow to targets? to cannon ball?)
+	//			sometimes explosion animation stays, some balls are un-hittable, targets' location on Z axis is not clear
+	// TODO: Change SQL table headers according to queries
 
 }

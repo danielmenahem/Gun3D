@@ -1,31 +1,21 @@
 package Client;
 
-import java.util.ArrayList;
 
-import Utilities.Difficulty;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javafx.util.Duration;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.*;
 
 public class Test extends Application {
 	
-	private ArrayList<CannonShell> shells = new ArrayList<>();
-/*	@Override
+/*	private ArrayList<CannonShell> shells = new ArrayList<>();
+	@Override
 	public void start(Stage primaryStage) throws Exception {
 		Pane pane = new Pane();
 
