@@ -616,36 +616,51 @@ public class GamePane extends Pane{
         this.setHeight(height);
 	}
 	
-	
+	/**
+	 * @return {@link GamePane#difficulty}
+	 */
 	public Difficulty getDifficulty() {
 		return difficulty;
 	}
 
-
+	/**
+	 * @return {@link GamePane#score}
+	 */
 	public int getScore() {
 		return score;
 	}
 
-
+	/**
+	 * @return {@link GamePane#hits}
+	 */
 	public int getHits() {
 		return hits;
 	}
 
-
+	/**
+	 * @return {@link GamePane#misses}
+	 */
 	public int getMisses() {
 		return misses;
 	}
 
-
+	/**
+	 * @return {@link GamePane#gameID}
+	 */
 	public int getGameID() {
 		return gameID;
 	}
 
-
+	/**
+	 * @return {@link GamePane#name}
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * @return {@link GamePane#isMatch}
+	 */
 	public boolean isMatch() {
 		return isMatch;
 	}

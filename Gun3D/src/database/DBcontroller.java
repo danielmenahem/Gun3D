@@ -17,8 +17,9 @@ import Utilities.EventType;
 /**
  * Implementation of the DB interface for the DB view.
  * 
- * @author Micha
- * @author Daniel
+ * @author Daniel Menahem 39676804
+ * @author Michael Shvarts 301578878
+ * @version 1.0
  * @see DBcontrollerInterface
  * 
  *      JavaDoc made under the assumption that the HTML generated doc will

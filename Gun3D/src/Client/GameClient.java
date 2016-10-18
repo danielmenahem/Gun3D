@@ -5,7 +5,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-
 import Utilities.Difficulty;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -26,171 +25,204 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
+/**
+ * A GUI stage to display DB queries
+ * 
+ * @author Daniel Menahem 39676804
+ * @author Michael Shvarts 301578878
+ * @version 1.0
+ *
+ *          JavaDoc made under the assumption that the HTML generated doc will
+ *          include private fields. Under different circumstances, the private
+ *          attributes would be documented in the public getters, and the rest
+ *          would link there. Private attributes documentation was made so
+ *          everything will be documented.
+ */
 public class GameClient extends Application {
-	private final Difficulty TRAINING_DIFFICULTY = Difficulty.Easy;
-	private final int SIZE_OF_BUTTONS = 300;
-	private final int SIZE_OF_PADDING = 30;
-	private final int GAME_LENGTH = 120;
-
-	private int secondsCounter;
+	/**
+	 * According to assignment description, user does not choose training
+	 * difficulty. {@code TRAINING_DIFFICULTY} is {@value}.
+	 */
+	private static final Difficulty TRAINING_DIFFICULTY = Difficulty.Easy;
+	/**
+	 * Denotes the size of the main buttons. {@code SIZE_OF_BUTTONS} is {@value}
+	 */
+	private static final int SIZE_OF_BUTTONS = 300;
+	/**
+	 * Denotes the size of padding. {@code SIZE_OF_PADDING} is {@value}
+	 */
+	private static final int SIZE_OF_PADDING = 30;
+	/**
+	 * Denotes the default length of a game. {@code GAME_LENGTH} is
+	 * {@value} seconds
+	 */
+	private static final int GAME_LENGTH = 120;
+	/**
+	 * Holds the server address. {@code HOST} is {@value}
+	 */
+	private static final String HOST = "localhost";
+	/**
+	 * Connects to the server.
+	 */
 	private Socket socket;
-	private String host = "localhost";
+	/**
+	 * Sends game events to the server.
+	 */
 	private ObjectOutputStream toServer;
+	/**
+	 * Receives game ID from server.
+	 */
 	private ObjectInputStream fromServer;
+	/**
+	 * Displays server connection errors.
+	 */
+	private Label lblConnectionError;
 
+	/**
+	 * Width of screen to send to the game pane.
+	 */
 	private double gameWidth;
+	/**
+	 * Height of screen to sent to the game pane.
+	 */
 	private double gameHeight;
 
+	/**
+	 * Displays the game
+	 */
 	private GamePane pnlGame;
+	/**
+	 * Primary stage for the game client
+	 */
 	private Stage primaryStage;
-
+	/**
+	 * Performs one second ticks to display a seconds timer in the game
+	 */
+	private Timeline timer;
+	/**
+	 * Holds timer ticks
+	 */
+	private int secondsCounter;
+	/**
+	 * Game ID received from the server
+	 */
 	private int gameID;
 
+	/**
+	 * Assigns the primary stage to the class property and gets the screen sizes
+	 * 
+	 * @param primaryStage
+	 *            primary stage of the application
+	 */
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
 
-		buildGUI();
-
-	}
-
-	private void buildGUI() {
 		Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 		gameWidth = primaryScreenBounds.getWidth();
 		gameHeight = primaryScreenBounds.getHeight();
 
-		showTrainingOrGameStage();
+		setTrainingOrGameScene();
 	}
 
-	private void showGameStage(Difficulty difficulty, String nameText) {
+	/**
+	 * Sets the scene that allows choice between training and game modes.
+	 */
+	private void setTrainingOrGameScene() {
+		GridPane gpTraingOrGame = new GridPane();
+		Button btnTraining = new Button("Training Mode");
+		btnTraining.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
+				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
+				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;"
+				+ "-fx-background-color: #E6E6FA, rgba(0,0,0,0.05),linear-gradient(#dcca8a, #c7a740), linear-gradient(#f9f2d6 0%, #f4e5bc 20%, #e6c75d 80%, #e2c045 100%),linear-gradient(#f6ebbe, #e6c34d);");
+		btnTraining.setOnAction(e -> {
+			setTrainingScene();
+		});
+		Button btnGame = new Button("Game Mode");
+		btnGame.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
+				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
+				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;");
+		btnGame.setOnAction(e -> {
+			setGameSettingsScene();
+		});
+		gpTraingOrGame.add(btnTraining, 0, 0);
+		gpTraingOrGame.add(btnGame, 1, 0);
+		gpTraingOrGame.setHgap(SIZE_OF_PADDING);
+		gpTraingOrGame.setPadding(new Insets(SIZE_OF_PADDING));
+		gpTraingOrGame.setBackground(null);
 
-		String playerID = nameText.equals("") ? "Annonymous" : nameText;
-
-		try {
-			connectToServer();
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		pnlGame = new GamePane(gameWidth, gameHeight);
-		addTimerToGame(pnlGame, true);
-		pnlGame.startMatch(difficulty, toServer, playerID, gameID);
-
-		Scene scene = new Scene(pnlGame, gameWidth, gameHeight, true);
+		Scene scene = new Scene(gpTraingOrGame, SIZE_OF_BUTTONS * 2 + SIZE_OF_PADDING * 3,
+				SIZE_OF_BUTTONS + SIZE_OF_PADDING * 2, true);
 		scene.setFill(null);
+
+		primaryStage.setScene(scene);
+		primaryStage.show();
+		primaryStage.setAlwaysOnTop(true);
+		primaryStage.centerOnScreen();
+		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			public void handle(WindowEvent event) {
+				Platform.exit();
+				System.exit(0);
+			}
+		});
+	}
+
+	/**
+	 * Sets the scene that shows the game in training mode (unlimited timer and
+	 * no records).
+	 */
+	private void setTrainingScene() {
+		GamePane gp = new GamePane(gameWidth, gameHeight);
+		addTimerToGame(gp, false);
+		Scene scene = new Scene(gp, gameWidth, gameHeight, true);
+		scene.setFill(null);
+		gp.startTraining(TRAINING_DIFFICULTY);
+
 		primaryStage.setScene(scene);
 		primaryStage.centerOnScreen();
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent event) {
-				
-				endGame();
+				timer.stop();
+				setTrainingOrGameScene();
 				event.consume();
 			}
 		});
-
 	}
 
-	private void addTimerToGame(GamePane gp, boolean realGame) {
-		secondsCounter = 0;
-		Label lblTimer = new Label("Timer:");
-		Timeline timer = new Timeline(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				secondsCounter++;
-				lblTimer.setText("Time: " + Integer.toString(secondsCounter));
-
-				if ((secondsCounter == GAME_LENGTH) && realGame) {
-					endGame();
-				}
-			}
-
-		}));
-		timer.setCycleCount(Timeline.INDEFINITE);
-		timer.play();
-		lblTimer.setLayoutX(0);
-		lblTimer.setLayoutY(gp.getHeight() - 45);
-		gp.getChildren().add(lblTimer);
-	}
-
-	private void endGame() {
-		pnlGame.stopGame();
-		try {
-			System.out.println("gpt here");
-			toServer.close();
-			fromServer.close();
-			socket.close();
-			showGameEndedStage();
-			System.out.println("got here 2");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	private void showGameEndedStage() {
-		Label lblInfo = new Label("Player: " + pnlGame.getName() + "\nGame ID: " + pnlGame.getGameID() + "\nTime: "
-				+ secondsCounter + "\nHits: " + pnlGame.getHits() + "\nMisses: " + pnlGame.getMisses() + "\nScore: "
-				+ pnlGame.getScore());
-		Button btnOK = new Button("OK");
-		btnOK.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				showTrainingOrGameStage();
-			}
-		});
-
-		VBox vb = new VBox(30);
-		vb.getChildren().addAll(lblInfo, btnOK);
-		Scene scene = new Scene(vb);
-
-		primaryStage.setScene(scene);
-		System.out.println("got here 3");
-		primaryStage.centerOnScreen();
-		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-			public void handle(WindowEvent event) {
-				showTrainingOrGameStage();
-			}
-		});
-	}
-
-	private void showGameSettingsStage() {
+	/**
+	 * Sets the scene that allows player's name insertion and choice of game
+	 * difficulty.
+	 */
+	private void setGameSettingsScene() {
 		GridPane gpGameSettings = new GridPane();
-		Label lblName = new Label("Insert your name:");
+		Label lblName = new Label("Name: ");
+		lblConnectionError = new Label();
 		TextField tfName = new TextField();
-
 		Button btnEasy = new Button("Easy");
 		btnEasy.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
 				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
 				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;");
 		btnEasy.setOnAction(e -> {
-			showGameStage(Difficulty.Easy, tfName.getText());
+			setGameScene(Difficulty.Easy, tfName.getText());
 		});
-
 		Button btnMedium = new Button("Medium");
 		btnMedium.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
 				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
 				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;");
 		btnMedium.setOnAction(e -> {
-			showGameStage(Difficulty.Medium, tfName.getText());
+			setGameScene(Difficulty.Medium, tfName.getText());
 		});
-
 		Button btnHard = new Button("Hard");
 		btnHard.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
 				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
 				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;");
 		btnHard.setOnAction(e -> {
-			showGameStage(Difficulty.Hard, tfName.getText());
+			setGameScene(Difficulty.Hard, tfName.getText());
 		});
 
 		gpGameSettings.add(lblName, 0, 0);
 		gpGameSettings.add(tfName, 1, 0);
+		gpGameSettings.add(lblConnectionError, 2, 0);
 		gpGameSettings.add(btnEasy, 0, 1);
 		gpGameSettings.add(btnMedium, 1, 1);
 		gpGameSettings.add(btnHard, 2, 1);
@@ -208,84 +240,155 @@ public class GameClient extends Application {
 		primaryStage.centerOnScreen();
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent event) {
-				showTrainingOrGameStage();
+				setTrainingOrGameScene();
+				event.consume();
 			}
 		});
+
 	}
 
-	private void showTrainingStage() {
-		GamePane gp = new GamePane(gameWidth, gameHeight);
-		Scene scene = new Scene(gp, gameWidth, gameHeight, true);
-		scene.setFill(null);
-		addTimerToGame(gp, false);
+	/**
+	 * Sets the scene to display the game pane in game mode (2 minutes limit,
+	 * records events).
+	 * 
+	 * @param difficulty
+	 *            the game's {@link Difficulty}
+	 * @param nameText
+	 *            text inserted by the user as the player's ID
+	 */
+	private void setGameScene(Difficulty difficulty, String nameText) {
+		String playerID = nameText.equals("") ? "Annonymous" : nameText;
 
-		gp.startTraining(TRAINING_DIFFICULTY);
+		try {
+			connectToServer();
+		} catch (ClassNotFoundException | IOException e) {
+			lblConnectionError.setText("Server Error");
+			return;
+		}
+
+		pnlGame = new GamePane(gameWidth, gameHeight);
+		addTimerToGame(pnlGame, true);
+		pnlGame.startMatch(difficulty, toServer, playerID, gameID);
+
+		Scene scene = new Scene(pnlGame, gameWidth, gameHeight, true);
+		scene.setFill(null);
 
 		primaryStage.setScene(scene);
 		primaryStage.centerOnScreen();
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent event) {
-				showTrainingOrGameStage();
+				endGame();
+				event.consume();
 			}
 		});
 	}
 
-	private void showTrainingOrGameStage() {
-		GridPane gpTraingOrGame = new GridPane();
-		Button btnTraining = new Button("Training Mode");
+	/**
+	 * Ends game mode.
+	 */
+	private void endGame() {
+		pnlGame.stopGame();
+		timer.stop();
+		closeConnection();
+		setGameEndedScene();
+	}
 
-		btnTraining.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
-				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
-				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;"
-				+ "-fx-background-color: #E6E6FA, rgba(0,0,0,0.05),linear-gradient(#dcca8a, #c7a740), linear-gradient(#f9f2d6 0%, #f4e5bc 20%, #e6c75d 80%, #e2c045 100%),linear-gradient(#f6ebbe, #e6c34d);");
-		btnTraining.setOnAction(e -> {
-			showTrainingStage();
+	/**
+	 * Disconnects from server.
+	 */
+	private void closeConnection() {
+		try {
+			toServer.close();
+			fromServer.close();
+			socket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Sets the scene to display game statistics.
+	 */
+	private void setGameEndedScene() {
+		Label lblInfo = new Label("Player: " + pnlGame.getName() + "\nGame ID: " + pnlGame.getGameID() + "\nTime: "
+				+ secondsCounter + "\nHits: " + pnlGame.getHits() + "\nMisses: " + pnlGame.getMisses() + "\nScore: "
+				+ pnlGame.getScore());
+		Button btnOK = new Button("OK");
+		btnOK.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				setTrainingOrGameScene();
+			}
 		});
 
-		Button btnGame = new Button("Game Mode");
-		btnGame.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
-				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
-				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;");
-		btnGame.setOnAction(e -> {
-			showGameSettingsStage();
-		});
+		VBox vb = new VBox(30);
+		vb.getChildren().addAll(lblInfo, btnOK);
+		Scene scene = new Scene(vb);
 
-		gpTraingOrGame.add(btnTraining, 0, 0);
-		gpTraingOrGame.add(btnGame, 1, 0);
-		gpTraingOrGame.setHgap(SIZE_OF_PADDING);
-		gpTraingOrGame.setPadding(new Insets(SIZE_OF_PADDING));
-		gpTraingOrGame.setBackground(null);
-
-		Scene scene = new Scene(gpTraingOrGame, SIZE_OF_BUTTONS * 2 + SIZE_OF_PADDING * 3,
-				SIZE_OF_BUTTONS + SIZE_OF_PADDING * 2, true);
-		scene.setFill(null);
-
-		primaryStage.show();
 		primaryStage.setScene(scene);
 		primaryStage.centerOnScreen();
-		primaryStage.setAlwaysOnTop(true);
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent event) {
-				Platform.exit();
-				System.exit(0);
+				setTrainingOrGameScene();
+				event.consume();
 			}
 		});
 	}
 
+	/**
+	 * Adds timer to the game pane.
+	 * 
+	 * @param gamePanel
+	 *            the game panel
+	 * @param realGame
+	 *            true for game mode, false for training mode.
+	 */
+	private void addTimerToGame(GamePane gamePanel, boolean realGame) {
+		secondsCounter = 0;
+		Label lblTimer = new Label("Timer: 0");
+		timer = new Timeline(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				secondsCounter++;
+				lblTimer.setText("Time: " + Integer.toString(secondsCounter));
+
+				if ((secondsCounter == GAME_LENGTH) && realGame) {
+					endGame();
+				}
+			}
+
+		}));
+
+		timer.setCycleCount(Timeline.INDEFINITE);
+		timer.play();
+		lblTimer.setLayoutX(0);
+		lblTimer.setLayoutY(gamePanel.getHeight() - 45);
+		gamePanel.getChildren().add(lblTimer);
+	}
+
+	/**
+	 * Connects to server.
+	 */
 	private void connectToServer() throws UnknownHostException, IOException, ClassNotFoundException {
-		socket = new Socket(host, 8000);
+		socket = new Socket(HOST, 8000);
 		toServer = new ObjectOutputStream(socket.getOutputStream());
 		fromServer = new ObjectInputStream(socket.getInputStream());
 		gameID = fromServer.readInt();
 	}
 
+	/**
+	 * Main method of {@code GameClient} to launch the application.
+	 * 
+	 * @param args
+	 *            command line arguments
+	 */
 	public static void main(String[] args) {
 		launch(args);
 	}
 
 	// TODO: CSS independent sheet + better design
-	// TODO: JavaDoc, Daniel's improvements and added methods
-	// TODO: no server exceptions
-	// TODO: Close client better
+	// TODO: JavaDoc, improve. Daniel: no need to mention type of properties (already mentioned)
+	// TODO: DANIEL? Music doesn't stop at scene change
 
 }

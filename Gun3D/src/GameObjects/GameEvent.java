@@ -7,121 +7,114 @@ import Utilities.EventType;
 /**
  * A game event class
  * 
- * @author Micha
- * @author Daniel
+ * @author Daniel Menahem 39676804
+ * @author Michael Shvarts 301578878
+ * @version 1.0
+ * 
+ *          JavaDoc made under the assumption that the HTML generated doc will
+ *          include private fields. Under different circumstances, the private
+ *          attributes would be documented in the public getters, and the rest
+ *          would link there. Private attributes documentation was made so
+ *          everything will be documented.
+ * 
  */
-public class GameEvent implements Serializable{
+public class GameEvent implements Serializable {
 	/**
 	 * The value of static final long is {@value}.
 	 */
 	private static final long serialVersionUID = 1L;
-
 	/**
 	 * Player's ID that is the player's name associated to this event
 	 */
 	private String playerName;
-
 	/*
 	 * Game's ID associated to this event.
 	 */
 	private int gameID;
-
 	/**
 	 * Event type of the event associated to this record. {@link EventType}
 	 */
-	private EventType event;
+	private EventType eventType;
+
+	/**
+	 * current game score at the time of the event.
+	 */
 	private int gameScore;
 
 	/**
 	 * Public constructor to create a game event
 	 * 
 	 * @param playerName
-	 *            player's name and ID
+	 *            {@link GameEvent#playerName}
 	 * @param gameID
-	 *            game ID
-	 * @param event
-	 *            event type ({@link EventType} options: HIT, MISS, END_GAME)
+	 *            {@link GameEvent#gameID}
+	 * @param eventType
+	 *            {@link GameEvent#eventType}
 	 * @param gameScore
-	 *            game's current score
+	 *            {@link GameEvent#gameScore}
 	 */
-	public GameEvent(String playerName, int gameID, EventType event, int gameScore) {
+	public GameEvent(String playerName, int gameID, EventType eventType, int gameScore) {
 		this.playerName = playerName;
 		this.gameID = gameID;
-		this.event = event;
+		this.eventType = eventType;
 		this.gameScore = gameScore;
 	}
 
 	/**
-	 * Gets the event's player ID
-	 * 
-	 * @return the player's name
+	 * @return {@link GameEvent#playerName}
 	 */
 	public String getPlayerName() {
 		return playerName;
 	}
 
 	/**
-	 * Sets the event's player ID
-	 * 
 	 * @param name
-	 *            the event's new player's name
+	 *            {@link GameEvent#playerName}
 	 */
 	public void setPlayerName(String name) {
 		this.playerName = name;
 	}
 
 	/**
-	 * Gets the event's game ID
-	 * 
-	 * @return game's ID
+	 * @return {@link GameEvent#gameID}
 	 */
 	public int getGameID() {
 		return gameID;
 	}
 
 	/**
-	 * Sets the event's game ID
-	 * 
 	 * @param gameID
-	 *            the event's new game ID
+	 *            {@link GameEvent#gameID}
 	 */
 	public void setGameID(int gameID) {
 		this.gameID = gameID;
 	}
 
 	/**
-	 * Gets the event type
-	 * 
-	 * @return {@link EventType} options: MISS, HIT, END_GAME
+	 * @return {@link GameEvent#eventType}
 	 */
 	public EventType getEvent() {
-		return this.event;
+		return this.eventType;
 	}
 
 	/**
-	 * Sets the event's event type
-	 * 
 	 * @param event
-	 *            new event type, {@link EventType} options: MISS, HIT, END_GAME
+	 *            {@link GameEvent#eventType}
 	 */
 	public void setEvent(EventType event) {
-		this.event = event;
+		this.eventType = event;
 	}
 
 	/**
-	 * Gets the event's game score
-	 * 
-	 * @return the game's score
+	 * @return {@link GameEvent#gameScore}
 	 */
 	public int getGameScore() {
 		return gameScore;
 	}
 
 	/**
-	 * Sets the event's game score
-	 * 
 	 * @param gameScore
-	 *            new event game score
+	 *            {@link GameEvent#gameScore}
 	 */
 	public void setGameScore(int gameScore) {
 		this.gameScore = gameScore;

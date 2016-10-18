@@ -23,14 +23,15 @@ import javafx.stage.Stage;
 /**
  * A GUI stage to display DB queries
  * 
- * @author Micha
- * @author Daniel
+ * @author Daniel Menahem 39676804
+ * @author Michael Shvarts 301578878
+ * @version 1.0
  *
- *         JavaDoc made under the assumption that the HTML generated doc will
- *         include private fields. Under different circumstances, the private
- *         attributes would be documented in the public getters, and the rest
- *         would link there. Private attributes documentation was made so
- *         everything will be documented.
+ *          JavaDoc made under the assumption that the HTML generated doc will
+ *          include private fields. Under different circumstances, the private
+ *          attributes would be documented in the public getters, and the rest
+ *          would link there. Private attributes documentation was made so
+ *          everything will be documented.
  */
 
 public class DBView extends Stage {
@@ -69,10 +70,13 @@ public class DBView extends Stage {
 	 * A gridpane to contain the elemnts need to choose and run a query
 	 */
 	private GridPane gpOptions;
-
+	/*
+	 * Main scene to contain the GUI elements
+	 */
 	private Scene scene;
 	/**
-	 * The database object that performs the queries
+	 * The database controller that performs the queries and implements
+	 * {@link DBcontrollerInterface}
 	 */
 	private DBcontrollerInterface db;
 	/**
@@ -81,10 +85,10 @@ public class DBView extends Stage {
 	private TableView<Record> table;
 
 	/**
-	 * A constructor to build this view
+	 * The constructor that builds this view
 	 * 
 	 * @param db
-	 *            an object implementing the {@link DBcontrollerInterface}
+	 *            {@link DBView#db}
 	 */
 	public DBView(DBcontroller db) {
 		this.db = db;
@@ -127,7 +131,6 @@ public class DBView extends Stage {
 		TableColumn<Record, String> tcTimeStamp = new TableColumn<>("Time Stamp");
 		tcTimeStamp.setCellValueFactory(new PropertyValueFactory<Record, String>("timeStamp"));
 
-		
 		table.getColumns().setAll(tcPlayerID, tcGameID, tcGameScore, tcEventType, tcTimeStamp);
 		table.setPrefWidth(450);
 		table.setPrefHeight(300);
@@ -140,10 +143,8 @@ public class DBView extends Stage {
 
 		this.setTitle("Gun3D DB view");
 		this.setScene(scene);
-
 		this.show();
 		this.setAlwaysOnTop(true);
-
 	}
 
 	/**
@@ -185,7 +186,7 @@ public class DBView extends Stage {
 				// All games by most misses (descending)
 				table.setItems(FXCollections.observableList(db.getAllGamesByMostEventsDescending(EventType.MISS)));
 			}
-			
+
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
