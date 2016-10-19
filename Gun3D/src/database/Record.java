@@ -2,7 +2,7 @@ package database;
 
 import java.time.LocalDateTime;
 
-import Utilities.EventType;
+import GameObjects.EventType;
 
 /**
  * Database record

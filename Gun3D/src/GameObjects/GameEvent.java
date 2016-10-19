@@ -2,8 +2,6 @@ package GameObjects;
 
 import java.io.Serializable;
 
-import Utilities.EventType;
-
 /**
  * A game event class
  * 

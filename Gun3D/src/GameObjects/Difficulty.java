@@ -1,4 +1,4 @@
-package Utilities;
+package GameObjects;
 
 /**
  * Difficulty Options are: Ease, Medium, Hard

@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import GameObjects.EventType;
 import GameObjects.GameEvent;
-import Utilities.EventType;
 import database.DBcontroller;
 import javafx.application.Application;
 import javafx.application.Platform;

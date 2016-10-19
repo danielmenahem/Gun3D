@@ -94,7 +94,7 @@ public class Test extends Application {
         //Scene scene = new Scene(paneMain, width, height );
 		//gamePane.startTraining(Difficulty.Low);
 		//gamePane.startTraining(Difficulty.Medium);
-		gamePane.startTraining(Utilities.Difficulty.Hard);
+		gamePane.startTraining(GameObjects.Difficulty.Hard);
 		primaryStage.setScene(scene);
 		primaryStage.show(); 
 		primaryStage.setAlwaysOnTop(true);

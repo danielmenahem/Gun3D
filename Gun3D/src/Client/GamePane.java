@@ -5,9 +5,10 @@ import java.io.ObjectOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import GameObjects.Difficulty;
+import GameObjects.EventType;
 import GameObjects.GameEvent;
-import Utilities.Difficulty;
-import Utilities.EventType;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;

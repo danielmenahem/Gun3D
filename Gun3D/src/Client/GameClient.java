@@ -5,7 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import Utilities.Difficulty;
+
+import GameObjects.Difficulty;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -18,6 +19,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
@@ -40,14 +47,24 @@ import javafx.util.Duration;
  */
 public class GameClient extends Application {
 	/**
-	 * According to assignment description, user does not choose training
+	 * Background image path for the training or game screen.
+	 * {@code TRAINING_OR_GAME_BACKGROUND} is {@value}
+	 */
+	private static final String TRAINING_OR_GAME_BACKGROUND = "/Client/Images/first_screen.jpg";
+	/**
+	 * Background image path for the game settings screen.
+	 * {@code GAME_SETTINGS_BACKGROUND} is {@value}
+	 */
+	private static final String GAME_SETTINGS_BACKGROUND = "/Client/Images/second_screen.jpg";
+	/**
+	 * According to assignment description, user doesn't choose training
 	 * difficulty. {@code TRAINING_DIFFICULTY} is {@value}.
 	 */
 	private static final Difficulty TRAINING_DIFFICULTY = Difficulty.Easy;
 	/**
 	 * Denotes the size of the main buttons. {@code SIZE_OF_BUTTONS} is {@value}
 	 */
-	private static final int SIZE_OF_BUTTONS = 300;
+	private static final int SIZE_OF_BUTTONS = 150;
 	/**
 	 * Denotes the size of padding. {@code SIZE_OF_PADDING} is {@value}
 	 */
@@ -133,15 +150,16 @@ public class GameClient extends Application {
 		Button btnTraining = new Button("Training Mode");
 		btnTraining.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
 				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
-				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;"
-				+ "-fx-background-color: #E6E6FA, rgba(0,0,0,0.05),linear-gradient(#dcca8a, #c7a740), linear-gradient(#f9f2d6 0%, #f4e5bc 20%, #e6c75d 80%, #e2c045 100%),linear-gradient(#f6ebbe, #e6c34d);");
+				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;" + "-fx-background-color: #E0FFFF");
+
 		btnTraining.setOnAction(e -> {
 			setTrainingScene();
 		});
 		Button btnGame = new Button("Game Mode");
 		btnGame.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
 				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
-				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;");
+				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;" + "-fx-background-color: #4682B4");
+
 		btnGame.setOnAction(e -> {
 			setGameSettingsScene();
 		});
@@ -153,10 +171,16 @@ public class GameClient extends Application {
 
 		Scene scene = new Scene(gpTraingOrGame, SIZE_OF_BUTTONS * 2 + SIZE_OF_PADDING * 3,
 				SIZE_OF_BUTTONS + SIZE_OF_PADDING * 2, true);
-		scene.setFill(null);
+
+		gpTraingOrGame.setBackground(new Background(new BackgroundImage(
+				new Image(TRAINING_OR_GAME_BACKGROUND, gpTraingOrGame.getWidth(), gpTraingOrGame.getHeight(), false,
+						true),
+				BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+				BackgroundSize.DEFAULT)));
 
 		primaryStage.setScene(scene);
 		primaryStage.show();
+		primaryStage.setTitle("Gun3D");
 		primaryStage.setAlwaysOnTop(true);
 		primaryStage.centerOnScreen();
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -196,26 +220,30 @@ public class GameClient extends Application {
 	private void setGameSettingsScene() {
 		GridPane gpGameSettings = new GridPane();
 		Label lblName = new Label("Name: ");
+		lblName.setStyle("-fx-text-fill: white");
 		lblConnectionError = new Label();
+		lblConnectionError.setStyle("-fx-text-fill: red");
 		TextField tfName = new TextField();
 		Button btnEasy = new Button("Easy");
 		btnEasy.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
 				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
-				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;");
+				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;" + "-fx-background-color: #008000");
 		btnEasy.setOnAction(e -> {
 			setGameScene(Difficulty.Easy, tfName.getText());
 		});
+
 		Button btnMedium = new Button("Medium");
 		btnMedium.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
 				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
-				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;");
+				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;" + "-fx-background-color: #FF8C00");
 		btnMedium.setOnAction(e -> {
 			setGameScene(Difficulty.Medium, tfName.getText());
 		});
+
 		Button btnHard = new Button("Hard");
 		btnHard.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
 				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
-				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;");
+				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;" + "-fx-background-color: #800000");
 		btnHard.setOnAction(e -> {
 			setGameScene(Difficulty.Hard, tfName.getText());
 		});
@@ -234,7 +262,13 @@ public class GameClient extends Application {
 
 		Scene scene = new Scene(gpGameSettings, SIZE_OF_BUTTONS * 3 + SIZE_OF_PADDING * 4,
 				SIZE_OF_BUTTONS + SIZE_OF_PADDING * 5, true);
-		scene.setFill(null);
+
+		gpGameSettings
+				.setBackground(new Background(new BackgroundImage(
+						new Image(GAME_SETTINGS_BACKGROUND, gpGameSettings.getWidth(), gpGameSettings.getHeight(),
+								false, true),
+						BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+						BackgroundSize.DEFAULT)));
 
 		primaryStage.setScene(scene);
 		primaryStage.centerOnScreen();
@@ -347,6 +381,7 @@ public class GameClient extends Application {
 	private void addTimerToGame(GamePane gamePanel, boolean realGame) {
 		secondsCounter = 0;
 		Label lblTimer = new Label("Timer: 0");
+		lblTimer.setStyle("-fx-text-fill: blue");
 		timer = new Timeline(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
@@ -379,6 +414,7 @@ public class GameClient extends Application {
 
 	/**
 	 * Main method of {@code GameClient} to launch the application.
+	 * 
 	 * @param args
 	 *            command line arguments
 	 */
@@ -386,11 +422,14 @@ public class GameClient extends Application {
 		launch(args);
 	}
 
-	// TODO: CSS independent sheet + better GUI
-	// TODO: JavaDoc, improve. Daniel: no need to mention type of properties (already mentioned)
+	// TODO: JavaDoc, improve. Daniel: no need to mention type of properties
+	// (already mentioned)
 	// TODO: DANIEL? Music doesn't stop at scene change
-	// TODO: DANIEL? 3D improvements (balls should be small AND look further away, cannon ball should fall and not disappear/rise - add gravity? add shadow to targets? to cannon ball?)
-	//			sometimes explosion animation stays, some balls are un-hittable, targets' location on Z axis is not clear
-	// TODO: Change SQL table headers according to queries
+	// TODO: DANIEL? 3D improvements (balls should be small AND look further
+	// away, cannon ball should fall and not disappear/rise - add gravity? add
+	// shadow to targets? to cannon ball?)
+	// sometimes explosion animation stays, some balls are un-hittable, targets'
+	// location on Z axis is not clear
+	// TODO: add a player from server view
 
 }

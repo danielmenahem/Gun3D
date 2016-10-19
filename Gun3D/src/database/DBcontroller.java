@@ -12,7 +12,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
-import Utilities.EventType;
+import GameObjects.EventType;
 
 /**
  * Implementation of the DB interface for the DB view.

@@ -1,7 +1,8 @@
 package views;
 
 import java.sql.SQLException;
-import Utilities.EventType;
+
+import GameObjects.EventType;
 import database.Record;
 import database.DBcontroller;
 import database.DBcontrollerInterface;
@@ -36,53 +37,73 @@ import javafx.stage.Stage;
 
 public class DBView extends Stage {
 	/**
-	 * Contains query options
+	 * Contains query options.
 	 */
 	private final String[] options = { "All events by name and then by game time",
 			"All events by name and then by game score (descending)", "All games by game score (descending)",
 			"All players with 3 games or more by rank", "All games by most hits (descending)",
 			"All games by most misses (descending)" };
 	/**
-	 * Minimum games to count for top players
+	 * Minimum games to count for top players.
 	 */
 	private final int MIN_GAMES_TO_COUNT_FOR_TOP_PLAYERS = 3;
 	/**
-	 * Displays the query options
+	 * Displays the query options.
 	 */
 	private ComboBox<String> cbxQueryChoice;
 	/**
-	 * Contains query options for the combobox
+	 * Contains query options for the combobox.
 	 */
 	private ObservableList<String> queryOptions;
 	/**
-	 * "Choose a query" label
+	 * "Choose a query" label.
 	 */
 	private Label lblQueryChoice;
 	/**
-	 * "Run" query button
+	 * "Run" query button.
 	 */
 	private Button btnRun;
 	/**
-	 * Vertical box to contain the options grid pane and the table view
+	 * Vertical box to contain the options grid pane and the table view.
 	 */
 	private VBox vbContainer;
 	/**
-	 * A gridpane to contain the elemnts need to choose and run a query
+	 * A gridpane to contain the elemnts need to choose and run a query.
 	 */
 	private GridPane gpOptions;
 	/*
-	 * Main scene to contain the GUI elements
+	 * Main scene to contain the GUI elements.
 	 */
 	private Scene scene;
 	/**
-	 * The database controller that performs the queries and implements
+	 * The database controller that performs the queries and implements.
 	 * {@link DBcontrollerInterface}
 	 */
 	private DBcontrollerInterface db;
 	/**
-	 * The table view to display the results
+	 * The table view to display the results.
 	 */
 	private TableView<Record> table;
+	/**
+	 * Column for player ID.
+	 */
+	private TableColumn<Record, String> tcPlayerID;
+	/**
+	 * Column for game id/number of games.
+	 */
+	private TableColumn<Record, String> tcGameID;
+	/**
+	 * Column for game score/average score/number of hits/misses.
+	 */
+	private TableColumn<Record, String> tcGameScore;
+	/**
+	 * Column for event type hit/miss.
+	 */
+	private TableColumn<Record, String> tcEventType;
+	/**
+	 * Column for timestamp.
+	 */
+	private TableColumn<Record, String> tcTimeStamp;
 
 	/**
 	 * The constructor that builds this view
@@ -98,17 +119,19 @@ public class DBView extends Stage {
 	/**
 	 * Builds the GUI elements
 	 */
-	@SuppressWarnings("unchecked")
 	private void buildGUI() {
 		gpOptions = new GridPane();
 		gpOptions.setPadding(new Insets(10, 10, 10, 10));
 		gpOptions.setHgap(10);
 		gpOptions.setVgap(10);
+		
 		lblQueryChoice = new Label("Choose a query:");
+		
 		cbxQueryChoice = new ComboBox<>();
 		queryOptions = FXCollections.observableArrayList(options);
 		cbxQueryChoice.setItems(queryOptions);
 		cbxQueryChoice.getSelectionModel().selectFirst();
+		
 		btnRun = new Button("Run");
 		btnRun.setOnAction(e -> {
 			runQuery(cbxQueryChoice.getSelectionModel().getSelectedIndex());
@@ -120,23 +143,27 @@ public class DBView extends Stage {
 
 		table = new TableView<Record>();
 
-		TableColumn<Record, String> tcPlayerID = new TableColumn<>("Player ID");
+		tcPlayerID = new TableColumn<>("Player ID");
 		tcPlayerID.setCellValueFactory(new PropertyValueFactory<Record, String>("playerID"));
-		TableColumn<Record, String> tcGameID = new TableColumn<>("Game ID");
+		
+		tcGameID = new TableColumn<>("Game ID");
 		tcGameID.setCellValueFactory(new PropertyValueFactory<Record, String>("gameID"));
-		TableColumn<Record, String> tcGameScore = new TableColumn<>("Score");
+		
+		tcGameScore = new TableColumn<>("Score");
 		tcGameScore.setCellValueFactory(new PropertyValueFactory<Record, String>("score"));
-		TableColumn<Record, String> tcEventType = new TableColumn<>("Event Type");
+		
+		tcEventType = new TableColumn<>("Event Type");
 		tcEventType.setCellValueFactory(new PropertyValueFactory<Record, String>("event"));
-		TableColumn<Record, String> tcTimeStamp = new TableColumn<>("Time Stamp");
+		
+		tcTimeStamp = new TableColumn<>("Time Stamp");
 		tcTimeStamp.setCellValueFactory(new PropertyValueFactory<Record, String>("timeStamp"));
 
-		table.getColumns().setAll(tcPlayerID, tcGameID, tcGameScore, tcEventType, tcTimeStamp);
 		table.setPrefWidth(450);
 		table.setPrefHeight(300);
 		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
 		vbContainer = new VBox(20);
+		vbContainer.setPadding(new Insets(10));
 		vbContainer.getChildren().addAll(gpOptions, table);
 
 		scene = new Scene(vbContainer, 500, 475);
@@ -148,43 +175,63 @@ public class DBView extends Stage {
 	}
 
 	/**
-	 * Runs the selected query
+	 * Runs the selected query, modifies the table per query
 	 * 
 	 * @param index
 	 *            of the selected query
 	 */
+	@SuppressWarnings("unchecked")
 	private void runQuery(int index) {
 		try {
 			switch (index) {
 			case 0: {
 				// All events by name and then by game time
 				table.setItems(FXCollections.observableList(db.getAllEventsByNameAndThenByTimeDescending()));
+				table.getColumns().setAll(tcPlayerID, tcGameID, tcGameScore, tcEventType, tcTimeStamp);
+				tcGameID.setText("Game ID");
+				tcGameScore.setText("Score");
 				break;
 			}
 			case 1: {
 				// All events by name and then by game score
 				table.setItems(FXCollections.observableList(db.getAllEventsByNameAndThenByScoreDescending()));
+				table.getColumns().setAll(tcPlayerID, tcGameID, tcGameScore, tcEventType, tcTimeStamp);
+				tcGameID.setText("Game ID");
+				tcGameScore.setText("Score");
 				break;
 			}
 			case 2: {
 				// All games by game score
 				table.setItems(FXCollections.observableList(db.getAllEventsByGameScoreDescending()));
+				table.getColumns().setAll(tcPlayerID, tcGameID, tcGameScore);
+				tcGameID.setText("Game ID");
+				tcGameScore.setText("Score");
 				break;
 			}
 			case 3: {
 				// Average scores of players with more than 3 games
 				table.setItems(FXCollections.observableList(
 						db.getAverageScoresOfPlayersWithXGamesOrMoreDescending(MIN_GAMES_TO_COUNT_FOR_TOP_PLAYERS)));
+				table.getColumns().setAll(tcPlayerID, tcGameID, tcGameScore);
+				tcGameID.setText("Number Of Games");
+				tcGameScore.setText("Average Score");
 				break;
 			}
 			case 4: {
 				// All games by most hits (descending)
 				table.setItems(FXCollections.observableList(db.getAllGamesByMostEventsDescending(EventType.HIT)));
+				table.getColumns().setAll(tcPlayerID, tcGameID, tcGameScore);
+				tcGameID.setText("Game ID");
+				tcGameScore.setText("Number of hits");
 				break;
 			}
 			case 5: {
 				// All games by most misses (descending)
 				table.setItems(FXCollections.observableList(db.getAllGamesByMostEventsDescending(EventType.MISS)));
+				table.getColumns().setAll(tcPlayerID, tcGameID, tcGameScore);
+				tcGameID.setText("Game ID");
+				tcGameScore.setText("Number of misses");
+
 			}
 
 			}

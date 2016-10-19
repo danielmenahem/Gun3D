@@ -3,7 +3,7 @@ package database;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import Utilities.EventType;
+import GameObjects.EventType;
 
 /**
  * Interface to declare the methods required, and their signatures, for the

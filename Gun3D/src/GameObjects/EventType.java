@@ -1,4 +1,4 @@
-package Utilities;
+package GameObjects;
 
 /**
  * Event type, options are HIT, MISS, END_GAME
