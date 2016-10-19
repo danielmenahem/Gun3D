@@ -430,6 +430,6 @@ public class GameClient extends Application {
 	// shadow to targets? to cannon ball?)
 	// sometimes explosion animation stays, some balls are un-hittable, targets'
 	// location on Z axis is not clear
-	// TODO: add a player from server view
+	// TODO: add a player from server views
 
 }
