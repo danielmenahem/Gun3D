@@ -14,6 +14,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -64,7 +65,7 @@ public class GameClient extends Application {
 	/**
 	 * Denotes the size of the main buttons. {@code SIZE_OF_BUTTONS} is {@value}
 	 */
-	private static final int SIZE_OF_BUTTONS = 150;
+	private static final int SIZE_OF_BUTTONS = 200;
 	/**
 	 * Denotes the size of padding. {@code SIZE_OF_PADDING} is {@value}
 	 */
@@ -155,7 +156,8 @@ public class GameClient extends Application {
 		Button btnTraining = new Button("Training Mode");
 		btnTraining.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
 				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
-				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;" + "-fx-background-color: #E0FFFF");
+				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;" + "-fx-background-color: #E0FFFF;"
+				+ "-fx-font: 24px \"Comic Sans MS\"");
 
 		btnTraining.setOnAction(e -> {
 			setTrainingScene();
@@ -163,7 +165,8 @@ public class GameClient extends Application {
 		Button btnGame = new Button("Game Mode");
 		btnGame.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
 				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
-				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;" + "-fx-background-color: #4682B4");
+				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;" + "-fx-background-color: #4682B4;"
+				+ "-fx-font: 24px \"Comic Sans MS\"");
 
 		btnGame.setOnAction(e -> {
 			setGameSettingsScene();
@@ -224,14 +227,6 @@ public class GameClient extends Application {
 	public void playAServerGame() {
 		setGameSettingsScene();
 		standAlone = true;
-		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-
-			@Override
-			public void handle(WindowEvent event) {
-				primaryStage.close();
-				event.consume();
-			}
-		});
 	}
 
 	/**
@@ -248,7 +243,8 @@ public class GameClient extends Application {
 		Button btnEasy = new Button("Easy");
 		btnEasy.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
 				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
-				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;" + "-fx-background-color: #008000");
+				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;" + "-fx-background-color: #008000;"
+				+ "-fx-font: 24px \"Comic Sans MS\";" + "-fx-text-fill: white");
 		btnEasy.setOnAction(e -> {
 			setGameScene(Difficulty.Easy, tfName.getText());
 		});
@@ -256,7 +252,8 @@ public class GameClient extends Application {
 		Button btnMedium = new Button("Medium");
 		btnMedium.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
 				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
-				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;" + "-fx-background-color: #FF8C00");
+				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;" + "-fx-background-color: #FF8C00;"
+				+ "-fx-font: 24px \"Comic Sans MS\";" + "-fx-text-fill: white");
 		btnMedium.setOnAction(e -> {
 			setGameScene(Difficulty.Medium, tfName.getText());
 		});
@@ -264,7 +261,8 @@ public class GameClient extends Application {
 		Button btnHard = new Button("Hard");
 		btnHard.setStyle("-fx-background-radius: 50em; " + "-fx-min-width: " + SIZE_OF_BUTTONS + "px; "
 				+ "-fx-min-height: " + SIZE_OF_BUTTONS + "px; " + "-fx-max-width: " + SIZE_OF_BUTTONS + "px; "
-				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;" + "-fx-background-color: #800000");
+				+ "-fx-max-height: " + SIZE_OF_BUTTONS + "px;" + "-fx-background-color: #800000;"
+				+ "-fx-font: 24px \"Comic Sans MS\";" + "-fx-text-fill: white");
 		btnHard.setOnAction(e -> {
 			setGameScene(Difficulty.Hard, tfName.getText());
 		});
@@ -295,7 +293,9 @@ public class GameClient extends Application {
 		primaryStage.centerOnScreen();
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent event) {
-				if (!standAlone)
+				if (standAlone)
+					primaryStage.close();
+				else
 					setTrainingOrGameScene();
 				event.consume();
 			}
@@ -358,8 +358,7 @@ public class GameClient extends Application {
 			fromServer.close();
 			socket.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Failed to close connections.");
 		}
 	}
 
@@ -370,29 +369,33 @@ public class GameClient extends Application {
 		Label lblInfo = new Label("Player: " + pnlGame.getName() + "\nGame ID: " + pnlGame.getGameID() + "\nTime: "
 				+ secondsCounter + "\nHits: " + pnlGame.getHits() + "\nMisses: " + pnlGame.getMisses() + "\nScore: "
 				+ pnlGame.getScore());
+		lblInfo.setStyle("-fx-text-fill: white");
 		Button btnOK = new Button("OK");
 		btnOK.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				if (!standAlone)
-					setTrainingOrGameScene();
-				else
+				if (standAlone)
 					primaryStage.close();
+				else
+					setTrainingOrGameScene();
 			}
 		});
 
 		VBox vb = new VBox(30);
+		vb.setStyle("-fx-background-color: #4682B4");
+		vb.setPadding(new Insets(20));
 		vb.getChildren().addAll(lblInfo, btnOK);
+		vb.setAlignment(Pos.CENTER);
 		Scene scene = new Scene(vb);
 
 		primaryStage.setScene(scene);
 		primaryStage.centerOnScreen();
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent event) {
-				if (!standAlone)
-					setTrainingOrGameScene();
-				else
+				if (standAlone)
 					primaryStage.close();
+				else
+					setTrainingOrGameScene();
 				event.consume();
 			}
 		});
@@ -459,7 +462,7 @@ public class GameClient extends Application {
 	// shadow to targets? to cannon ball?)
 	// sometimes explosion animation stays, some balls are un-hittable, targets'
 	// location on Z axis is not clear
-	// TODO: Improve DB gui
-	// TODO: add a player from server views
+	// TODO: build requested DB entries
+	
 
 }

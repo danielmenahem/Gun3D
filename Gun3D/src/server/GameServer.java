@@ -14,8 +14,6 @@ import GameObjects.GameEvent;
 import database.DBcontroller;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -23,11 +21,9 @@ import javafx.scene.shape.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import views.DBView;
 
 /**
@@ -206,7 +202,7 @@ public class GameServer extends Application {
 		btnChange.setOnAction(e -> {
 			changePlayerName();
 		});
-		
+
 		btnNewGame.setOnAction(e -> {
 			newGame();
 		});
@@ -223,6 +219,10 @@ public class GameServer extends Application {
 		}).start();
 	}
 
+	/**
+	 * Starts a new stand alone game, thus creating a new player, per
+	 * instructions
+	 */
 	private void newGame() {
 		try {
 			GameClient gc = new GameClient();
@@ -230,7 +230,7 @@ public class GameServer extends Application {
 			gc.playAServerGame();
 		} catch (Exception e1) {
 			e1.printStackTrace();
-		};	
+		}
 	}
 
 	/**
@@ -351,7 +351,7 @@ public class GameServer extends Application {
 
 		HBox hb = new HBox();
 		hb.getChildren().addAll(btnNewGame, btnShowDB);
-		
+
 		paneActions.setTop(paneChange);
 		paneActions.setBottom(paneDelete);
 		paneMain.setRight(paneActions);
