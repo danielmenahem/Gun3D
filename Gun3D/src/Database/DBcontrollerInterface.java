@@ -1,4 +1,4 @@
-package database;
+package Database;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -164,7 +164,7 @@ public interface DBcontrollerInterface {
 	ArrayList<Record> getAllEventsByGameScoreDescending() throws SQLException;
 
 	/**
-	 * Get the average scores of players who have more than a number of games,
+	 * Get the average scores of X top games of players who have at least X number of games,
 	 * sorted by score, descending.
 	 * 
 	 * @param minGames
@@ -173,7 +173,7 @@ public interface DBcontrollerInterface {
 	 * @throws SQLException
 	 *             DB SQL exceptions
 	 */
-	ArrayList<Record> getAverageScoresOfPlayersWithXGamesOrMoreDescending(int minGames) throws SQLException;
+	ArrayList<Record> getAverageScoresOfXTopGameByPlayersWithXGamesOrMoreDescending(int minGames) throws SQLException;
 
 	/**
 	 * Get all the <b>games</b>, sorted by number of events of a certain type,

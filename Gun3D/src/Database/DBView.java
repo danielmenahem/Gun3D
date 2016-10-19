@@ -1,11 +1,8 @@
-package views;
+package Database;
 
 import java.sql.SQLException;
 
 import GameObjects.EventType;
-import database.Record;
-import database.DBcontroller;
-import database.DBcontrollerInterface;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -211,7 +208,7 @@ public class DBView extends Stage {
 			case 3: {
 				// Average scores of players with more than 3 games
 				table.setItems(FXCollections.observableList(
-						db.getAverageScoresOfPlayersWithXGamesOrMoreDescending(MIN_GAMES_TO_COUNT_FOR_TOP_PLAYERS)));
+						db.getAverageScoresOfXTopGameByPlayersWithXGamesOrMoreDescending(MIN_GAMES_TO_COUNT_FOR_TOP_PLAYERS)));
 				table.getColumns().setAll(tcPlayerID, tcGameID, tcGameScore);
 				tcGameID.setText("Number Of Games");
 				tcGameScore.setText("Average Score");

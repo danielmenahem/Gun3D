@@ -46,7 +46,7 @@ import javafx.util.Duration;
  *          would link there. Private attributes documentation was made so
  *          everything will be documented.
  */
-public class GameClient extends Application {
+public class Gun3D_301578878_39676804_Client extends Application {
 	/**
 	 * Background image path for the training or game screen.
 	 * {@code TRAINING_OR_GAME_BACKGROUND} is {@value}
@@ -444,7 +444,7 @@ public class GameClient extends Application {
 	}
 
 	/**
-	 * Main method of {@code GameClient} to launch the application.
+	 * Main method of {@code Gun3D_301578878_39676804_Client} to launch the application.
 	 * 
 	 * @param args
 	 *            command line arguments
@@ -452,17 +452,5 @@ public class GameClient extends Application {
 	public static void main(String[] args) {
 		launch(args);
 	}
-
-	// TODO: JavaDoc, improve. No need to mention type of properties
-	// (already mentioned) + getters & setters should link to their respective
-	// property.
-	// TODO: Music doesn't stop at scene change
-	// TODO: 3D improvements (balls should be small and look further
-	// away, cannon ball should fall and not disappear/rise - add gravity? add
-	// shadow to targets? to cannon ball?)
-	// sometimes explosion animation stays, some balls are un-hittable, targets'
-	// location on Z axis is not clear
-	// TODO: build requested DB entries
-	
 
 }

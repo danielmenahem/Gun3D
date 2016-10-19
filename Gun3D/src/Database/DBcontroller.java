@@ -1,4 +1,4 @@
-package database;
+package Database;
 
 import java.sql.Connection;
 
@@ -276,7 +276,7 @@ public class DBcontroller implements DBcontrollerInterface {
 	}
 
 	@Override
-	public ArrayList<Record> getAverageScoresOfPlayersWithXGamesOrMoreDescending(int minGames) throws SQLException {
+	public ArrayList<Record> getAverageScoresOfXTopGameByPlayersWithXGamesOrMoreDescending(int minGames) throws SQLException {
 		ArrayList<Record> records = new ArrayList<>();
 
 		stmt = connection.prepareStatement(

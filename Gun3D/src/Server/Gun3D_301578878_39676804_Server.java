@@ -1,4 +1,4 @@
-package server;
+package Server;
 
 import java.io.*;
 import java.net.*;
@@ -8,10 +8,11 @@ import java.util.Date;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import Client.GameClient;
+import Client.Gun3D_301578878_39676804_Client;
+import Database.DBView;
+import Database.DBcontroller;
 import GameObjects.EventType;
 import GameObjects.GameEvent;
-import database.DBcontroller;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -24,7 +25,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import views.DBView;
 
 /**
  * This class provides a game server, manages online games and games history
@@ -36,7 +36,7 @@ import views.DBView;
  * @author Michael Shvarts 301578878
  * @version 1.0
  */
-public class GameServer extends Application {
+public class Gun3D_301578878_39676804_Server extends Application {
 
 	/**
 	 * The value of static final int {@code NUMBER_OF_ATTEMPTS} is {@value}.
@@ -225,7 +225,7 @@ public class GameServer extends Application {
 	 */
 	private void newGame() {
 		try {
-			GameClient gc = new GameClient();
+			Gun3D_301578878_39676804_Client gc = new Gun3D_301578878_39676804_Client();
 			gc.start(new Stage());
 			gc.playAServerGame();
 		} catch (Exception e1) {
@@ -502,7 +502,7 @@ public class GameServer extends Application {
 	}
 
 	/**
-	 * Main of {@code GameServer} start the application
+	 * Main of {@code Gun3D_301578878_39676804_Server} to launch the application
 	 * 
 	 * @param args
 	 *            the command line arguments
