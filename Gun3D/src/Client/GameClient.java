@@ -124,6 +124,10 @@ public class GameClient extends Application {
 	 * Game ID received from the server
 	 */
 	private int gameID;
+	/**
+	 * Server game = true, client game = false
+	 */
+	private boolean standAlone;
 
 	/**
 	 * Assigns the primary stage to the class property and gets the screen sizes
@@ -134,6 +138,7 @@ public class GameClient extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
+		this.standAlone = false;
 
 		Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 		gameWidth = primaryScreenBounds.getWidth();
@@ -214,6 +219,22 @@ public class GameClient extends Application {
 	}
 
 	/**
+	 * To allow start of new game from server
+	 */
+	public void playAServerGame() {
+		setGameSettingsScene();
+		standAlone = true;
+		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+
+			@Override
+			public void handle(WindowEvent event) {
+				primaryStage.close();
+				event.consume();
+			}
+		});
+	}
+
+	/**
 	 * Sets the scene that allows player's name insertion and choice of game
 	 * difficulty.
 	 */
@@ -274,7 +295,8 @@ public class GameClient extends Application {
 		primaryStage.centerOnScreen();
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent event) {
-				setTrainingOrGameScene();
+				if (!standAlone)
+					setTrainingOrGameScene();
 				event.consume();
 			}
 		});
@@ -352,7 +374,10 @@ public class GameClient extends Application {
 		btnOK.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				setTrainingOrGameScene();
+				if (!standAlone)
+					setTrainingOrGameScene();
+				else
+					primaryStage.close();
 			}
 		});
 
@@ -364,7 +389,10 @@ public class GameClient extends Application {
 		primaryStage.centerOnScreen();
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent event) {
-				setTrainingOrGameScene();
+				if (!standAlone)
+					setTrainingOrGameScene();
+				else
+					primaryStage.close();
 				event.consume();
 			}
 		});
@@ -422,14 +450,16 @@ public class GameClient extends Application {
 		launch(args);
 	}
 
-	// TODO: JavaDoc, improve. Daniel: no need to mention type of properties
-	// (already mentioned)
-	// TODO: DANIEL? Music doesn't stop at scene change
-	// TODO: DANIEL? 3D improvements (balls should be small AND look further
+	// TODO: JavaDoc, improve. No need to mention type of properties
+	// (already mentioned) + getters & setters should link to their respective
+	// property.
+	// TODO: Music doesn't stop at scene change
+	// TODO: 3D improvements (balls should be small and look further
 	// away, cannon ball should fall and not disappear/rise - add gravity? add
 	// shadow to targets? to cannon ball?)
 	// sometimes explosion animation stays, some balls are un-hittable, targets'
 	// location on Z axis is not clear
+	// TODO: Improve DB gui
 	// TODO: add a player from server views
 
 }

@@ -179,22 +179,24 @@ public class DBcontroller implements DBcontrollerInterface {
 	}
 
 	@Override
-	public void deletePlayer(String playerID) throws SQLException {
+	public void deletePlayer(String playerID) throws SQLException, Exception {
 		stmt = connection.prepareStatement("DELETE FROM " + tableName + " WHERE playerID = ?");
 		stmt.setString(1, playerID);
 
-		stmt.executeUpdate();
+		if (stmt.executeUpdate() == 0)
+			throw new Exception("Player doesn't exist");
 	}
 
 	@Override
-	public void changePlayerName(String oldPlayerID, String newPlayerID) throws SQLException {
+	public void changePlayerName(String oldPlayerID, String newPlayerID) throws SQLException, Exception {
 		// playerID is player's name
 		stmt = connection.prepareStatement("UPDATE " + tableName + " SET playerID = ? WHERE playerID = ?");
 		stmt.setString(1, newPlayerID);
 		stmt.setString(2, oldPlayerID);
 
-		stmt.executeUpdate();
-	}
+		if (stmt.executeUpdate() == 0)
+			throw new Exception("Player doesn't exist");
+		}
 
 	@Override
 	public ArrayList<Record> getAllGamesByPlayerID(String playerID) throws SQLException {

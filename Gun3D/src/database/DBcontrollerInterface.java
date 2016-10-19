@@ -110,8 +110,10 @@ public interface DBcontrollerInterface {
 	 *            player's name, string inserted by the user
 	 * @throws SQLException
 	 *             DB SQL exceptions
+	 * @throws Exception
+	 *             Player doesn't exist
 	 */
-	void deletePlayer(String playerID) throws SQLException;
+	void deletePlayer(String playerID) throws SQLException, Exception;
 
 	/**
 	 * Change a player's name.
@@ -123,7 +125,7 @@ public interface DBcontrollerInterface {
 	 * @throws SQLException
 	 *             DB SQL exceptions
 	 */
-	void changePlayerName(String oldPlayerID, String newPlayerID) throws SQLException;
+	void changePlayerName(String oldPlayerID, String newPlayerID) throws SQLException, Exception;
 
 	/**
 	 * Close connection.

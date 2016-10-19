@@ -8,20 +8,26 @@ import java.util.Date;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import Client.GameClient;
 import GameObjects.EventType;
 import GameObjects.GameEvent;
 import database.DBcontroller;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.shape.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import views.DBView;
 
 /**
@@ -133,6 +139,10 @@ public class GameServer extends Application {
 	private TextField tfReplacingName = new TextField();
 
 	/**
+	 * According to instructions, option to open a client from server.
+	 */
+	private Button btnNewGame = new Button("New Game/Player");
+	/**
 	 * The {@code primaryStage} is a {@link Stage}. The application's primary
 	 * Stage
 	 */
@@ -196,6 +206,10 @@ public class GameServer extends Application {
 		btnChange.setOnAction(e -> {
 			changePlayerName();
 		});
+		
+		btnNewGame.setOnAction(e -> {
+			newGame();
+		});
 
 		new Thread(() -> {
 			try {
@@ -209,6 +223,16 @@ public class GameServer extends Application {
 		}).start();
 	}
 
+	private void newGame() {
+		try {
+			GameClient gc = new GameClient();
+			gc.start(new Stage());
+			gc.playAServerGame();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		};	
+	}
+
 	/**
 	 * Changes player name in DB based on the inserted text in the intended
 	 * TextFileds errors will be printed in server log
@@ -220,8 +244,10 @@ public class GameServer extends Application {
 			try {
 				dbManager.changePlayerName(tfNameToChange.getText(), tfReplacingName.getText());
 				writeToLog("Name change message: All events under the name " + tfNameToChange.getText()
-						+ " have been replaced by the name " + tfReplacingName.getText());
-			} catch (SQLException e) {
+						+ " have been replaced by the name " + tfReplacingName.getText() + "\n");
+			} catch (SQLException ex) {
+				writeToLog("Delete Error: SQL Exception\n");
+			} catch (Exception e) {
 				writeToLog("Name Change Error: Old player name does not exist\n");
 			}
 		}
@@ -240,7 +266,9 @@ public class GameServer extends Application {
 			try {
 				dbManager.deletePlayer(tfNameForDelete.getText());
 				writeToLog("Delete message: The player " + tfNameForDelete.getText() + " deleted successfuly\n");
-			} catch (SQLException e) {
+			} catch (SQLException ex) {
+				writeToLog("Delete Error: SQL Exception\n");
+			} catch (Exception e) {
 				writeToLog("Delete Error: Inserted player name does not exist\n");
 			}
 			tfNameForDelete.setText("");
@@ -321,10 +349,13 @@ public class GameServer extends Application {
 		paneDelete.setTop(lblDeleteHead);
 		paneDelete.setBottom(paneDeleteControls);
 
+		HBox hb = new HBox();
+		hb.getChildren().addAll(btnNewGame, btnShowDB);
+		
 		paneActions.setTop(paneChange);
 		paneActions.setBottom(paneDelete);
 		paneMain.setRight(paneActions);
-		paneMain.setTop(btnShowDB);
+		paneMain.setTop(hb);
 		paneMain.setCenter(new ScrollPane(taLog));
 		paneMain.setShape(new Line());
 
