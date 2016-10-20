@@ -48,7 +48,7 @@ public class DBcontroller implements DBcontrollerInterface {
 	/**
 	 * DB table's name, should be "events" (different names for testing tables).
 	 */
-	private final String tableName = "eventsTest505005";
+	private final String tableName = "events";
 
 	/**
 	 * Number of games. When setting this property current number should be
@@ -75,6 +75,7 @@ public class DBcontroller implements DBcontrollerInterface {
 	public DBcontroller() throws Exception {
 		connect();
 		createTable();
+		createFakeDB(); //put in comment if DB exists
 		getCurrentNumberOfGames();
 	}
 
@@ -196,7 +197,7 @@ public class DBcontroller implements DBcontrollerInterface {
 
 		if (stmt.executeUpdate() == 0)
 			throw new Exception("Player doesn't exist");
-		}
+	}
 
 	@Override
 	public ArrayList<Record> getAllGamesByPlayerID(String playerID) throws SQLException {
@@ -276,7 +277,8 @@ public class DBcontroller implements DBcontrollerInterface {
 	}
 
 	@Override
-	public ArrayList<Record> getAverageScoresOfXTopGameByPlayersWithXGamesOrMoreDescending(int minGames) throws SQLException {
+	public ArrayList<Record> getAverageScoresOfXTopGameByPlayersWithXGamesOrMoreDescending(int minGames)
+			throws SQLException {
 		ArrayList<Record> records = new ArrayList<>();
 
 		stmt = connection.prepareStatement(
@@ -317,12 +319,11 @@ public class DBcontroller implements DBcontrollerInterface {
 	}
 
 	/**
-	 * A method to create DB records for testing purposes.
+	 * A method to create DB for testing.
 	 */
-	@SuppressWarnings("unused")
-	private void fakeDbTester() {
-		for (int i = 0; i < 10; i++) {
-			// 10 players
+	private void createFakeDB() {
+		for (int i = 0; i < 5; i++) {
+			// 5 players
 			int maxGames = ThreadLocalRandom.current().nextInt(0, 5 + 1);
 			// each has a different number of games
 			for (int j = 0; j < maxGames; j++) {
@@ -332,19 +333,39 @@ public class DBcontroller implements DBcontrollerInterface {
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
-				int numberOfEvent = ThreadLocalRandom.current().nextInt(0, 15 + 1);
+				int numberOfEvent = ThreadLocalRandom.current().nextInt(20, 25 + 1);
 				int scoreRandom = ThreadLocalRandom.current().nextInt(0, 500 + 1);
-				// each game has a different number of events
+				// each game has a different number of events, min 20
 				for (int k = 0; k < numberOfEvent; k++) {
 					try {
-						// randomize hit of miss
+						// randomize hit or miss
 						int hitOrMiss = ThreadLocalRandom.current().nextInt(0, 1 + 1);
-						insertEvent("Player" + i, gameNumber, scoreRandom, EventType.values()[hitOrMiss]);
+						// randomize times in gaps of seconds
+						int seconds = ThreadLocalRandom.current().nextInt(0, 60 + 1);
+						insertModifiedTimeEvent("Player" + i, gameNumber, scoreRandom, EventType.values()[hitOrMiss],
+								Timestamp.valueOf(LocalDateTime.now().minusSeconds(seconds)));
 					} catch (SQLException e) {
 						e.printStackTrace();
 					}
 				}
 			}
 		}
+	}
+
+	/**
+	 * A method to insert DB records to test the code.
+	 */
+	private void insertModifiedTimeEvent(String playerID, int gameID, int gameScore, EventType event, Timestamp timeStamp)
+			throws SQLException {
+		stmt = connection.prepareStatement("INSERT INTO " + tableName
+				+ " (playerID, gameID, gameScore, eventType, timeStamp)" + " VALUES (?, ?, ?, ?, ?)");
+
+		stmt.setString(1, playerID);
+		stmt.setInt(2, gameID);
+		stmt.setInt(3, gameScore);
+		stmt.setString(4, event.name());
+		stmt.setTimestamp(5, timeStamp);
+
+		stmt.executeUpdate();
 	}
 }
