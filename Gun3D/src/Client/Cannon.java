@@ -1,5 +1,6 @@
 package Client;
 
+import GameObjects.RotationDirection;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.transform.Rotate;
@@ -18,37 +19,47 @@ import javafx.scene.transform.Rotate;
 public class Cannon extends ImageView{
 
 	/**
-	 * The value of static final String {@code PICTURE_URL} is {@value}.
+	 * The value of static final {@code PICTURE_URL} is {@value}.
 	 */
-	private static String PICTURE_URL = "/Client/Images/cannon_transp5.png";
+	private static final String PICTURE_URL = "/Client/Images/cannon_transp5.png";
 	
 	/**
-	 * The value of static final int {@code ROTATION_DELTA} is {@value}.
+	 * The value of static final {@code ROTATION_DELTA} is {@value}.
 	 */
 	public static final int ROTATION_DELTA = 2;
 	
 	/**
-	 * The value of static final int {@code MAX_HORIZONTAL_ROTATION} is {@value}.
+	 * The value of static final {@code MAX_HORIZONTAL_ROTATION} is {@value}.
 	 */
 	public static final int MAX_HORIZONTAL_ROTATION = 60;
 	
 	/**
-	 * The value of static final int {@code MAX_VERTICAL_ROTATION} is {@value}.
+	 * The value of static final {@code MAX_VERTICAL_ROTATION} is {@value}.
 	 */
 	public static final int MAX_VERTICAL_ROTATION = 30;
 	
 	/**
-	 * The value of static final int {@code BASE_ANGEL} is {@value}.
+	 * The value of static final {@code BASE_ANGEL} is {@value}.
 	 */
 	public static final int BASE_ANGEL = 90;
 	
 	/**
-	 * The {@code horizontalRotation} is an integer. holds the horizontal rotation angel
+	 * The value of static final {@code CANNON_WIDTH} is {@value}.
+	 */
+	public static final int CANNON_WIDTH = 50;
+	
+	/**
+	 * The value of static final {@code CANNON_HEIGHT} is {@value}.
+	 */
+	public static final int CANNON_HEIGHT = 120;
+
+	/**
+	 * The {@code horizontalRotation} holds the horizontal rotation angel
 	 */
 	private int horzinotalRotation;
 	
 	/**
-	 * The {@code verticalRotation} is an integer. holds the vertical rotation angel
+	 * The {@code verticalRotation} holds the vertical rotation angel
 	 */
 	private int verticalRotation;
 	
@@ -63,12 +74,12 @@ public class Cannon extends ImageView{
 	private Rotate rotateVertical;
 	
 	/**
-	 * The {@code height} is a double. holds cannon height
+	 * The {@code height} holds container height
 	 */
 	private double height;
 	
 	/**
-	 * The {@code width} is a double. holds cannon width
+	 * The {@code width} holds container width
 	 */
 	private double width;
 	
@@ -94,8 +105,8 @@ public class Cannon extends ImageView{
 	 * Places the cannon on the container
 	 * */
 	private void paintCannon(){
-		this.setFitHeight(120);
-		this.setFitWidth(50);
+		this.setFitHeight(CANNON_HEIGHT);
+		this.setFitWidth(CANNON_WIDTH);
 		this.setX(width/2 - this.getFitWidth()/2);
 		this.setY(height - this.getFitHeight());
 	}
@@ -114,10 +125,29 @@ public class Cannon extends ImageView{
 	
 	
 	/**
+	 * Rotates the cannon
+	 * @param direction the rotation direction {@link RotationDirection}
+	 * @return true if the rotation is allowed (boolean)
+	 * */
+	public boolean rotate(RotationDirection direction){
+		if(direction == RotationDirection.Left)
+			return rotateLeft();
+		else if(direction == RotationDirection.Right)
+			return rotateRight();
+		else if(direction == RotationDirection.Forward)
+			return rotateForward();
+		else if(direction == RotationDirection.Backward)
+			return rotateBackwards();
+		
+		return false;
+	}
+	
+	
+	/**
 	 * Rotates the cannon forward throughout the z axis
 	 * @return true if the rotation is allowed (boolean)
 	 * */
-	public boolean rotateForward(){
+	private boolean rotateForward(){
 		if(verticalRotation < MAX_VERTICAL_ROTATION){
 			verticalRotation+=ROTATION_DELTA;
 			rotateVertical.setAngle(verticalRotation);
@@ -132,7 +162,7 @@ public class Cannon extends ImageView{
 	 * Rotates the cannon backwards throughout the z axis
 	 * @return true if the rotation is allowed (boolean)
 	 * */
-	public boolean rotateBackwards(){
+	private boolean rotateBackwards(){
 		if(verticalRotation > 0){			
 			verticalRotation-=ROTATION_DELTA;
 			rotateVertical.setAngle(verticalRotation);
@@ -147,7 +177,7 @@ public class Cannon extends ImageView{
 	 * Rotates the cannon left throughout the x axis
 	 * @return true if the rotation is allowed (boolean)
 	 * */
-	public boolean rotateLeft(){
+	private boolean rotateLeft(){
 		if(horzinotalRotation > -MAX_HORIZONTAL_ROTATION){
 			horzinotalRotation-=ROTATION_DELTA;
 			rotateHorizontal.setAngle(horzinotalRotation);
@@ -162,7 +192,7 @@ public class Cannon extends ImageView{
 	 * Rotates the cannon right throughout the x axis
 	 * @return true if the rotation is allowed (boolean)
 	 * */
-	public boolean rotateRight(){
+	private boolean rotateRight(){
 		if(horzinotalRotation < MAX_HORIZONTAL_ROTATION){
 			horzinotalRotation+=ROTATION_DELTA;
 			rotateHorizontal.setAngle(horzinotalRotation);
@@ -191,20 +221,10 @@ public class Cannon extends ImageView{
 	}
 	
 	
-	/**
-	 * Returns the cannon height
-	 * @return cannon height (double)
-	 * */
-	public double getHeight() {
-		return height;
-	}
-
-	
-	/**
-	 * Returns the cannon height
-	 * @return cannon height (double)
-	 * */
-	public double getWidth() {
-		return width;
+	/**Shoots a cannon shell based on the cannon rotation angles*/
+	public CannonShell shoot(){
+		CannonShell shell = new CannonShell(this.getTheta(), 
+				this.getPhi(), (int)this.getFitHeight() + 2, this.height, this.width);
+		return shell;	
 	}
 }

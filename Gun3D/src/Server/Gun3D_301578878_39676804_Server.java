@@ -11,6 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import Client.Gun3D_301578878_39676804_Client;
 import Database.DBView;
 import Database.DBcontroller;
+import Database.DBcontrollerInterface;
 import GameObjects.EventType;
 import GameObjects.GameEvent;
 import javafx.application.Application;
@@ -39,7 +40,7 @@ import javafx.stage.Stage;
 public class Gun3D_301578878_39676804_Server extends Application {
 
 	/**
-	 * The value of static final int {@code NUMBER_OF_ATTEMPTS} is {@value}.
+	 * The value of static final {@code NUMBER_OF_ATTEMPTS} is {@value}.
 	 */
 	private static final int NUMBER_OF_ATTEMPTS = 3;
 
@@ -161,10 +162,10 @@ public class Gun3D_301578878_39676804_Server extends Application {
 	 * The {@code dbManager} is a {@link DBcontroller}. Controls all
 	 * interactions with DB.
 	 */
-	private DBcontroller dbManager;
+	private DBcontrollerInterface dbManager;
 
 	/**
-	 * The {@code lastGameID} is an integer. holds the last game id.
+	 * The {@code lastGameID} holds the last game id.
 	 */
 	private int lastGameID;
 
@@ -173,8 +174,8 @@ public class Gun3D_301578878_39676804_Server extends Application {
 	 * {@code lastGameID} from parallel use
 	 */
 	private static Lock gameIdLock = new ReentrantLock();
-	// private static Lock dbLock = new ReentrantLock();
 
+	
 	/**
 	 * Builds the GUI and sets up the server.
 	 * 
@@ -192,21 +193,9 @@ public class Gun3D_301578878_39676804_Server extends Application {
 		primaryStage.setOnCloseRequest(e -> {
 			onClose();
 		});
-
-		btnShowDB.setOnAction(e -> {
-			viewDB();
-		});
-		btnDelete.setOnAction(e -> {
-			deletePlayer();
-		});
-		btnChange.setOnAction(e -> {
-			changePlayerName();
-		});
-
-		btnNewGame.setOnAction(e -> {
-			newGame();
-		});
-
+		
+		setButtonsActions();
+		
 		new Thread(() -> {
 			try {
 				serverSocket = new ServerSocket(8000);
@@ -218,7 +207,27 @@ public class Gun3D_301578878_39676804_Server extends Application {
 			}
 		}).start();
 	}
+	
+	
+	/**
+	 * Sets the application buttons actions
+	 * */
+	private void setButtonsActions(){
+		btnShowDB.setOnAction(e -> {
+			viewDB();
+		});
+		btnDelete.setOnAction(e -> {
+			deletePlayer();
+		});
+		btnChange.setOnAction(e -> {
+			changePlayerName();
+		});
+		btnNewGame.setOnAction(e -> {
+			newGame();
+		});
+	}
 
+	
 	/**
 	 * Starts a new stand alone game, thus creating a new player, per
 	 * instructions
@@ -233,6 +242,7 @@ public class Gun3D_301578878_39676804_Server extends Application {
 		}
 	}
 
+	
 	/**
 	 * Changes player name in DB based on the inserted text in the intended
 	 * TextFileds errors will be printed in server log
@@ -275,6 +285,7 @@ public class Gun3D_301578878_39676804_Server extends Application {
 		}
 	}
 
+	
 	/**
 	 * Gets new socket and opens new thread for it documents details in server
 	 * log
@@ -287,6 +298,7 @@ public class Gun3D_301578878_39676804_Server extends Application {
 		new Thread(new HandleAClient(socket)).start();
 	}
 
+	
 	/**
 	 * Starts a connection do DB * @exception e close the server if the
 	 * connection failed;
@@ -315,6 +327,7 @@ public class Gun3D_301578878_39676804_Server extends Application {
 		});
 	}
 
+	
 	/**
 	 * Writes messages to sever log
 	 **/
@@ -324,6 +337,7 @@ public class Gun3D_301578878_39676804_Server extends Application {
 		});
 	}
 
+	
 	/**
 	 * Builds the application GUI
 	 */
@@ -372,6 +386,7 @@ public class Gun3D_301578878_39676804_Server extends Application {
 		primaryStage.setAlwaysOnTop(true);
 	}
 
+	
 	/**
 	 * Prepares the application for close. close the application
 	 */
@@ -389,6 +404,7 @@ public class Gun3D_301578878_39676804_Server extends Application {
 		close();
 	}
 
+	
 	/**
 	 * Close the application
 	 */
@@ -400,6 +416,7 @@ public class Gun3D_301578878_39676804_Server extends Application {
 		});
 	}
 
+	
 	/**
 	 * This class provides a task to manage online clients
 	 * 
@@ -501,6 +518,7 @@ public class Gun3D_301578878_39676804_Server extends Application {
 		}
 	}
 
+	
 	/**
 	 * Main of {@code Gun3D_301578878_39676804_Server} to launch the application
 	 * 

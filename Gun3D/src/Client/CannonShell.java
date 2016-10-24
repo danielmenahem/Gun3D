@@ -17,12 +17,12 @@ import javafx.scene.paint.PhongMaterial;
  */
 public class CannonShell extends Sphere{
 	/**
-	 * The value of static final int {@code RADIUS} is {@value}.
+	 * The value of static final {@code RADIUS} is {@value}.
 	 */
 	public static final int RADIUS = 8;
 	
 	/**
-	 * The value of static final int {@code INCREASMENT} is {@value}.
+	 * The value of static final {@code INCREASMENT} is {@value}.
 	 */
 	public static final int INCREASMENT = 2;
 	
@@ -32,27 +32,27 @@ public class CannonShell extends Sphere{
 	private PhongMaterial material;
 	
 	/**
-	 * The {@code theta} in an int. holds the cannon shell theta angel
+	 * The {@code theta} holds the cannon shell theta angel
 	 * */
 	private int theta;
 	
 	/**
-	 * The {@code phi} in an int. holds the cannon shell phi angel
+	 * The {@code phi} holds the cannon shell phi angel
 	 * */
 	private int phi;
 	
 	/**
-	 * The {@code length} in an int. holds the cannon shell length from bottom center
+	 * The {@code length} holds the cannon shell length from bottom center
 	 * */
 	private int length;
 	
 	/**
-	 * The {@code height} in an int. holds the container height
+	 * The {@code height} holds the container height
 	 * */
 	private double height;
 
 	/**
-	 * The {@code height} in an int. holds the container width
+	 * The {@code height} holds the container width
 	 * */
 	private double width;
 	
@@ -86,6 +86,20 @@ public class CannonShell extends Sphere{
 		moveShell();
 		setDrawMode(DrawMode.FILL);
         setMaterial(material);
+	}
+	
+	
+	/**
+	 * Checks if the cannon shell reached out of bounds
+	 * @param maxZ the max z depth allowed
+	 * @return true if out of bounds (boolean)
+	 * */
+	public boolean isOutofBounds(double maxZ) {
+		
+		return ((this.getTranslateX() + CannonShell.RADIUS > (this.width)) || 
+				(this.getTranslateX() - CannonShell.RADIUS < 0) || 
+				(this.getTranslateY() - CannonShell.RADIUS*2 < 0) || 
+				(this.getTranslateZ() > maxZ));
 	}
 	
 	

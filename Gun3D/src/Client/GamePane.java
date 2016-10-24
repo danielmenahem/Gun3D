@@ -9,6 +9,7 @@ import java.util.HashMap;
 import GameObjects.Difficulty;
 import GameObjects.EventType;
 import GameObjects.GameEvent;
+import GameObjects.RotationDirection;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -36,83 +37,93 @@ import javafx.scene.media.MediaPlayer;
 public class GamePane extends Pane{
 	
 	/**
-	 * The value of static final String {@code TRAINING_BACKGROUND_URL} is {@value}.
+	 * The value of static final {@code TRAINING_BACKGROUND_URL} is {@value}.
 	 */
 	private static final String TRAINING_BACKGROUND_URL = "/Client/Images/cartoon_desert.jpg";
 	
 	/**
-	 * The value of static final String {@code MATCH_BACKGROUND_URL} is {@value}.
+	 * The value of static final {@code MATCH_BACKGROUND_URL} is {@value}.
 	 */
 	private static final String MATCH_BACKGROUND_URL = "/Client/Images/desert.jpg";
 	
 	/**
-	 * The value of static final String {@code  EXPLOSION_URL} is {@value}.
+	 * {@code  EXPLOSION_URL} holds the explosions images URL's
 	 */
-	private static final String EXPLOSION_URL = "/Client/Images/explosion.png";
+	private static final String EXPLOSIONS_URL [] = {"/Client/Images/explosion.png", 
+			"/Client/Images/explosion2.png", "/Client/Images/explosion3.png"};
 	
 	/**
-	 * The value of static final String {@code SHOT_SOUND_URL} is {@value}.
+	 * The value of static final {@code SHOT_SOUND_URL} is {@value}.
 	 */
 	private static final String SHOT_SOUND_URL = "src/Client/Sounds/shot.wav";
 	
 	/**
-	 * The value of static final String {@code HIT_SOUND_URL} is {@value}.
+	 * The value of static final {@code HIT_SOUND_URL} is {@value}.
 	 */
 	private static final String HIT_SOUND_URL = "src/Client/Sounds/hit.wav";
 	
 	/**
-	 * The value of static final String {@code MOVE_SOUND_URL} is {@value}.
+	 * The value of static final {@code MOVE_SOUND_URL} is {@value}.
 	 */
 	private static final String MOVE_SOUND_URL = "src/Client/Sounds/cannon_move.wav";
 	
 	/**
-	 * The value of static final String {@code BACKGROUND_SOUND_URL} is {@value}.
+	 * The value of static final {@code BACKGROUND_SOUND_URL} is {@value}.
 	 */
 	private static final String BACKGROUND_SOUND_URL = "src/Client/Sounds/wind.wav";
 	
 	/**
-	 * The static final int[] {@code TARGET_SIZES} holds the values 30, 25 ,20
+	 * The static final {@code TARGET_SIZES} holds the values 30, 25 ,20
 	 */
 	private static final int [] TARGET_SIZES = {30, 25 ,20};
 	
 	/**
-	 * The static final int[] {@code TARGET_Z_MAX} holds the values 45, 40, 35
+	 * The static final {@code TARGET_Z_MAX} holds the values 50, 42, 35
 	 */
 	private static final int [] TARGET_Z_MAX = {50, 42, 35};
 	
 	/**
-	 * The value of static final double {@code TARGET_Y_DEVIDER} is {@value}.
+	 * The value of static final {@code TARGET_Y_DEVIDER} is {@value}.
 	 */
 	private static final double TARGET_Y_DEVIDER = 2.5;
 	
 	/**
-	 * The value of static final double {@code GAME_ANIMATION_MILLIS} is {@value}.
+	 * The value of static final {@code GAME_ANIMATION_MILLIS} is {@value}.
 	 */
 	private static final double GAME_ANIMATION_MILLIS = 5;
 	
 	/**
-	 * The value of static final double {@code EXPLOSION_ANIMATION_MILLIS} is {@value}.
+	 * The value of static final {@code EXPLOSION_ANIMATION_MILLIS} is {@value}.
 	 */
 	private static final double EXPLOSION_ANIMATION_MILLIS = 100;
 	
 	/**
-	 * The value of static final int {@code NUMBER_OF_EXPLOSION_CYCLES} is {@value}.
+	 * The value of static final {@code SOUND_EFFECTS_VOLUME} is {@value}.
+	 */
+	private static final double SOUND_EFFECTS_VOLUME = 0.4;	
+	/**
+	 * The value of static final {@code NUMBER_OF_EXPLOSION_CYCLES} is {@value}.
 	 */
 	private static final int NUMBER_OF_EXPLOSION_CYCLES = 9;
 	
 	
 	/**
-	 * The value of static final int {@code HIT_MULTIPLIER} is {@value}.
+	 * The value of static final {@code HIT_MULTIPLIER} is {@value}.
 	 */
 	private static final int HIT_MULTIPLIER = 10; 
 	
 	/**
-	 * The {@code backgrounds_url} is an {@link HashMap}
+	 * The {@code backgroundsUrl} is an {@link HashMap}. holds the backgrounds URL's
 	 *  */
-	private static HashMap <Boolean, String> backgrounds_url = new HashMap<>();
+	private static HashMap <Boolean, String> backgroundsUrl = new HashMap<>();
 	
 	/**
-	 * The {@code isMatch} is a boolean. holds the game mode
+	 * The {@code rotationDirection} is an {@link HashMap}. holds the directions map
+	 *  */
+	private static HashMap<KeyCode, RotationDirection> rotationDirection = new HashMap<>();
+	
+	/**
+	 * The {@code isMatch} holds the game mode
 	 * */
 	private boolean isMatch;
 	
@@ -127,37 +138,37 @@ public class GamePane extends Pane{
 	private Difficulty difficulty;
 	
 	/**
-	 * The {@code score} is an int. holds the game score
+	 * The {@code score} holds the game score
 	 * */
 	private int score;
 
 	/**
-	 * The {@code hits} is an int. holds the number of hits
+	 * The {@code hits} holds the number of hits
 	 * */
 	private int hits;
 	
 	/**
-	 * The {@code misses} is an int. holds the number of misses
+	 * The {@code misses} holds the number of misses
 	 * */
 	private int misses;
 	
 	/**
-	 * The {@code gameID} is an int. holds the game ID
+	 * The {@code gameID} holds the game ID
 	 * */
 	private int gameID;
 	
 	/**
-	 * The {@code name} is a String. holds the player name
+	 * The {@code name} holds the player name
 	 * */
 	private String name;
 	
 	/**
-	 * The {@code width} is double. holds the panel width
+	 * The {@code width} holds the panel width
 	 * */
 	private double width;
 	
 	/**
-	 * The {@code height} is double. holds the panel height
+	 * The {@code height} holds the panel height
 	 * */
 	private double height;
 	
@@ -168,63 +179,53 @@ public class GamePane extends Pane{
 	private ArrayList<CannonShell> shells;
 	
 	/**
-	 * The {@code mainTarget} is {@link Target}. holds the game main target
+	 * The {@code mainTarget} is a {@link Target}. holds the game main target
 	 * */
 	private Target mainTarget;
 	
 	/**
-	 * The {@code mainTarget} is {@link Target}. holds the game secondary target
+	 * The {@code mainTarget} is a {@link Target}. holds the game secondary target
 	 * */
 	private Target seconderyTarget;
 	/**
-	 * The {@code cannon} is {@link Cannon}. holds the game cannon
+	 * The {@code cannon} is a {@link Cannon}. holds the game cannon
 	 * */
 	private Cannon cannon;
 	
 	/**
-	 * The {@code gameAnimation} is {@link TimeLine}. holds the game engine
+	 * The {@code gameAnimation} is a {@link TimeLine}. holds the game engine
 	 * */
 	private Timeline gameAnimation;
 	
 	/**
-	 * The {@code lblInfo} is {@link Label}. holds the game score information
+	 * The {@code lblInfo} is a {@link Label}. holds the game score information
 	 * */
 	private Label lblInfo;
 	
 	/**
-	 * The {@code background} is {@link BackgroundImage}. holds the game background
+	 * The {@code background} is a {@link BackgroundImage}. holds the game background
 	 * */
 	private BackgroundImage background;
 	
 	/**
-	 * The {@code shotPlayer} is {@link MediaPlayer}. holds the sound for shot
+	 * The {@code shotPlayer} is a {@link MediaPlayer}. holds the sound for shot
 	 * */
 	private MediaPlayer shotPlayer;
 	
 	/**
-	 * The {@code hitPlayer} is {@link MediaPlayer}. holds the sound for hit
+	 * The {@code hitPlayer} is a {@link MediaPlayer}. holds the sound for hit
 	 * */
 	private MediaPlayer hitPlayer;
 	
 	/**
-	 * The {@code movePlayer} is {@link MediaPlayer}. holds the sound for cannon movement
+	 * The {@code movePlayer} is a {@link MediaPlayer}. holds the sound for cannon movement
 	 * */
 	private MediaPlayer movePlayer;
 	
 	/**
-	 * The {@code movePlayer} is {@link MediaPlayer}. holds the sound for cannon movement
+	 * The {@code movePlayer} is a {@link MediaPlayer}. holds the sound for cannon movement
 	 * */
 	private MediaPlayer backgroundPlayer;
-	
-	/**
-	 * The {@code imgExplusion} is {@link ImageView}. holds the explosion picture
-	 * */
-	private ImageView imgExplusion;
-	
-	/**
-	 * The {@code explosionAnimation} is {@link Timeline}. sets the explosion animation
-	 * */
-	private Timeline explosionAnimation;
 	
 	
 	/** 
@@ -232,14 +233,8 @@ public class GamePane extends Pane{
 	 * @param width the game panel width (double)
 	 * @param height the game panel height (double)*/
 	public GamePane(double width, double height){
-		this.width = width;
-		this.height = height;
-		setSize();
-		
-		backgrounds_url.put(true, MATCH_BACKGROUND_URL);
-		backgrounds_url.put(false, TRAINING_BACKGROUND_URL);
-		
-		prepareExplosionAnimation();
+		setSize(width, height);
+		initHashMapsValues();
 	}
 	
 	
@@ -281,9 +276,11 @@ public class GamePane extends Pane{
 			} catch (IOException e) {
 			}
 		}
+		this.gameAnimation.stop();
+		this.backgroundPlayer.stop();
 		this.getChildren().removeAll(this.getChildren());
 		calculateScore();
-		return this.score;
+		return getScore();
 	}
 	
 	
@@ -291,9 +288,7 @@ public class GamePane extends Pane{
 	 * Prepares and start a game
 	 * */
 	private void prepareAndStartGame(){
-		this.score = 0;
-		this.hits = 0;
-		this.misses = 0;
+		resetGameStats();
 		initMediaPlayers();
 		setBackground();
         addGameControls();
@@ -311,16 +306,23 @@ public class GamePane extends Pane{
 	}
 	
 	
+	private void resetGameStats(){
+		this.score = 0;
+		this.hits = 0;
+		this.misses = 0;
+	}
+	
+	
 	/**
 	 * Initiates sound media players
 	 * */
 	private void initMediaPlayers(){
 		this.shotPlayer = new MediaPlayer(new Media(new File(SHOT_SOUND_URL).toURI().toString()));
-		this.shotPlayer.setVolume(0.5);
+		this.shotPlayer.setVolume(SOUND_EFFECTS_VOLUME);
 		this.hitPlayer = new MediaPlayer(new Media(new File(HIT_SOUND_URL).toURI().toString()));
-		this.hitPlayer.setVolume(0.5);
+		this.hitPlayer.setVolume(SOUND_EFFECTS_VOLUME);
 		this.movePlayer = new MediaPlayer(new Media(new File(MOVE_SOUND_URL).toURI().toString()));
-		this.movePlayer.setVolume(0.5);
+		this.movePlayer.setVolume(SOUND_EFFECTS_VOLUME);
 		this.backgroundPlayer = new MediaPlayer(new Media(new File(BACKGROUND_SOUND_URL).toURI().toString()));
 	}
 		
@@ -332,10 +334,11 @@ public class GamePane extends Pane{
 		if(difficulty == Difficulty.Hard){
 			this.mainTarget.moveTarget();
 		}
+		
 		for(int i=0; i<this.shells.size();i++){
 			CannonShell cs = this.shells.get(i);
 			cs.moveShell();
-			if(isOutofBounds(cs)){
+			if(cs.isOutofBounds(TARGET_Z_MAX[difficulty.ordinal()]*3)){
 				miss(cs);
 			}
 			else{
@@ -345,6 +348,14 @@ public class GamePane extends Pane{
 				}
 			}
 		}
+	}
+	
+	
+	/**Shoots a cannon shell*/
+	private void shoot(){
+		CannonShell shell = cannon.shoot();
+		this.getChildren().add(shell);
+		shells.add(shell);		
 	}
 	
 	
@@ -361,7 +372,7 @@ public class GamePane extends Pane{
 	/**
 	 * Performs the action needed after a hit
 	 * @param cs the hitting {@link CannonShell}
-	 * @param target the impaired target
+	 * @param target the impaired {@link Target}
 	 * */
 	private void hit(CannonShell cs, Target target) {
 		playSound(hitPlayer,1);
@@ -376,7 +387,6 @@ public class GamePane extends Pane{
 			try {
 				toServer.writeObject(new GameEvent(this.name, this.gameID, EventType.HIT, this.score));
 			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 		updateInfoText();
@@ -387,6 +397,8 @@ public class GamePane extends Pane{
 	 * Prepares and start explosion animation
 	 * @param target the impaired target*/
 	private void prepareAndShowExplosion(Target target){
+		ImageView imgExplusion = setExplosionImage();
+		Timeline explosionAnimation = prepareExplosionAnimation(imgExplusion);
     	imgExplusion.setVisible(true);
     	imgExplusion.setX(target.getTranslateX() - target.getRadius() + target.getTranslateZ()/2);
     	imgExplusion.setY(target.getTranslateY() - target.getRadius() + target.getTranslateZ()/2);
@@ -394,11 +406,14 @@ public class GamePane extends Pane{
     	imgExplusion.setFitHeight(Math.max(1,target.getRadius()*2 - target.getTranslateZ()));
 
 		explosionAnimation.play();
+		explosionAnimation.setOnFinished(e ->  {
+			this.getChildren().remove(imgExplusion);
+		});
 	}
 	
 
 	/**
-	 * Performs the action needed after a miss
+	 * Performs the actions which needed after a miss
 	 * @param cs the missing {@link CannonShell}
 	 * */
 	private void miss(CannonShell cs) {
@@ -409,7 +424,6 @@ public class GamePane extends Pane{
 			try {
 				toServer.writeObject(new GameEvent(this.name, this.gameID, EventType.MISS, this.score));
 			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 		updateInfoText();
@@ -430,40 +444,14 @@ public class GamePane extends Pane{
 	 * @return the impaired {@link Target}. null if no hit
 	 * */
 	private Target isHit(CannonShell cs) {
-		if(checkForHit(cs, mainTarget))
+		if(mainTarget.checkForHit(cs))
 			return mainTarget;
 		
 		if(difficulty == Difficulty.Easy){
-			if(checkForHit(cs, seconderyTarget))
+			if(seconderyTarget.checkForHit(cs))
 				return seconderyTarget;
 		}
 		return null;
-	}
-	
-	
-	/**
-	 * Checks if the cannon shell hit the target
-	 * @param cs the reviewed {@link CannonShell}
-	 * @param target the reviewed {@link Target}
-	 * @return true if hit (boolean)
-	 * */
-	private boolean checkForHit(CannonShell cs, Target target){
-		return Math.sqrt(Math.pow((target.getTranslateX() - cs.getTranslateX()), 2)
-				+ Math.pow((target.getTranslateY() - cs.getTranslateY()), 2) 
-				+ Math.pow((target.getTranslateZ() - cs.getTranslateZ()), 2)) <= (TARGET_SIZES[this.difficulty.ordinal()]);
-	}
-
-	
-	/**
-	 * Checks if the cannon shell hit out of bounds
-	 * @param shell the reviewed {@link CannonShell}
-	 * @return true if out of bounds (boolean)
-	 * */
-	private boolean isOutofBounds(CannonShell shell) {
-		
-		return ((shell.getTranslateX() + CannonShell.RADIUS> (this.getWidth()+this.getTranslateX())) || 
-				(shell.getTranslateX() - CannonShell.RADIUS< 0) || (shell.getTranslateY() - CannonShell.RADIUS*2 < 0) || 
-				(shell.getTranslateZ() > TARGET_Z_MAX[difficulty.ordinal()]*3) );
 	}
 
 	
@@ -472,37 +460,35 @@ public class GamePane extends Pane{
 	 * */
 	private void setKeyboardEvents() {
 		this.setOnKeyPressed(e -> {
-			if(e.getCode() == KeyCode.LEFT){
-				if(cannon.rotateLeft())
-					playSound(movePlayer,1);
-			}
-			else if(e.getCode() == KeyCode.RIGHT){
-				if(cannon.rotateRight())
-					playSound(movePlayer,1);
-			}
-			else if(e.getCode() == KeyCode.UP){
-				if(cannon.rotateForward())
-					playSound(movePlayer,1);
-			}
-			else if(e.getCode() == KeyCode.DOWN){
-				if(cannon.rotateBackwards())
-					playSound(movePlayer,1);
-			}
+			if(cannon.rotate(rotationDirection.get(e.getCode())))
+				playSound(movePlayer,1);
+
 			else if(e.getCode() == KeyCode.SPACE){
 				playSound(shotPlayer,1);
-				CannonShell shell = new CannonShell(cannon.getTheta(), 
-						cannon.getPhi(), (int)cannon.getFitHeight() + 2, height, width);
-				this.getChildren().add(shell);
-				shells.add(shell);				
+				shoot();
 			}
 		});
 	}
 	
 	
 	/**
+	 * Initiates the values of {@link GamePane#backgroundsUrl} and {@link GamePane#rotationDirection}
+	 * */
+	private void initHashMapsValues(){
+		backgroundsUrl.put(true, MATCH_BACKGROUND_URL);
+		backgroundsUrl.put(false, TRAINING_BACKGROUND_URL);
+		
+		rotationDirection.put(KeyCode.LEFT, RotationDirection.Left);
+		rotationDirection.put(KeyCode.RIGHT, RotationDirection.Right);
+		rotationDirection.put(KeyCode.UP, RotationDirection.Forward);
+		rotationDirection.put(KeyCode.DOWN, RotationDirection.Backward);
+	}
+	
+	
+	/**
 	 * Plays a sound file
 	 * @param sound the sound {@link MediaPlayer}
-	 * @param sycleCount 
+	 * @param cycles the number of cycles
 	 * */
 	private void playSound(MediaPlayer sound, int cycles){
         new Thread()
@@ -526,18 +512,26 @@ public class GamePane extends Pane{
 	
 	
 	/**
-	 * Configures the explosion animation
+	 * Configures explosion image
 	 * */
-	private void prepareExplosionAnimation(){
-		imgExplusion = new ImageView(new Image(EXPLOSION_URL));
+	private ImageView setExplosionImage(){
+		ImageView imgExplusion = new ImageView(new Image(EXPLOSIONS_URL[(int)getRandom(EXPLOSIONS_URL.length, 0)]));
 		imgExplusion.setVisible(false);
-		
-		explosionAnimation = new Timeline(new KeyFrame(Duration.millis(EXPLOSION_ANIMATION_MILLIS), e -> {
-		    imgExplusion.setVisible(!imgExplusion.isVisible());
+		this.getChildren().add(imgExplusion);
+		return imgExplusion;
+	}
+	
+	
+	/**
+	 * Configures an explosion animation
+	 * */
+	private Timeline prepareExplosionAnimation(ImageView img){
+		Timeline explosionAnimation = new Timeline(new KeyFrame(Duration.millis(EXPLOSION_ANIMATION_MILLIS), e -> {
+		    img.setVisible(!img.isVisible());
 		}));
 		
 		explosionAnimation.setCycleCount(NUMBER_OF_EXPLOSION_CYCLES);
-		this.getChildren().add(imgExplusion);
+		return explosionAnimation;
 	}
 	
 
@@ -545,7 +539,7 @@ public class GamePane extends Pane{
 	 * Sets the game background
 	 * */
 	private void setBackground() {
-		background = new BackgroundImage(new Image(backgrounds_url.get(isMatch),width,height,false,true),
+		background = new BackgroundImage(new Image(backgroundsUrl.get(isMatch),width,height,false,true),
 		        BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER,
 		         BackgroundSize.DEFAULT);
 		this.setBackground(new Background(background));
@@ -612,10 +606,13 @@ public class GamePane extends Pane{
 	/**
 	 * Sets the panel size
 	 * */
-	private void setSize(){
+	private void setSize(double width, double height){
+		this.width = width;
         this.setWidth(width);
+		this.height = height;
         this.setHeight(height);
 	}
+	
 	
 	/**
 	 * @return {@link GamePane#difficulty}
@@ -624,6 +621,7 @@ public class GamePane extends Pane{
 		return difficulty;
 	}
 
+	
 	/**
 	 * @return {@link GamePane#score}
 	 */
@@ -631,6 +629,7 @@ public class GamePane extends Pane{
 		return score;
 	}
 
+	
 	/**
 	 * @return {@link GamePane#hits}
 	 */
@@ -638,6 +637,7 @@ public class GamePane extends Pane{
 		return hits;
 	}
 
+	
 	/**
 	 * @return {@link GamePane#misses}
 	 */
@@ -645,6 +645,7 @@ public class GamePane extends Pane{
 		return misses;
 	}
 
+	
 	/**
 	 * @return {@link GamePane#gameID}
 	 */
@@ -652,12 +653,14 @@ public class GamePane extends Pane{
 		return gameID;
 	}
 
+	
 	/**
 	 * @return {@link GamePane#name}
 	 */
 	public String getName() {
 		return name;
 	}
+	
 
 	/**
 	 * @return {@link GamePane#isMatch}
@@ -665,7 +668,4 @@ public class GamePane extends Pane{
 	public boolean isMatch() {
 		return isMatch;
 	}
-
-
-	
 }

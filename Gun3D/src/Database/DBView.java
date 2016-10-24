@@ -108,7 +108,7 @@ public class DBView extends Stage {
 	 * @param db
 	 *            {@link DBView#db}
 	 */
-	public DBView(DBcontroller db) {
+	public DBView(DBcontrollerInterface db) {
 		this.db = db;
 		buildGUI();
 	}

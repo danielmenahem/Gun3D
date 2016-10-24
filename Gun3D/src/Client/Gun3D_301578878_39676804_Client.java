@@ -215,6 +215,7 @@ public class Gun3D_301578878_39676804_Client extends Application {
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent event) {
 				timer.stop();
+				gp.stopGame();
 				setTrainingOrGameScene();
 				event.consume();
 			}
