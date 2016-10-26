@@ -40,6 +40,26 @@ import javafx.stage.Stage;
 public class Gun3D_301578878_39676804_Server extends Application {
 
 	/**
+	 * The value of static final {@code LABEL_STYLE} is {@value}.
+	 */
+	private static final String LABEL_STYLE = "-fx-font-size: 15;-fx-font-weight: bold;";
+	
+	/**
+	 * The value of static final {@code BUTTON_STYLE} is {@value}.
+	 */
+	private static final String BUTTON_STYLE = "-fx-background-color: #d5d6e3;";
+	
+	/**
+	 * The value of static final {@code BORDER_STYLE} is {@value}.
+	 */
+	private static final String BORDER_STYLE = "-fx-border-color: #aaaab2;-fx-border-width: 2px;";
+	
+	/**
+	 * The value of static final {@code ACTION_PANES_STYLE} is {@value}.
+	 */
+	private static final String ACTION_PANES_STYLE = "-fx-background-color: #fff9be;";
+	
+	/**
 	 * The value of static final {@code NUMBER_OF_ATTEMPTS} is {@value}.
 	 */
 	private static final int NUMBER_OF_ATTEMPTS = 3;
@@ -94,6 +114,17 @@ public class Gun3D_301578878_39676804_Server extends Application {
 	 * The {@code paneChangeControls} is a {@link GridPane}.
 	 */
 	private GridPane paneChangeControls = new GridPane();
+	
+	
+	/**
+	 * The {@code paneCommands} is an {@link HBox}.
+	 */
+	private HBox paneCommands = new HBox();
+	
+	/**
+	 * The {@code spLog} is an {@link ScrollPane}.
+	 */
+	private ScrollPane spLog = new ScrollPane(taLog);
 
 	/**
 	 * The {@code lblDeleteHead} is a {@link Label}.
@@ -265,13 +296,14 @@ public class Gun3D_301578878_39676804_Server extends Application {
 		tfReplacingName.setText("");
 	}
 
+	
 	/**
 	 * Deletes player name in DB based on the inserted text in the intended
 	 * TextFiled errors will be printed in server log
 	 */
 	private void deletePlayer() {
 		if (tfNameForDelete.getText().equals(""))
-			writeToLog("Delete Error: Please insert name to deleting\n");
+			writeToLog("Delete Error: Please insert name to delete\n");
 		else {
 			try {
 				dbManager.deletePlayer(tfNameForDelete.getText());
@@ -312,6 +344,7 @@ public class Gun3D_301578878_39676804_Server extends Application {
 		}
 	}
 
+	
 	/**
 	 * Opens the DB view
 	 */
@@ -342,48 +375,93 @@ public class Gun3D_301578878_39676804_Server extends Application {
 	 * Builds the application GUI
 	 */
 	private void buildGUI() {
+		organizeControls();
+		setControlsPaddingAndAlignment();
+		setControlsStyle();
+
+		Scene scene = new Scene(paneMain, 800, 310);
+		primaryStage.setTitle("Game Server");
+		primaryStage.setScene(scene);
+		primaryStage.show();
+		primaryStage.setAlwaysOnTop(true);
+	}
+	
+	
+	/**
+	 * Sets the application controls style
+	 * */
+	private void setControlsStyle(){
+		paneMain.getCenter().setStyle(BORDER_STYLE);
+		paneActions.setStyle(BORDER_STYLE);
+		paneChange.setStyle(ACTION_PANES_STYLE);
+		paneDelete.setStyle(ACTION_PANES_STYLE);
+		lblChangeHead.setStyle(LABEL_STYLE);
+		lblDeleteHead.setStyle(LABEL_STYLE);
+		btnChange.setStyle(BUTTON_STYLE);
+		btnDelete.setStyle(BUTTON_STYLE);
+		btnNewGame.setStyle(BUTTON_STYLE);
+		btnShowDB.setStyle(BUTTON_STYLE);
+		paneCommands.setStyle("-fx-background-color: #46475a;" + BORDER_STYLE);
+	}
+	
+	
+	/**
+	 * Sets the application controls padding and alignment
+	 * */
+	private void setControlsPaddingAndAlignment(){
+		paneChangeControls.setAlignment(Pos.CENTER);
+		paneChangeControls.setPadding(new Insets(20, 12.5, 15, 14.5));
+		paneChangeControls.setHgap(5);
+		paneChangeControls.setVgap(5);
+		
+		paneDeleteControls.setAlignment(Pos.CENTER);
+		paneDeleteControls.setPadding(new Insets(5, 12.5, 15, 14.5));
+		paneDeleteControls.setHgap(5);
+		paneDeleteControls.setVgap(5);
+		
+		paneCommands.setSpacing(5);
+		paneCommands.setPadding(new Insets(2,2,4,2));
+		
+		paneActions.setPadding(new Insets(10, 15, 15, 15));
+		spLog.setPadding(new Insets(10,0,0,10));
+		
+		BorderPane.setAlignment(lblDeleteHead, Pos.CENTER);
+		BorderPane.setAlignment(lblChangeHead, Pos.CENTER);
+	}
+	
+	
+	/**
+	 * Organizes the application controls
+	 * */
+	private void organizeControls(){
 		taLog.setEditable(false);
+		taLog.setMinHeight(250);
+		
 		paneChangeControls.add(lblNameToChange, 0, 0);
 		paneChangeControls.add(tfNameToChange, 1, 0);
 		paneChangeControls.add(lblReplacingName, 0, 1);
 		paneChangeControls.add(tfReplacingName, 1, 1);
 		paneChangeControls.add(btnChange, 1, 2);
-		paneChangeControls.setAlignment(Pos.CENTER);
-		paneChangeControls.setPadding(new Insets(5, 12.5, 15, 14.5));
 
 		paneChange.setTop(lblChangeHead);
 		paneChange.setBottom(paneChangeControls);
-
+	
 		paneDeleteControls.add(lblNameForDelate, 0, 0);
 		paneDeleteControls.add(tfNameForDelete, 1, 0);
 		paneDeleteControls.add(btnDelete, 1, 1);
-		paneDeleteControls.setAlignment(Pos.CENTER);
-		paneDeleteControls.setPadding(new Insets(5, 12.5, 15, 14.5));
 
 		paneDelete.setTop(lblDeleteHead);
 		paneDelete.setBottom(paneDeleteControls);
 
-		HBox hb = new HBox();
-		hb.getChildren().addAll(btnNewGame, btnShowDB);
+		paneCommands.getChildren().addAll(btnNewGame, btnShowDB);
 
 		paneActions.setTop(paneChange);
 		paneActions.setBottom(paneDelete);
+		
+		paneMain.setTop(paneCommands);
 		paneMain.setRight(paneActions);
-		paneMain.setTop(hb);
-		paneMain.setCenter(new ScrollPane(taLog));
+		paneMain.setCenter(spLog);
 		paneMain.setShape(new Line());
-
-		BorderPane.setAlignment(lblDeleteHead, Pos.CENTER);
-		BorderPane.setAlignment(lblChangeHead, Pos.CENTER);
-
-		lblChangeHead.setStyle("-fx-font-size: 15;-fx-font-weight: bold;");
-		lblDeleteHead.setStyle("-fx-font-size: 15;-fx-font-weight: bold;");
-
-		Scene scene = new Scene(paneMain, 760, 250);
-		primaryStage.setTitle("Game Server");
-		primaryStage.setScene(scene);
-		primaryStage.show();
-		primaryStage.setAlwaysOnTop(true);
 	}
 
 	
@@ -442,12 +520,45 @@ public class Gun3D_301578878_39676804_Server extends Application {
 		 */
 		private void closeClient() {
 			try {
+				writeToLog("Client " + socket.getInetAddress().getHostName() + "session has ended\n");
 				this.socket.close();
 			} catch (IOException e) {
 			}
 			sockets.remove(socket);
 		}
+		
+		
+		/**
+		 * Sets {@link HandleAClient#gameID}
+		 * */
+		private void setGameID(){
+			gameIdLock.lock();
+			lastGameID++;
+			this.gameID = lastGameID;
+			gameIdLock.unlock();
+		}
 
+		
+		/**
+		 * Writes an event to DB
+		 * @param event the event for save ({@link GameEvent})
+		 * @return true if the writing succeeded
+		 * */
+		private boolean insertEventToDB(GameEvent event){
+			boolean success = false;
+			for (int i = 0; i < NUMBER_OF_ATTEMPTS; i++) {
+				try {
+					dbManager.insertEvent(event.getPlayerName(), event.getGameID(), event.getGameScore(),
+							event.getEvent());
+					success = true;
+					i = NUMBER_OF_ATTEMPTS;
+				} catch (SQLException e1) {
+				}
+			}
+			return success;
+		}
+		
+		
 		/**
 		 * Runs a task
 		 * 
@@ -461,11 +572,7 @@ public class Gun3D_301578878_39676804_Server extends Application {
 		@Override
 		public void run() {
 			try {
-				gameIdLock.lock();
-				lastGameID++;
-				this.gameID = lastGameID;
-				gameIdLock.unlock();
-
+				setGameID();
 				ObjectInputStream inputFromClient = new ObjectInputStream(socket.getInputStream());
 				ObjectOutputStream outputToClient = new ObjectOutputStream(socket.getOutputStream());
 				outputToClient.writeInt(this.gameID);
@@ -480,29 +587,19 @@ public class Gun3D_301578878_39676804_Server extends Application {
 						event = (GameEvent) inputFromClient.readObject();
 						failedReadAttempts = 0;
 						if (event.getEvent() != EventType.END_GAME) {
-							dbManager.insertEvent(event.getPlayerName(), event.getGameID(), event.getGameScore(),
-									event.getEvent());
-						} else {
-							loop = false;
-							closeClient();
-						}
-					} catch (ClassNotFoundException e) {
-					} catch (SQLException e) {
-						boolean success = false;
-						for (int i = 0; i < NUMBER_OF_ATTEMPTS; i++) {
-							try {
-								dbManager.insertEvent(event.getPlayerName(), event.getGameID(), event.getGameScore(),
-										event.getEvent());
-								success = true;
-								i = NUMBER_OF_ATTEMPTS;
-							} catch (SQLException e1) {
+							if (!insertEventToDB(event)) {
+								loop = false;
+								closeClient();
 							}
-						}
-						if (!success) {
+						} 
+						else {
 							loop = false;
 							closeClient();
 						}
-					} catch (IOException e) {
+					} 
+					catch (ClassNotFoundException e) {
+					} 
+					catch (IOException e) {
 						failedReadAttempts++;
 						if (failedReadAttempts >= NUMBER_OF_ATTEMPTS) {
 							loop = false;
@@ -510,10 +607,13 @@ public class Gun3D_301578878_39676804_Server extends Application {
 						}
 					}
 				}
+				
 				closeClient();
-			} catch (SocketException ex) {
+			}
+			catch (SocketException ex) {
 				closeClient();
-			} catch (IOException ex) {
+			} 
+			catch (IOException ex) {
 			}
 		}
 	}

@@ -1,5 +1,8 @@
 package Client;
 import javafx.scene.text.Font;
+import javafx.scene.transform.Rotate;
+import javafx.scene.shape.*;
+
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.File;
@@ -21,6 +24,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
 
 
 /**
@@ -355,7 +360,7 @@ public class GamePane extends Pane{
 	private void shoot(){
 		CannonShell shell = cannon.shoot();
 		this.getChildren().add(shell);
-		shells.add(shell);		
+		shells.add(shell);
 	}
 	
 	
