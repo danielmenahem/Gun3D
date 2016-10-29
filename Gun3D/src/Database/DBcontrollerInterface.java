@@ -181,7 +181,7 @@ public interface DBcontrollerInterface {
 	 * 
 	 * @param event
 	 *            type of event to count, ({@link EventType} END_GAME is not
-	 *            relevant for this query (1 per game)).
+	 *            relevant for this query (1 per game))
 	 * @return {@link ArrayList} of {@link Record} selected in the DB
 	 * @throws SQLException
 	 *             DB SQL exceptions

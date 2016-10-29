@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.concurrent.ThreadLocalRandom;
 
 import GameObjects.EventType;
@@ -75,7 +76,7 @@ public class DBcontroller implements DBcontrollerInterface {
 	public DBcontroller() throws Exception {
 		connect();
 		createTable();
-		createFakeDB(); //put in comment if DB exists
+		createFakeDB(); // put in comment if DB exists
 		getCurrentNumberOfGames();
 	}
 
@@ -279,18 +280,85 @@ public class DBcontroller implements DBcontrollerInterface {
 	@Override
 	public ArrayList<Record> getAverageScoresOfXTopGameByPlayersWithXGamesOrMoreDescending(int minGames)
 			throws SQLException {
+
+		ArrayList<Record> records = getPlayersWithXGamesOrMore(minGames);
+		records = getAverageScoresOfXTopGameOfPlayers(records, minGames);
+
+		records.sort(new Comparator<Record>() {
+
+			@Override
+			public int compare(Record r1, Record r2) {
+				if (r1.getScore() >= r2.getScore())
+					return -1;
+				else
+					return 1;
+			}
+		});
+		;
+
+		return records;
+	}
+
+	/**
+	 * Get average score of top X games of specific players.
+	 * 
+	 * @param players
+	 *            {@link ArrayList} of {@link Record} containing the players
+	 *            that their top average will be calculated, and their number of
+	 *            games
+	 * @param numberOfTopGamesToCalc
+	 *            the number of top games to include in calculated average
+	 * @return {@link ArrayList} of {@link Record} containing players' names,
+	 *         number of games and average of top X games
+	 * @throws SQLException
+	 *             DB SQL exceptions
+	 */
+	private ArrayList<Record> getAverageScoresOfXTopGameOfPlayers(ArrayList<Record> players, int numberOfTopGamesToCalc)
+			throws SQLException {
+		ArrayList<Record> records = new ArrayList<>();
+
+		for (int i = 0; i < players.size(); i++) {
+			stmt = connection.prepareStatement(
+					"SELECT playerID, AVG(max_score) as avg_top FROM (SELECT playerID, gameID as g_id, max(gameScore) as max_score ,min(timeStamp) FROM "
+							+ tableName
+							+ " WHERE playerID = ? GROUP BY gameID order by max_score DESC limit ?) as top_games GROUP BY playerID");
+			stmt.setString(1, players.get(i).getPlayerID());
+			stmt.setInt(2, numberOfTopGamesToCalc);
+
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				records.add(new Record(rs.getString("playerID"), players.get(i).getGameID(), rs.getInt("avg_top"), null,
+						null));
+			}
+
+		}
+		return records;
+	}
+
+	/**
+	 * Get the players that have more than X games and their number of games.
+	 * 
+	 * @param minGames
+	 *            the minimum number of games of players to include in the returned list
+	 * @return {@link ArrayList} of {@link Record} containing players' names and
+	 *         their number of games
+	 * @throws SQLException
+	 *             DB SQL exceptions
+	 */
+	private ArrayList<Record> getPlayersWithXGamesOrMore(int minGames) throws SQLException {
 		ArrayList<Record> records = new ArrayList<>();
 
 		stmt = connection.prepareStatement(
-				"SELECT playerID, count(distinct(g_id)) as gameCount, AVG(max_score) as average FROM ( SELECT playerID, gameID as g_id, max(gameScore) as max_score ,min(timeStamp) FROM "
+				"SELECT playerID, count(distinct(g_id)) as gamesCount FROM (SELECT playerID, gameID as g_id, max(gameScore) as max_score ,min(timeStamp) FROM "
 						+ tableName
-						+ " GROUP BY playerID, gameID) as group_games_table GROUP BY playerID HAVING gameCount >= ? ORDER BY average DESC");
+						+ " GROUP BY playerID, gameID) as max_score GROUP BY playerID HAVING gamesCount >= ?");
 		stmt.setInt(1, minGames);
 
 		ResultSet rs = stmt.executeQuery();
 		while (rs.next()) {
-			records.add(new Record(rs.getString("playerID"), rs.getInt("gameCount"), rs.getInt("average"), null, null));
+			records.add(new Record(rs.getString("playerID"), rs.getInt("gamesCount"), 0, null, null));
 		}
+
 		return records;
 	}
 
@@ -355,8 +423,8 @@ public class DBcontroller implements DBcontrollerInterface {
 	/**
 	 * A method to insert DB records to test the code.
 	 */
-	private void insertModifiedTimeEvent(String playerID, int gameID, int gameScore, EventType event, Timestamp timeStamp)
-			throws SQLException {
+	private void insertModifiedTimeEvent(String playerID, int gameID, int gameScore, EventType event,
+			Timestamp timeStamp) throws SQLException {
 		stmt = connection.prepareStatement("INSERT INTO " + tableName
 				+ " (playerID, gameID, gameScore, eventType, timeStamp)" + " VALUES (?, ?, ?, ?, ?)");
 
