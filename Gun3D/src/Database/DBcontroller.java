@@ -81,7 +81,7 @@ public class DBcontroller implements DBcontrollerInterface {
 		connect();
 		createDB();
 		createTable();
-		createFakeData(); 
+		createFakeData();
 		getCurrentNumberOfGames();
 	}
 
@@ -97,7 +97,7 @@ public class DBcontroller implements DBcontrollerInterface {
 		connection = DriverManager.getConnection(dbURL, dbUsername, dbPassword);
 		System.out.println("Connection made");
 	}
-	
+
 	/**
 	 * Create the database, if it doesn't exist.
 	 */
@@ -108,15 +108,15 @@ public class DBcontroller implements DBcontrollerInterface {
 			connection.prepareStatement(db).executeUpdate();
 			System.out.println("DB created");
 		} catch (SQLException e) {
-			if (e.getErrorCode() == 1007) 
-	            // Database already exists error
-	            System.out.println("Database already exists");
+			if (e.getErrorCode() == 1007)
+				// Database already exists error
+				System.out.println("Database already exists");
 			else
 				System.out.println(e.getMessage());
-		}		
-		
+		}
+
 		try {
-			connection = DriverManager.getConnection(dbURL + dbName , dbUsername, dbPassword);
+			connection = DriverManager.getConnection(dbURL + dbName, dbUsername, dbPassword);
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
@@ -368,7 +368,8 @@ public class DBcontroller implements DBcontrollerInterface {
 	 * Get the players that have more than X games and their number of games.
 	 * 
 	 * @param minGames
-	 *            the minimum number of games of players to include in the returned list
+	 *            the minimum number of games of players to include in the
+	 *            returned list
 	 * @return {@link ArrayList} of {@link Record} containing players' names and
 	 *         their number of games
 	 * @throws SQLException
@@ -450,7 +451,22 @@ public class DBcontroller implements DBcontrollerInterface {
 	}
 
 	/**
-	 * A method to insert DB records to test the code.
+	 * Insert an event to the DB with a modified timestamp, for fake data
+	 * creation
+	 * 
+	 * @param playerID
+	 *            player's name, string inserted by the user
+	 * @param gameID
+	 *            game's ID. To insert, get current number of games and
+	 *            increment it by 1 to avoid collisions
+	 * @param gameScore
+	 *            game's score at the moment of the event
+	 * @param event
+	 *            event type {@link EventType}
+	 * @param timeStamp
+	 *            the modified timestamp of the inserted event
+	 * @throws SQLException
+	 *             DB SQL exceptions
 	 */
 	private void insertModifiedTimeEvent(String playerID, int gameID, int gameScore, EventType event,
 			Timestamp timeStamp) throws SQLException {
