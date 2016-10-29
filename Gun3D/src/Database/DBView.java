@@ -239,6 +239,12 @@ public class DBView extends Stage {
 		}
 	}
 
+	/**
+	 * Main method of {@code DBView} to launch the view of the database.
+	 * 
+	 * @param args
+	 *            command line arguments
+	 */
 	public static void main(String[] args) {
 		Application.launch(args);
 	}
