@@ -1,11 +1,7 @@
 package Client;
-import javafx.scene.text.Font;
-import javafx.scene.transform.Rotate;
-import javafx.scene.shape.*;
-
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -17,15 +13,19 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
-import javafx.scene.input.KeyCode;
-import javafx.util.Duration;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.PhongMaterial;
+import javafx.scene.text.Font;
+import javafx.util.Duration;
 
 
 /**
@@ -125,7 +125,7 @@ public class GamePane extends Pane{
 	/**
 	 * The {@code rotationDirection} is an {@link HashMap}. holds the directions map
 	 *  */
-	private static HashMap<KeyCode, RotationDirection> rotationDirection = new HashMap<>();
+	private static HashMap<KeyCode, RotationDirection> rotationDirections = new HashMap<>();
 	
 	/**
 	 * The {@code isMatch} holds the game mode
@@ -436,7 +436,7 @@ public class GamePane extends Pane{
 
 	
 	/**
-	 * Calculates the current game score
+	 * Calculates and updates the current game score
 	 * */
 	private void calculateScore() {
 		this.score = this.hits*(this.difficulty.ordinal()+1)*HIT_MULTIPLIER - this.misses;
@@ -465,7 +465,7 @@ public class GamePane extends Pane{
 	 * */
 	private void setKeyboardEvents() {
 		this.setOnKeyPressed(e -> {
-			if(cannon.rotate(rotationDirection.get(e.getCode())))
+			if(cannon.rotate(rotationDirections.get(e.getCode())))
 				playSound(movePlayer,1);
 
 			else if(e.getCode() == KeyCode.SPACE){
@@ -477,16 +477,16 @@ public class GamePane extends Pane{
 	
 	
 	/**
-	 * Initiates the values of {@link GamePane#backgroundsUrl} and {@link GamePane#rotationDirection}
+	 * Initiates the values of {@link GamePane#backgroundsUrl} and {@link GamePane#rotationDirections}
 	 * */
 	private void initHashMapsValues(){
 		backgroundsUrl.put(true, MATCH_BACKGROUND_URL);
 		backgroundsUrl.put(false, TRAINING_BACKGROUND_URL);
 		
-		rotationDirection.put(KeyCode.LEFT, RotationDirection.Left);
-		rotationDirection.put(KeyCode.RIGHT, RotationDirection.Right);
-		rotationDirection.put(KeyCode.UP, RotationDirection.Forward);
-		rotationDirection.put(KeyCode.DOWN, RotationDirection.Backward);
+		rotationDirections.put(KeyCode.LEFT, RotationDirection.Left);
+		rotationDirections.put(KeyCode.RIGHT, RotationDirection.Right);
+		rotationDirections.put(KeyCode.UP, RotationDirection.Forward);
+		rotationDirections.put(KeyCode.DOWN, RotationDirection.Backward);
 	}
 	
 	
