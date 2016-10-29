@@ -34,7 +34,7 @@ import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 /**
- * A GUI stage to display DB queries
+ * Display the game screens on the player's (client) side.
  * 
  * @author Daniel Menahem 39676804
  * @author Michael Shvarts 301578878
