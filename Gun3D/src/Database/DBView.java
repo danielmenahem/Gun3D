@@ -34,16 +34,17 @@ import javafx.stage.Stage;
 
 public class DBView extends Stage {
 	/**
+	 * Minimum games to count for top players. Value of {@code MIN_GAMES_TO_COUNT_FOR_TOP_PLAYERS} is {@value}.
+	 */
+	private static final int MIN_GAMES_TO_COUNT_FOR_TOP_PLAYERS = 3;
+	/**
 	 * Contains query options.
 	 */
-	private final String[] options = { "All events by name and then by game time",
+	private static final String[] options = { "All events by name and then by game time",
 			"All events by name and then by game score (descending)", "All games by game score (descending)",
-			"All players with 3 games or more by rank", "All games by most hits (descending)",
-			"All games by most misses (descending)" };
-	/**
-	 * Minimum games to count for top players.
-	 */
-	private final int MIN_GAMES_TO_COUNT_FOR_TOP_PLAYERS = 3;
+			"Players with "
+					+ MIN_GAMES_TO_COUNT_FOR_TOP_PLAYERS + " games or more top " + MIN_GAMES_TO_COUNT_FOR_TOP_PLAYERS + " games average",
+			"All games by most hits (descending)", "All games by most misses (descending)" };
 	/**
 	 * Displays the query options.
 	 */
@@ -121,14 +122,14 @@ public class DBView extends Stage {
 		gpOptions.setPadding(new Insets(10, 10, 10, 10));
 		gpOptions.setHgap(10);
 		gpOptions.setVgap(10);
-		
+
 		lblQueryChoice = new Label("Choose a query:");
-		
+
 		cbxQueryChoice = new ComboBox<>();
 		queryOptions = FXCollections.observableArrayList(options);
 		cbxQueryChoice.setItems(queryOptions);
 		cbxQueryChoice.getSelectionModel().selectFirst();
-		
+
 		btnRun = new Button("Run");
 		btnRun.setOnAction(e -> {
 			runQuery(cbxQueryChoice.getSelectionModel().getSelectedIndex());
@@ -142,16 +143,16 @@ public class DBView extends Stage {
 
 		tcPlayerID = new TableColumn<>("Player ID");
 		tcPlayerID.setCellValueFactory(new PropertyValueFactory<Record, String>("playerID"));
-		
+
 		tcGameID = new TableColumn<>("Game ID");
 		tcGameID.setCellValueFactory(new PropertyValueFactory<Record, String>("gameID"));
-		
+
 		tcGameScore = new TableColumn<>("Score");
 		tcGameScore.setCellValueFactory(new PropertyValueFactory<Record, String>("score"));
-		
+
 		tcEventType = new TableColumn<>("Event Type");
 		tcEventType.setCellValueFactory(new PropertyValueFactory<Record, String>("event"));
-		
+
 		tcTimeStamp = new TableColumn<>("Time Stamp");
 		tcTimeStamp.setCellValueFactory(new PropertyValueFactory<Record, String>("timeStamp"));
 
@@ -207,8 +208,9 @@ public class DBView extends Stage {
 			}
 			case 3: {
 				// Average scores of players with more than 3 games
-				table.setItems(FXCollections.observableList(
-						db.getAverageScoresOfXTopGameByPlayersWithXGamesOrMoreDescending(MIN_GAMES_TO_COUNT_FOR_TOP_PLAYERS)));
+				table.setItems(
+						FXCollections.observableList(db.getAverageScoresOfXTopGameByPlayersWithXGamesOrMoreDescending(
+								MIN_GAMES_TO_COUNT_FOR_TOP_PLAYERS)));
 				table.getColumns().setAll(tcPlayerID, tcGameID, tcGameScore);
 				tcGameID.setText("Number Of Games");
 				tcGameScore.setText("Average Score");

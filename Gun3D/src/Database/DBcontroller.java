@@ -31,25 +31,29 @@ import GameObjects.EventType;
  */
 public class DBcontroller implements DBcontrollerInterface {
 	/**
-	 * DB driver: jdbc.
+	 * jdbc driver. Value of {@code dbDriverName} is {@value}.
 	 */
-	private final String dbDriverName = "com.mysql.jdbc.Driver";
+	private static final String dbDriverName = "com.mysql.jdbc.Driver";
 	/**
-	 * DB name: "gun".
+	 * A database URL for the connection. Value of {@code dbURL} is {@value}.
 	 */
-	private final String dbName = "jdbc:mysql://localhost/gun";
+	private static final String dbURL = "jdbc:mysql://localhost/";
 	/**
-	 * DB user name, by instructions is "scott".
+	 * DB name. Value of {@code dbName} is {@value}.
 	 */
-	private final String dbUsername = "scott";
+	private static final String dbName = "gun3DMichaelAndDaniel";
 	/**
-	 * DB password, by instructions is "tiger".
+	 * DB user name. Value of {@code dbUsername} is {@value}.
 	 */
-	private final String dbPassword = "tiger";
+	private static final String dbUsername = "scott";
 	/**
-	 * DB table's name, should be "events" (different names for testing tables).
+	 * DB password. Value of {@code dbPassword} is {@value}.
 	 */
-	private final String tableName = "events";
+	private static final String dbPassword = "tiger";
+	/**
+	 * DB table's name. Value of {@code tableName} is {@value}.
+	 */
+	private static final String tableName = "events";
 
 	/**
 	 * Number of games. When setting this property current number should be
@@ -75,8 +79,9 @@ public class DBcontroller implements DBcontrollerInterface {
 	 */
 	public DBcontroller() throws Exception {
 		connect();
+		createDB();
 		createTable();
-		createFakeDB(); // put in comment if DB exists
+		createFakeData(); 
 		getCurrentNumberOfGames();
 	}
 
@@ -89,8 +94,32 @@ public class DBcontroller implements DBcontrollerInterface {
 	private void connect() throws Exception {
 		Class.forName(dbDriverName);
 		System.out.println("Driver loaded");
-		connection = DriverManager.getConnection(dbName, dbUsername, dbPassword);
-		System.out.println("Database connected");
+		connection = DriverManager.getConnection(dbURL, dbUsername, dbPassword);
+		System.out.println("Connection made");
+	}
+	
+	/**
+	 * Create the database, if it doesn't exist.
+	 */
+	private void createDB() {
+		String db = "CREATE DATABASE " + dbName;
+
+		try {
+			connection.prepareStatement(db).executeUpdate();
+			System.out.println("DB created");
+		} catch (SQLException e) {
+			if (e.getErrorCode() == 1007) 
+	            // Database already exists error
+	            System.out.println("Database already exists");
+			else
+				System.out.println(e.getMessage());
+		}		
+		
+		try {
+			connection = DriverManager.getConnection(dbURL + dbName , dbUsername, dbPassword);
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	/**
@@ -389,7 +418,7 @@ public class DBcontroller implements DBcontrollerInterface {
 	/**
 	 * A method to create DB for testing.
 	 */
-	private void createFakeDB() {
+	private void createFakeData() {
 		for (int i = 0; i < 5; i++) {
 			// 5 players
 			int maxGames = ThreadLocalRandom.current().nextInt(0, 5 + 1);
