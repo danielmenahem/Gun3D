@@ -520,7 +520,7 @@ public class Gun3D_301578878_39676804_Server extends Application {
 		 */
 		private void closeClient() {
 			try {
-				writeToLog("Client " + socket.getInetAddress().getHostName() + "session has ended\n");
+				writeToLog("Client " + socket.getInetAddress().getHostName() + " session has ended\n");
 				this.socket.close();
 			} catch (IOException e) {
 			}
@@ -594,7 +594,6 @@ public class Gun3D_301578878_39676804_Server extends Application {
 						} 
 						else {
 							loop = false;
-							closeClient();
 						}
 					} 
 					catch (ClassNotFoundException e) {
