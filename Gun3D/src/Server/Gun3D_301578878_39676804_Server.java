@@ -25,6 +25,7 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -237,6 +238,14 @@ public class Gun3D_301578878_39676804_Server extends Application {
 		
 		setButtonsActions();
 		
+		waitForClients();
+	}
+	
+	
+	/**
+	 * Starts the server sockets. waits for new clients.
+	 * */
+	private void waitForClients(){
 		new Thread(() -> {
 			try {
 				serverSocket = new ServerSocket(8000);
@@ -364,7 +373,7 @@ public class Gun3D_301578878_39676804_Server extends Application {
 
 	
 	/**
-	 * Gets new socket and opens new thread for it documents details in server
+	 * Gets new socket and opens new thread for it. documents details in server
 	 * log
 	 */
 	private void dealWithNewClient(Socket socket) {
@@ -377,8 +386,8 @@ public class Gun3D_301578878_39676804_Server extends Application {
 
 	
 	/**
-	 * Starts a connection do DB * @exception e close the server if the
-	 * connection failed;
+	 * Starts a connection do DB 
+	 * @exception Exception close the server if the connection failed;
 	 */
 	private void connectToDB() {
 		try {
@@ -549,11 +558,20 @@ public class Gun3D_301578878_39676804_Server extends Application {
 	 * @version 1.0
 	 */
 	class HandleAClient implements Runnable {
+		/**
+		 * The {@code socket} is a {@link Socket}. Holds the client socket
+		 * */
 		private Socket socket;
+		
+		/**
+		 * The {@code gameID} holds the client's game ID
+		 * */
 		private int gameID;
 
 		/**
 		 * Construct a task
+		 * @param socket the client socket ({@link Socket}).
+		 * sets {@link HandleAClient#socket}
 		 */
 		public HandleAClient(Socket socket) {
 			this.socket = socket;

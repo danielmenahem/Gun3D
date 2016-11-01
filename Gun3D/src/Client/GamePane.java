@@ -235,8 +235,9 @@ public class GamePane extends Pane{
 	
 	/** 
 	 * Constructs new Game panel
-	 * @param width the game panel width (double)
-	 * @param height the game panel height (double)*/
+	 * @param width the game panel width (double). Sets {@link GamePane#width}.
+	 * @param height the game panel height (double). Sets {@link GamePane#height}.
+	 * */
 	public GamePane(double width, double height){
 		setSize(width, height);
 		initHashMapsValues();
@@ -609,7 +610,8 @@ public class GamePane extends Pane{
 
 	
 	/**
-	 * Sets the panel size
+	 * Sets the panel size.
+	 * Sets {@link GamePane#width} and {@link GamePane#height}
 	 * */
 	private void setSize(double width, double height){
 		this.width = width;
