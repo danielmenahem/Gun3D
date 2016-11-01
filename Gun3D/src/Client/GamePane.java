@@ -340,7 +340,7 @@ public class GamePane extends Pane{
 			this.mainTarget.moveTarget();
 		}
 		
-		for(int i=0; i<this.shells.size();i++){
+		for(int i=0; i<this.shells.size(); i++){
 			CannonShell cs = this.shells.get(i);
 			cs.moveShell();
 			if(cs.isOutofBounds(TARGET_Z_MAX[difficulty.ordinal()]*3)){

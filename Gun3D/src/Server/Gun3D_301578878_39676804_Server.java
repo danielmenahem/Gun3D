@@ -37,8 +37,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
-
-
 /**
  * This class provides a game server, manages online games and games history
  * 
@@ -95,6 +93,11 @@ public class Gun3D_301578878_39676804_Server extends Application {
 	 * The {@code btnChange} is a {@link Button}. changes player name on DB.
 	 */
 	private Button btnChange = new Button("Change Player Name");
+	
+	/**
+	 * According to instructions, option to open a client from server.
+	 */
+	private Button btnNewGame = new Button("New Game/Player");
 
 	/**
 	 * The {@code paneMain} is a {@link BorderPane}. contains all of the GUI
@@ -176,11 +179,7 @@ public class Gun3D_301578878_39676804_Server extends Application {
 	 * The {@code tfReplacingName} is a {@link TextField}.
 	 */
 	private TextField tfReplacingName = new TextField();
-
-	/**
-	 * According to instructions, option to open a client from server.
-	 */
-	private Button btnNewGame = new Button("New Game/Player");
+	
 	/**
 	 * The {@code primaryStage} is a {@link Stage}. The application's primary
 	 * Stage

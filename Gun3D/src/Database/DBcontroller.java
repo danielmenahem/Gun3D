@@ -43,6 +43,10 @@ public class DBcontroller implements DBcontrollerInterface {
 	 */
 	private static final String dbName = "gun3DMichaelAndDaniel";
 	/**
+	 *Value of {@code disableSSL} is {@value}.
+	 */
+	private static final String disableSSL = "?useSSL=false";
+	/**
 	 * DB user name. Value of {@code dbUsername} is {@value}.
 	 */
 	private static final String dbUsername = "scott";
@@ -54,6 +58,7 @@ public class DBcontroller implements DBcontrollerInterface {
 	 * DB table's name. Value of {@code tableName} is {@value}.
 	 */
 	private static final String tableName = "events";
+	
 
 	/**
 	 * Number of games. When setting this property current number should be
@@ -94,7 +99,7 @@ public class DBcontroller implements DBcontrollerInterface {
 	private void connect() throws Exception {
 		Class.forName(dbDriverName);
 		System.out.println("Driver loaded");
-		connection = DriverManager.getConnection(dbURL, dbUsername, dbPassword);
+		connection = DriverManager.getConnection(dbURL + disableSSL, dbUsername, dbPassword);
 		System.out.println("Connection made");
 	}
 
@@ -116,7 +121,7 @@ public class DBcontroller implements DBcontrollerInterface {
 		}
 
 		try {
-			connection = DriverManager.getConnection(dbURL + dbName, dbUsername, dbPassword);
+			connection = DriverManager.getConnection(dbURL + dbName + disableSSL, dbUsername, dbPassword);
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
