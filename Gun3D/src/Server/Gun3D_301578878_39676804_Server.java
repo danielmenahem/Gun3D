@@ -669,7 +669,7 @@ public class Gun3D_301578878_39676804_Server extends Application {
 	 * 
 	 * @param args
 	 *            the command line arguments
-	 * @see start
+	 * @see Gun3D_301578878_39676804_Server#start
 	 */
 	public static void main(String[] args) {
 		launch(args);
