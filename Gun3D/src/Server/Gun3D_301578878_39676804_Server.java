@@ -260,7 +260,7 @@ public class Gun3D_301578878_39676804_Server extends Application {
 		});
 		
 		btnShowDB.setOnMouseEntered(e -> {
-			btnDelete.setEffect(new Glow());
+			btnShowDB.setEffect(new Glow());
 		});	
 		
 		btnShowDB.setOnMouseExited(e -> {
@@ -284,7 +284,7 @@ public class Gun3D_301578878_39676804_Server extends Application {
 		});
 		
 		btnChange.setOnMouseEntered(e -> {
-			btnDelete.setEffect(new Glow());
+			btnChange.setEffect(new Glow());
 		});	
 		
 		btnChange.setOnMouseExited(e -> {
@@ -296,7 +296,7 @@ public class Gun3D_301578878_39676804_Server extends Application {
 		});	
 		
 		btnNewGame.setOnMouseEntered(e -> {
-			btnDelete.setEffect(new Glow());
+			btnNewGame.setEffect(new Glow());
 		});
 		
 		btnNewGame.setOnMouseExited(e -> {
